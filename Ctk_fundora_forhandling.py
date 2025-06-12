@@ -47,3 +47,5 @@ class Strategi_tab(ctk.CTkFrame):
         FrameColoum2.grid(row=0, sticky='new',column=1, padx=5, pady=5)
         FrameColoum3 = ctk.CTkFrame(self)
         FrameColoum3.grid(row=0, sticky='new',column=2, padx=5, pady=5)
+
+        
