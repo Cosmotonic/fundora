@@ -1,7 +1,7 @@
 
 import customtkinter as ctk
 from tkinter import filedialog, Canvas
-from loanerValues import * 
+from Ctk_fundora_loanerValues import * 
 
 class hubview(ctk.CTkFrame): 
     def __init__(self, parent, **menues): 

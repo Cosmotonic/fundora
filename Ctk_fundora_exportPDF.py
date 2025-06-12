@@ -1,5 +1,5 @@
 from fpdf import FPDF
-from loanerValues import *
+from Ctk_fundora_loanerValues import *
 from tkinter import filedialog
 import locale
 

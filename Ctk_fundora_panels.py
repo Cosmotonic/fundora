@@ -1,7 +1,7 @@
 # panels.py are not specific to any UI layout but are generic building blocks to avoid code repetition. 
 
 import customtkinter as ctk
-from loanerValues import * 
+from Ctk_fundora_loanerValues import * 
 from datetime import date
 
 class Panel(ctk.CTkFrame):

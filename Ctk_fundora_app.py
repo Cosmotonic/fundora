@@ -4,7 +4,7 @@ import customtkinter as ctk
 import Ctk_fundora_exportPDF as export 
 import ctk_fundora_math_lib as fuMath 
 
-from loanerValues import *
+from Ctk_fundora_loanerValues import *
 from Ctk_fundora_hubview import * 
 from Ctk_fundora_forhandling import * 
 from Ctk_fundora_finansiering import * 
