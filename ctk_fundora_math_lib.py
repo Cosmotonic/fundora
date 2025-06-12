@@ -1,7 +1,4 @@
-
 # Math Library 
-
-
 def percentage_of_offering(origional_price, new_price ):
     Value_for_a = round((new_price/origional_price) * 100, 0)
 
@@ -22,11 +19,11 @@ def udregn_Indkomst(data_var):
     ExistLoan2 = float(data_var['gaeld_2'].get()) if data_var['gaeld_2'].get() else 0
 
     # Calculate after-tax salaries
-    after_tax_salary1, samletSkat1 = beregn_netto_maanedsloen(salary1) # salary1 * (1 - tax1)
-    after_tax_salary2, samletSkat2 = beregn_netto_maanedsloen(salary2) # salary2 * (1 - tax2)
+    after_tax_salary1, samletSkat1 = beregn_netto_maanedsloen(salary1) 
+    after_tax_salary2, samletSkat2 = beregn_netto_maanedsloen(salary2) 
 
     # Calculate total household income
-    total_income = (salary1) + (salary2) # (salary1 * (1+pension1)) + (salary2 * (1+pension2))
+    total_income = (salary1) + (salary2) # Vi bruger ikke længer pension til gældsfaktor
     max_laan = (total_income * 12 * 4 + savings) - (ExistLoan1 + ExistLoan2)
     loan_total = total_income * 12 * 4
     total_after_tax_income = after_tax_salary1 + after_tax_salary2
@@ -36,8 +33,6 @@ def udregn_Indkomst(data_var):
     data_var["max_lån"].set(max_laan)
     data_var["løn_efter_skat1"].set(after_tax_salary1)
     data_var["løn_efter_skat2"].set(after_tax_salary2)
-    #data_var["skatteprocent1"].set(total_income)
-    #data_var["skatteprocent2"].set(total_income)
     data_var["samlet_efter_skat"].set(total_after_tax_income)
 
 
@@ -146,35 +141,35 @@ def udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, eksp
         bank_loan = huspris - (RemainingPercentageForBankloan * huspris)
         
         # Calculate scenarios
-        real_loan_results = calculate_loan_scenario(real_loan, real_rente, real_periode, payments_per_year=real_terminer, bidragssats=real_bidragssats)      
-        bank_loan_results = calculate_loan_scenario(bank_loan, bank_rente, bank_periode, payments_per_year=bank_terminer, bidragssats=0) 
+        realkredit_lån_resultat = calculate_loan_scenario(real_loan, real_rente, real_periode, payments_per_year=real_terminer, bidragssats=real_bidragssats)      
+        bank_lån_resultat = calculate_loan_scenario(bank_loan, bank_rente, bank_periode, payments_per_year=bank_terminer, bidragssats=0) 
         
-        fremtid_vars['realkredit_låneberegning'] = real_loan_results
-        fremtid_vars['bank_låneberegning']       = bank_loan_results
+        fremtid_vars['realkredit_låneberegning'] = realkredit_lån_resultat
+        fremtid_vars['bank_låneberegning']       = bank_lån_resultat
 
-        real_first_payment = real_loan_results["Amortization Schedule"][0]
-        bank_first_payment = bank_loan_results["Amortization Schedule"][0]
+        real_first_payment = realkredit_lån_resultat["Amortization Schedule"][0]
+        bank_first_payment = bank_lån_resultat["Amortization Schedule"][0]
 
-        RealTotalCost               = real_loan_results['Total Cost']
-        RealTotalInterest           = real_loan_results["Total Interest"]
-        RealMonthlyCost             = real_loan_results["Månedelig Cost"]
-        RealMonthlyInterest         = real_loan_results["Månedelig Interest"]
-        RealMonthlyRentefradrag     = real_loan_results["Månedelig Rentefradrag"]
-        RealMonthlyAfdrag           = real_loan_results["Månedelig Afdrag"]
+        RealTotalCost               = realkredit_lån_resultat['Total Cost']
+        RealTotalInterest           = realkredit_lån_resultat["Total Interest"]
+        RealMonthlyCost             = realkredit_lån_resultat["Månedelig Cost"]
+        RealMonthlyInterest         = realkredit_lån_resultat["Månedelig Interest"]
+        RealMonthlyRentefradrag     = realkredit_lån_resultat["Månedelig Rentefradrag"]
+        RealMonthlyAfdrag           = realkredit_lån_resultat["Månedelig Afdrag"]
 
         # udregn fradrag og fradrags procent 
-        interest_grand_total = float(f"{real_loan_results["Total Interest"]}") + float(f"{bank_loan_results["Total Interest"]}")
+        interest_grand_total = float(f"{realkredit_lån_resultat["Total Interest"]}") + float(f"{bank_lån_resultat["Total Interest"]}")
         Total_rentefradrag, udregnet_fradragsprocent = beregn_rentefradrag_enkelt_person(interest_grand_total)
 
-        BanktotalCost               = bank_loan_results["Total Cost"] 
-        BanlTotalInterest           = bank_loan_results["Total Interest"]
-        BankMonthlyCost             = bank_loan_results["Månedelig Cost"]
-        BankMonthlyInterest         = bank_loan_results["Månedelig Interest"]
-        BankMonthlyRentefradrag     = bank_loan_results["Månedelig Rentefradrag"]
-        BankMonthlyAfdrag           = bank_loan_results["Månedelig Afdrag"]
+        BanktotalCost               = bank_lån_resultat["Total Cost"] 
+        BanlTotalInterest           = bank_lån_resultat["Total Interest"]
+        BankMonthlyCost             = bank_lån_resultat["Månedelig Cost"]
+        BankMonthlyInterest         = bank_lån_resultat["Månedelig Interest"]
+        BankMonthlyRentefradrag     = bank_lån_resultat["Månedelig Rentefradrag"]
+        BankMonthlyAfdrag           = bank_lån_resultat["Månedelig Afdrag"]
 
-        LoanTotalCostCombined       = real_loan_results["Total Cost"] + bank_loan_results["Total Cost"]
-        LoanTotalInterestCombined   = real_loan_results["Total Interest"] + bank_loan_results["Total Interest"]
+        LoanTotalCostCombined       = realkredit_lån_resultat["Total Cost"] + bank_lån_resultat["Total Cost"]
+        LoanTotalInterestCombined   = realkredit_lån_resultat["Total Interest"] + bank_lån_resultat["Total Interest"]
  
         LoanMonthlyCombined         = RealMonthlyCost + BankMonthlyCost
         loanMonthlyInterest         = RealMonthlyInterest + BankMonthlyInterest
@@ -185,19 +180,19 @@ def udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, eksp
     elif 0.2*huspris <= opsparing:
         SavingPercentage        = opsparing / huspris
         real_loan               = huspris - opsparing   
-        real_loan_results       = calculate_loan_scenario(real_loan, real_rente, real_periode, payments_per_year=4, bidragssats=real_bidragssats) #  fradragsprocent=fradragsprocent)
-        fremtid_vars['realkredit_låneberegning'] = real_loan_results
+        realkredit_lån_resultat       = calculate_loan_scenario(real_loan, real_rente, real_periode, payments_per_year=4, bidragssats=real_bidragssats) #  fradragsprocent=fradragsprocent)
+        fremtid_vars['realkredit_låneberegning'] = realkredit_lån_resultat
 
-        interest_grand_total    = float(f"{real_loan_results["Total Interest"]}") 
+        interest_grand_total    = float(f"{realkredit_lån_resultat["Total Interest"]}") 
         Total_rentefradrag, udregnet_fradragsprocent = beregn_rentefradrag_enkelt_person(interest_grand_total)
 
-        real_first_payment      = real_loan_results["Amortization Schedule"][0]
-        RealTotalCost           = real_loan_results['Total Cost']
-        RealTotalInterest       = real_loan_results["Total Interest"]
-        RealMonthlyCost         = real_loan_results["Månedelig Cost"]
-        RealMonthlyInterest     = real_loan_results["Månedelig Interest"]
-        RealMonthlyRentefradrag = real_loan_results["Månedelig Rentefradrag"]
-        RealMonthlyAfdrag       = real_loan_results["Månedelig Afdrag"]
+        real_first_payment      = realkredit_lån_resultat["Amortization Schedule"][0]
+        RealTotalCost           = realkredit_lån_resultat['Total Cost']
+        RealTotalInterest       = realkredit_lån_resultat["Total Interest"]
+        RealMonthlyCost         = realkredit_lån_resultat["Månedelig Cost"]
+        RealMonthlyInterest     = realkredit_lån_resultat["Månedelig Interest"]
+        RealMonthlyRentefradrag = realkredit_lån_resultat["Månedelig Rentefradrag"]
+        RealMonthlyAfdrag       = realkredit_lån_resultat["Månedelig Afdrag"]
 
         LoanMonthlyCombined     = RealMonthlyCost 
         loanMonthlyInterest     = RealMonthlyInterest 
