@@ -6,7 +6,7 @@ import Ctk_fundora_exportPDF as export
 from Ctk_fundora_panels import ( SingleInputPanel, FlexibleInputPanel, ForhandlingsPanel, DoubleInputPanel, SliderPanel, 
                                 RadioInputPanel, BooleanInputPanel, xxInputPanel, InlineDatePicker, CloseSection )
 from Ctk_fundora_loanerValues import *
-import ctk_fundora_math_lib as fuMath 
+import Ctk_fundora_math_lib as fuMath 
 
 class Finansering(ctk.CTkTabview): 
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars): 
