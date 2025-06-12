@@ -15,6 +15,8 @@ Dette er koden til version 0.2
 
 # Link til build: https://drive.google.com/drive/folders/1Kk6bCB9Y0xjCmECYFvZ8gc98OJtKOcHU?usp=sharing
 
+# Video introduktion til Fundora 0.1 findes her: https://mailchi.mp/7e3556e15fa2/fundora
+
 ## 🖼️ Skærmbilleder
 ### Hovedvindue
 ![Hovedvindue](images/Screenshot_fundora_0010.png)
