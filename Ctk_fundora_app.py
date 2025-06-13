@@ -18,7 +18,7 @@ class App(ctk.CTk):
         # Setup 
         ctk.set_appearance_mode('dark') # ("light")
         self.geometry('1280x720')
-        self.title('Fundora 1.0')
+        self.title('Fundora 0.2')
         self.minsize(800,500)
         
         self.init_Finansiering_parameters()

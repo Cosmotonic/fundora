@@ -5,7 +5,8 @@
 Version udgivet 0.1. 
 Dette er koden til version 0.2 
 
-## 🔧 Funktioner
+## 🔧 Video Gennemgang (Prototype)
+# Gennemgang af use-case: https://mailchi.mp/7e3556e15fa2/fundora
 
 - ✅ Låneberegning og renteopdeling
 - ✅ Økonomisk overblik over boligkøb og månedlige udgifter
@@ -14,8 +15,6 @@ Dette er koden til version 0.2
 - ✅ Brugergrænseflade bygget med CustomTkinter
 
 # Link til build: https://drive.google.com/drive/folders/1Kk6bCB9Y0xjCmECYFvZ8gc98OJtKOcHU?usp=sharing
-
-# Video introduktion til Fundora 0.1 findes her: https://mailchi.mp/7e3556e15fa2/fundora
 
 ## 🖼️ Skærmbilleder
 ### Hovedvindue
