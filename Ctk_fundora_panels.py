@@ -155,6 +155,100 @@ class DoubleInputPanel(Panel):
 
         return read_color
 
+class ForhandlingCheckPanel(Panel):
+    def __init__(self, parent, checklist_data):
+        super().__init__(parent=parent)
+        self.vars = {}
+        self.current_row_index = 0  # Track row numbers
+
+        self.priority_options = {
+            "Vigtigt": {"color": "#236752", "desc": "Skal prioriteres"},
+            "Bonus": {"color": "#1554c0", "desc": "Godt at få med"},
+            "Ikke relevant": {"color": "#b71c62", "desc": "Springes over"}
+        }
+
+        # Create rows from initial data
+        for label_text, data in checklist_data.items():
+            self.add_line(
+                label_text=label_text,
+                checked=data.get("checked", False),
+                priority=data.get("priority", "Vigtigt"),
+                comment=data.get("comment", "")
+            )
+
+        # Add "+" button
+        add_button = ctk.CTkButton(
+            self,
+            text="+ Tilføj punkt",
+            fg_color="#f08c2e",  # Orange
+            hover_color="#d37314",
+            command=self.add_line
+        )
+        add_button.grid(row=999, column=0, columnspan=4, pady=(10, 0), padx=10, sticky="ew")
+
+    def add_line(self, label_text="", checked=False, priority="Vigtigt", comment=""):
+        row = self.current_row_index
+        self.rowconfigure(row, weight=0)
+
+        # Checkbox
+        var_chk = ctk.BooleanVar(value=checked)
+        checkbox = ctk.CTkCheckBox(self, text="", variable=var_chk)
+        checkbox.grid(row=row, column=0, padx=(10, 4), pady=2, sticky="w")
+
+        # Editable label
+        label_var = ctk.StringVar(value=label_text)
+        label_entry = ctk.CTkEntry(self, textvariable=label_var)
+        label_entry.grid(row=row, column=1, sticky="ew", padx=(0, 5))
+
+        # Priority dropdown
+        var_priority = ctk.StringVar(value=priority)
+        dropdown = ctk.CTkOptionMenu(
+            self,
+            variable=var_priority,
+            values=list(self.priority_options.keys()),
+            command=lambda val, v=var_priority: self.update_dropdown_color(v)
+        )
+        dropdown.grid(row=row, column=2, padx=(5, 5), sticky="ew")
+
+        # Comment field
+        comment_var = ctk.StringVar(value=comment)
+        comment_entry = ctk.CTkEntry(self, textvariable=comment_var)
+        comment_entry.grid(row=row, column=3, padx=(5, 10), sticky="ew")
+
+        self.columnconfigure(3, weight=1)
+
+        # Save reference
+        key = f"row_{row}"
+        self.vars[key] = {
+            "checked": var_chk,
+            "priority": var_priority,
+            "comment": comment_var,
+            "label": label_var,
+            "dropdown_widget": dropdown,
+            "priority_options": self.priority_options
+        }
+
+        self.update_dropdown_color(var_priority)
+        self.current_row_index += 1
+
+    def update_dropdown_color(self, var):
+        for item in self.vars.values():
+            if item["priority"] == var:
+                val = var.get()
+                color = item["priority_options"][val]["color"]
+                item["dropdown_widget"].configure(fg_color=color)
+
+    def get_results(self):
+        return {
+            data["label"].get(): {
+                "checked": data["checked"].get(),
+                "priority": data["priority"].get(),
+                "comment": data["comment"].get()
+            }
+            for data in self.vars.values()
+        }
+
+
 class xxInputPanel(Panel): 
     def __init__(self, parent, label_text, **input_fields): 
         super().__init__(parent=parent)

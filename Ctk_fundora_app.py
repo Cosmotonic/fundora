@@ -164,9 +164,23 @@ class App(ctk.CTk):
             "runde3_pris"       : ctk.StringVar(value=RUNDE3_PRIS), 
             "runde4_procent"    : ctk.StringVar(value=RUNDE4_PROCENT), 
             "runde4_pris"       : ctk.StringVar(value=RUNDE4_PRIS), 
-            "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET)
+            "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET),
             } 
         
+        self.forhandlings_Checklist_data = {
+            "Pris": {"checked": False, "priority": "Vigtigt", "comment": ""},
+            "Overtagelsesdato": {"checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
+            "Gardiner": {"checked": False, "priority": "Ikke relevant", "comment": ""},
+            "Skabe og opbevaring": {"checked": False, "priority": "Bonus", "comment": ""},
+            "Forbedringer": {"checked": False, "priority": "Vigtigt", "comment": ""},
+            "Hvidevarer": {"checked": False, "priority": "Bonus", "comment": ""},
+            "Aconto og restancer": {"checked": False, "priority": "Vigtigt", "comment": ""},
+            "Vedligeholdelsesplan": {"checked": False, "priority": "Bonus", "comment": ""},
+            "Møbler": {"checked": False, "priority": "Bonus", "comment": ""},
+            "Havemøbler ": {"checked": False, "priority": "Bonus", "comment": ""},
+            "Haveredskaber": {"checked": False, "priority": "Bonus", "comment": ""},
+            }
+
     def manipulate_forhandling(self, *args):
         # Udregn når variabler ændres
         fuMath.Ackerman_Set_Values(self.forhandlings_vars)
@@ -185,7 +199,7 @@ class App(ctk.CTk):
     def menu_forhandling(self): 
         print ('Forhandling menu')
         self.hubview.grid_forget()
-        self.current_view = Forhandling(self, self.forhandlings_vars)
+        self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_Checklist_data)
         self.close_button = CloseSection(self, self.back_to_hub)
         
     def menu_Koebet(self): 

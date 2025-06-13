@@ -1,8 +1,8 @@
 import customtkinter as ctk
-from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel
+from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel
 
 class Forhandling(ctk.CTkTabview): 
-    def __init__(self, parent, forhandlings_vars ): 
+    def __init__(self, parent, forhandlings_vars, forhandlings_Checklist_data ): 
         super().__init__(master = parent)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
@@ -12,7 +12,7 @@ class Forhandling(ctk.CTkTabview):
 
         Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
         Strategi_tab(self.tab("Strategi"))
-        Huskeliste_tab(self.tab("Huskeliste"))
+        Huskeliste_tab(self.tab("Huskeliste"), forhandlings_Checklist_data)
         
 class Ackerman_tab(ctk.CTkFrame): 
     def __init__(self, parent, forhandlings_vars): 
@@ -35,7 +35,6 @@ class Ackerman_tab(ctk.CTkFrame):
         DoubleInputPanel(outputFrame, "3. Forhandlingsbud: ", forhandlings_vars['runde3_procent'], forhandlings_vars['runde3_pris'], readOption_A='disabled',  readOption_B='disabled') 
         DoubleInputPanel(outputFrame, "4. Forhandlingsbud: ", forhandlings_vars['runde4_procent'], forhandlings_vars['runde4_pris'], readOption_A='disabled',  readOption_B='disabled') 
    
-
 class Strategi_tab(ctk.CTkFrame): 
     def __init__(self, parent): 
         super().__init__(master=parent, fg_color="transparent")
@@ -50,18 +49,25 @@ class Strategi_tab(ctk.CTkFrame):
         FrameColoum3 = ctk.CTkFrame(self)
         FrameColoum3.grid(row=0, sticky='new',column=2, padx=5, pady=5)
 
-class Huskeliste(ctk.CTkFrame): 
-    def __init__(self, parent): 
+class Huskeliste_tab(ctk.CTkFrame): 
+    def __init__(self, parent, forhandlings_Checklist_data): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
+        self.columnconfigure((0), weight=1)
 
-        self.columnconfigure((0,1,2), weight=1)
-      
         FrameColoum1 = ctk.CTkFrame(self)
-        FrameColoum1.grid(row=0, sticky='new',column=0, padx=5, pady=5)
-        FrameColoum2 = ctk.CTkFrame(self)
-        FrameColoum2.grid(row=0, sticky='new',column=1, padx=5, pady=5)
-        FrameColoum3 = ctk.CTkFrame(self)
-        FrameColoum3.grid(row=0, sticky='new',column=2, padx=5, pady=5)
+        FrameColoum1.grid(row=0, sticky='new', column=0, padx=5, pady=5)
 
-        
+        self.forhandlings_Checklist_data = forhandlings_Checklist_data
+
+        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Checklist_data)
+        self.panel.pack(fill="both", expand=True)
+
+        FrameColoum2 = ctk.CTkFrame(self)
+        FrameColoum2.grid(row=0, sticky='new', column=1, padx=5, pady=5)
+
+        FrameColoum3 = ctk.CTkFrame(self)
+        FrameColoum3.grid(row=0, sticky='new', column=2, padx=5, pady=5)
+
+    def get_checklist_results(self):
+        return self.panel.get_results()
