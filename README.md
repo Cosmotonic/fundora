@@ -1,5 +1,7 @@
 # Fundora – Boligværktøjet til førstegangskøbere 🏠
 
+# link to Github : https://github.com/Cosmotonic/fundora
+
 **Fundora** er et interaktivt økonomiværktøj bygget i Python, som hjælper førstegangskøbere med at forstå deres finansielle situation, forberede sig på boligkøb og forhandle bedre. 
 
 Version udgivet 0.1. 
