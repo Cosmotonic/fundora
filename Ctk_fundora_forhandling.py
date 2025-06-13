@@ -53,21 +53,18 @@ class Huskeliste_tab(ctk.CTkFrame):
     def __init__(self, parent, forhandlings_Checklist_data): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
-        self.columnconfigure((0), weight=1)
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
 
         FrameColoum1 = ctk.CTkFrame(self)
         FrameColoum1.grid(row=0, sticky='new', column=0, padx=5, pady=5)
 
         self.forhandlings_Checklist_data = forhandlings_Checklist_data
 
-        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Checklist_data)
+        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Checklist_data) # Get_results
         self.panel.pack(fill="both", expand=True)
 
-        FrameColoum2 = ctk.CTkFrame(self)
-        FrameColoum2.grid(row=0, sticky='new', column=1, padx=5, pady=5)
-
-        FrameColoum3 = ctk.CTkFrame(self)
-        FrameColoum3.grid(row=0, sticky='new', column=2, padx=5, pady=5)
 
     def get_checklist_results(self):
         return self.panel.get_results()
