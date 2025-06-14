@@ -231,4 +231,5 @@ class App(ctk.CTk):
 
 
 
-App()
+App() 
+# Run app 

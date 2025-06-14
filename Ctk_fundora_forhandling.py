@@ -55,7 +55,7 @@ class Huskeliste_tab(ctk.CTkFrame):
         self.pack(expand=True, fill='both')
 
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
+        #self.rowconfigure(0, weight=1)
 
         FrameColoum1 = ctk.CTkFrame(self)
         FrameColoum1.grid(row=0, sticky='new', column=0, padx=5, pady=5)
@@ -64,6 +64,15 @@ class Huskeliste_tab(ctk.CTkFrame):
 
         self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Checklist_data) # Get_results
         self.panel.pack(fill="both", expand=True)
+
+        print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)
+        print_button.grid(row=1, column=0, pady=10, padx=10, sticky="new")
+
+    def print_results(self):
+        resultater = self.panel.get_results()
+        for punkt, info in resultater.items():
+            print(f"{punkt}: {info}")
+
 
 
     def get_checklist_results(self):
