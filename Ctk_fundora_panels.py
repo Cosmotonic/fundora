@@ -208,6 +208,7 @@ class ForhandlingCheckPanel(Panel):
             values=list(self.priority_options.keys()),
             command=lambda val, v=var_priority: self.update_dropdown_color(v)
         )
+
         dropdown.grid(row=row, column=2, padx=(5, 5), sticky="ew")
 
         # Comment field
@@ -247,7 +248,6 @@ class ForhandlingCheckPanel(Panel):
             }
             for data in self.vars.values()
         }
-
 
 class xxInputPanel(Panel): 
     def __init__(self, parent, label_text, **input_fields): 

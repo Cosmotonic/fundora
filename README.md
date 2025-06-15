@@ -10,6 +10,9 @@ Dette er koden til version 0.2
 ## 🔧 Video Gennemgang (Prototype)
 # Gennemgang af use-case: https://mailchi.mp/7e3556e15fa2/fundora
 
+# FIGMA UX Design board 
+# https://www.figma.com/design/exSKN1FlEkSTZo6Fu3pDGP/Fundora?node-id=0-1&p=f
+
 - ✅ Låneberegning og renteopdeling
 - ✅ Økonomisk overblik over boligkøb og månedlige udgifter
 - ✅ Strategisk forhandlingsværktøj med Ackerman-model
