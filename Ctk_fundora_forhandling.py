@@ -9,11 +9,13 @@ class Forhandling(ctk.CTkTabview):
         self.add("Konsessiv Forhandling")
         self.add("Strategi")
         self.add("Interesser")
+        self.add("Eksport")
 
         Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
         Strategi_tab(self.tab("Strategi"), forhandlings_argumenter_data)
         Interesser_tab(self.tab("Interesser"), forhandlings_Interesseliste_data)
-        
+        Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_Interesseliste_data, forhandlings_argumenter_data)
+    
 class Ackerman_tab(ctk.CTkFrame): 
     def __init__(self, parent, forhandlings_vars): 
         super().__init__(master=parent, fg_color="transparent")
@@ -97,3 +99,29 @@ class Interesser_tab(ctk.CTkFrame):
 
     def get_checklist_results(self):
         return self.panel.get_results()
+
+
+class Eksport_tab(ctk.CTkFrame): 
+    def __init__(self, parent, forhandlings_vars, forhandlings_Interesseliste_data, forhandlings_argumenter_data): 
+        super().__init__(master=parent, fg_color="transparent")
+        self.pack(expand=True, fill='both')
+
+        self.columnconfigure((0, 1), weight=1)
+
+        # layout
+        person_frame1 = ctk.CTkFrame(self)
+        person_frame1.grid(row=1, column=0, columnspan=1, padx=5, pady=5, sticky='new')
+        person_frame2 = ctk.CTkFrame(self)
+        person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
+
+
+                # Beregning 
+        self.beregn_button = ctk.CTkButton(self, 
+                                            text="Eksporter PDF", 
+                                            corner_radius=32, 
+                                            hover_color="#EC6E07", 
+                                            fg_color='transparent', 
+                                            border_color="#FF9100", 
+                                            border_width=2, )
+                    
+        self.beregn_button.grid(row = 3, column=0, columnspan=2)

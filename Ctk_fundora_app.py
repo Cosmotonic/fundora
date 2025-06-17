@@ -152,7 +152,7 @@ class App(ctk.CTk):
             }
 
     def init_Forhandling_parameters(self):
-        self.forhandlings_vars = {
+        self.forhandlings_vars = { 
             "udbudspris"        : ctk.StringVar(value=UDBUDSPRIS), 
             "forventet_procent" : ctk.StringVar(value=FORVENTET_PROCENT), 
             "forventet_pris"    : ctk.StringVar(value=FORVENTET_PRIS), 
@@ -166,21 +166,21 @@ class App(ctk.CTk):
             "runde4_pris"       : ctk.StringVar(value=RUNDE4_PRIS), 
             "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET),
             } 
-        
+                
         self.forhandlings_Interesseliste_data = {
-            "Pris": {"checked": False, "priority": "Vigtigt", "comment": ""},
+            "Pris": {"checked": False, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
             "Overtagelsesdato": {"checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
-            "Gardiner": {"checked": False, "priority": "Ikke relevant", "comment": ""},
-            "Skabe og opbevaring": {"checked": False, "priority": "Bonus", "comment": ""},
-            "Forbedringer": {"checked": False, "priority": "Vigtigt", "comment": ""},
-            "Hvidevarer": {"checked": False, "priority": "Bonus", "comment": ""},
-            "Aconto og restancer": {"checked": False, "priority": "Vigtigt", "comment": ""},
-            "Vedligeholdelsesplan": {"checked": False, "priority": "Bonus", "comment": ""},
-            "Møbler": {"checked": False, "priority": "Bonus", "comment": ""},
-            "Havemøbler ": {"checked": False, "priority": "Bonus", "comment": ""},
-            "Haveredskaber": {"checked": False, "priority": "Bonus", "comment": ""},
+            "Gardiner": {"checked": False, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
+            "Skabe og opbevaring": {"checked": False, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
+            "Forbedringer": {"checked": False, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
+            "Hvidevarer": {"checked": False, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
+            "Aconto og restancer": {"checked": False, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
+            "Vedligeholdelsesplan": {"checked": False, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
+            "Møbler": {"checked": False, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
+            "Havemøbler ": {"checked": False, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
+            "Haveredskaber": {"checked": False, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
             }
-        
+
         self.forhandlings_argumenter_data = {
             "Liggetid": {"checked": False, "priority": "Fordel", "comment": ""},
             "Boligmarkedet": {"checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
@@ -192,7 +192,7 @@ class App(ctk.CTk):
             "Udbud og efterspørgsel": {"checked": False, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
             "Naboer eller støjforhold": {"checked": False, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
             "Tilstandsrapport eller energimærke": {"checked": False, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
-        }
+            }
 
     def manipulate_forhandling(self, *args):
         # Udregn når variabler ændres

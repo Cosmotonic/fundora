@@ -250,9 +250,7 @@ class Eksport_tab(ctk.CTkFrame):
         self.beregn_button.grid(row = 3, column=0, columnspan=2)
 
     def set_export_values(self): 
-        # I am keeping this function to remind me self I can sent functions back and forth. 
-        # Also keep in mind it can be used on tracing events. To be called when a value is changed in another script. 
-        # not just run directly. Its fun and I may remember it non the less but its here for now. 
-        # Thank you past me. 
+        # Tracking event jeg vil bruge senere som bliver ført over til anden fuction. Obj program for life. 
+
         print (" ")
         #print (f"Adresse before set: {self.eksport_vars['Adresse_vej1'].get()}")

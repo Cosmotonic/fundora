@@ -158,13 +158,15 @@ class DoubleInputPanel(Panel):
 class ForhandlingCheckPanel(Panel):
     def __init__(self, parent, checklist_data, priority_options):
         super().__init__(parent=parent)
+        
         self.vars = {}
         self.current_row_index = 0  # Track row numbers
 
         self.priority_options = priority_options 
-        first_key = list(self.priority_options.keys())[0]   # → "Fordel"
-        self.var_priority = ctk.StringVar(value=first_key)
+        # first_key = list(self.priority_options.keys())[0]   # → "Fordel"
+        # self.var_priority = ctk.StringVar(value=first_key)
 
+        # Indsæt alle eksempel linjer. 
         for label_text, data in checklist_data.items():
             priority_val = data.get("priority", list(self.priority_options.keys())[0])
             priority_var = ctk.StringVar(value=priority_val)
@@ -213,7 +215,9 @@ class ForhandlingCheckPanel(Panel):
         comment_entry = ctk.CTkEntry(self, textvariable=comment_var)
         comment_entry.grid(row=row, column=3, padx=(5, 10), sticky="ew")
 
-        self.columnconfigure(3, weight=1)
+        self.columnconfigure(3, weight=9)
+        self.columnconfigure((1,2), weight=3)
+        self.columnconfigure(0, weight=1)
 
         self.vars[f"row_{row}"] = {
             "checked": var_chk,
