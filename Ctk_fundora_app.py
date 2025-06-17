@@ -167,7 +167,7 @@ class App(ctk.CTk):
             "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET),
             } 
         
-        self.forhandlings_Checklist_data = {
+        self.forhandlings_Interesseliste_data = {
             "Pris": {"checked": False, "priority": "Vigtigt", "comment": ""},
             "Overtagelsesdato": {"checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
             "Gardiner": {"checked": False, "priority": "Ikke relevant", "comment": ""},
@@ -180,6 +180,19 @@ class App(ctk.CTk):
             "Havemøbler ": {"checked": False, "priority": "Bonus", "comment": ""},
             "Haveredskaber": {"checked": False, "priority": "Bonus", "comment": ""},
             }
+        
+        self.forhandlings_argumenter_data = {
+            "Liggetid": {"checked": False, "priority": "Fordel", "comment": ""},
+            "Boligmarkedet": {"checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
+            "Prisniveau i området": {"checked": False, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
+            "Stand og vedligeholdelse": {"checked": False, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
+            "Boligens størrelse og planløsning": {"checked": False, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
+            "Tidspres for sælger": {"checked": False, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
+            "Ejendomsskat og fællesudgifter": {"checked": False, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
+            "Udbud og efterspørgsel": {"checked": False, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
+            "Naboer eller støjforhold": {"checked": False, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
+            "Tilstandsrapport eller energimærke": {"checked": False, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
+        }
 
     def manipulate_forhandling(self, *args):
         # Udregn når variabler ændres
@@ -199,7 +212,7 @@ class App(ctk.CTk):
     def menu_forhandling(self): 
         print ('Forhandling menu')
         self.hubview.grid_forget()
-        self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_Checklist_data)
+        self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_Interesseliste_data, self.forhandlings_argumenter_data)
         self.close_button = CloseSection(self, self.back_to_hub)
         
     def menu_Koebet(self): 

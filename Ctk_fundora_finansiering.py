@@ -240,7 +240,7 @@ class Eksport_tab(ctk.CTkFrame):
  
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
-                                            text="Beregn", 
+                                            text="Eksporter PDF", 
                                             corner_radius=32, 
                                             hover_color="#EC6E07", 
                                             fg_color='transparent', 
