@@ -7,12 +7,12 @@ class Forhandling(ctk.CTkTabview):
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
         self.add("Konsessiv Forhandling")
-        self.add("Strategi")
+        self.add("Argumentation")
         self.add("Interesser")
         self.add("Eksport")
 
         Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
-        Strategi_tab(self.tab("Strategi"), forhandlings_argumenter_data)
+        Argument_tab(self.tab("Argumentation"), forhandlings_argumenter_data)
         Interesser_tab(self.tab("Interesser"), forhandlings_Interesseliste_data)
         Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_Interesseliste_data, forhandlings_argumenter_data)
     
@@ -37,7 +37,7 @@ class Ackerman_tab(ctk.CTkFrame):
         DoubleInputPanel(outputFrame, "3. Forhandlingsbud: ", forhandlings_vars['runde3_procent'], forhandlings_vars['runde3_pris'], readOption_A='disabled',  readOption_B='disabled') 
         DoubleInputPanel(outputFrame, "4. Forhandlingsbud: ", forhandlings_vars['runde4_procent'], forhandlings_vars['runde4_pris'], readOption_A='disabled',  readOption_B='disabled') 
    
-class Strategi_tab(ctk.CTkFrame): 
+class Argument_tab(ctk.CTkFrame): 
     def __init__(self, parent, forhandlings_Argumenter_data): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
@@ -53,7 +53,7 @@ class Strategi_tab(ctk.CTkFrame):
         # argumenter
         self.priority_options = {"Fordel": {"color": "#236752", "desc": "Skal prioriteres"},
                                  "Ulempe": {"color": "#1554c0", "desc": "Godt at få med"}}
-        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Argumenter_data, priority_options=self.priority_options) # Get_results
+        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Argumenter_data, priority_options=self.priority_options, AddCustomLine=False) # Get_results
         self.panel.pack(fill="both", expand=True)
 
         print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)

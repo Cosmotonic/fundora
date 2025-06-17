@@ -156,7 +156,7 @@ class DoubleInputPanel(Panel):
         return read_color
 
 class ForhandlingCheckPanel(Panel):
-    def __init__(self, parent, checklist_data, priority_options):
+    def __init__(self, parent, checklist_data, priority_options, AddCustomLine=True):
         super().__init__(parent=parent)
         
         self.vars = {}
@@ -179,14 +179,15 @@ class ForhandlingCheckPanel(Panel):
             )
 
         # Add "+" button
-        add_button = ctk.CTkButton(
-            self,
-            text="+ Tilføj punkt",
-            fg_color="#f08c2e",  # Orange
-            hover_color="#d37314",
-            command=self.add_line
-        )
-        add_button.grid(row=999, column=0, columnspan=4, pady=(10, 0), padx=10, sticky="ew")
+        if AddCustomLine: 
+            add_button = ctk.CTkButton(
+                self,
+                text="+ Tilføj punkt",
+                fg_color="#f08c2e",  # Orange
+                hover_color="#d37314",
+                command=self.add_line
+            )
+            add_button.grid(row=999, column=0, columnspan=4, pady=(10, 0), padx=10, sticky="ew")
 
     def add_line(self, label_text="", checked=False, priority=None, comment=""):
         row = self.current_row_index
