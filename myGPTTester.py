@@ -1,66 +1,49 @@
 import customtkinter as ctk
-from transformers import pipeline
+from tkinter import messagebox
 
-# Setup
-ctk.set_appearance_mode("light")
-ctk.set_default_color_theme("blue")
+# Brugerdatabase (kan være fra en fil eller database senere)
+brugere = {
+    "kasper": "1234",
+    "franzi": "qwerty",
+    "test": "letmein"
+}
 
-# Load GPT-2 model (lokalt)
-generator = pipeline("text-generation", model="gpt2")
-
-# GPT-generering
-def generate_ai_argument(user_input, perspective):
-    # Dansk til engelsk intro
-    if perspective == "Fordel":
-        intro = "We believe the long time on market is an opportunity because"
-    else:
-        intro = "We are cautious about the short time on market because"
-
-    # Sæt prompt sammen
-    prompt = f"{intro} {user_input}. Therefore, we think that"
-
-    # Generér svar
-    result = generator(prompt, max_length=80, num_return_sequences=1)
-    return result[0]["generated_text"]
-
-# GUI-app
-class ArgumentGeneratorApp(ctk.CTk):
+class LoginApp(ctk.CTk):
     def __init__(self):
         super().__init__()
+        self.title("Login")
+        self.geometry("300x200")
 
-        self.title("Fundora – Offline AI Forhandlingsgenerator (GPT-2)")
-        self.geometry("800x500")
+        ctk.CTkLabel(self, text="Brugernavn").pack(pady=(20, 5))
+        self.entry_user = ctk.CTkEntry(self)
+        self.entry_user.pack()
 
-        ctk.CTkLabel(self, text="Argument: Liggetid", font=ctk.CTkFont(size=18, weight="bold")).pack(pady=(20, 5))
+        ctk.CTkLabel(self, text="Adgangskode").pack(pady=(10, 5))
+        self.entry_pass = ctk.CTkEntry(self, show="*")
+        self.entry_pass.pack()
 
-        self.perspective_option = ctk.CTkOptionMenu(self, values=["Fordel", "Ulempe"])
-        self.perspective_option.set("Fordel")
-        self.perspective_option.pack(pady=(0, 10))
+        ctk.CTkButton(self, text="Login", command=self.tjek_login).pack(pady=20)
 
-        ctk.CTkLabel(self, text="Skriv din begrundelse på dansk (bliver kombineret med engelsk intro):").pack()
-        self.input_box = ctk.CTkTextbox(self, height=100, width=600)
-        self.input_box.pack(pady=5)
+    def tjek_login(self):
+        bruger = self.entry_user.get()
+        kode = self.entry_pass.get()
 
-        self.generate_button = ctk.CTkButton(self, text="Generer AI-svar", command=self.on_generate)
-        self.generate_button.pack(pady=10)
+        if bruger in brugere and brugere[bruger] == kode:
+            messagebox.showinfo("Login", f"Velkommen, {bruger}!")
+            self.destroy()  # luk login-vinduet
+            MainApp()  # åbn hovedprogram
+        else:
+            messagebox.showerror("Fejl", "Forkert brugernavn eller adgangskode.")
 
-        self.output_label = ctk.CTkLabel(self, text="AI-genereret (engelsk) svar vises her...", wraplength=700, justify="left")
-        self.output_label.pack(padx=20, pady=20)
-
-    def on_generate(self):
-        user_input = self.input_box.get("1.0", "end").strip()
-        perspective = self.perspective_option.get()
-
-        if not user_input:
-            self.output_label.configure(text="❌ Skriv venligst din begrundelse.")
-            return
-
-        self.output_label.configure(text="⏳ Genererer svar...")
-        self.update_idletasks()
-
-        result = generate_ai_argument(user_input, perspective)
-        self.output_label.configure(text=result)
+class MainApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Hovedprogram")
+        self.geometry("400x300")
+        ctk.CTkLabel(self, text="Du er nu logget ind!").pack(pady=40)
+        self.mainloop()
 
 if __name__ == "__main__":
-    app = ArgumentGeneratorApp()
+    ctk.set_appearance_mode("light")
+    app = LoginApp()
     app.mainloop()

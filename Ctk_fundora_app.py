@@ -167,7 +167,7 @@ class App(ctk.CTk):
             "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET),
             } 
                 
-        self.forhandlings_Interesseliste_data = {
+        self.forhandlings_løsøre_data = {
             "Pris": {"checked": False, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
             "Overtagelsesdato": {"checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
             "Gardiner": {"checked": False, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
@@ -212,7 +212,7 @@ class App(ctk.CTk):
     def menu_forhandling(self): 
         print ('Forhandling menu')
         self.hubview.grid_forget()
-        self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_Interesseliste_data, self.forhandlings_argumenter_data)
+        self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_løsøre_data, self.forhandlings_argumenter_data)
         self.close_button = CloseSection(self, self.back_to_hub)
         
     def menu_Koebet(self): 

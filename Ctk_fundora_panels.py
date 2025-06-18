@@ -156,15 +156,17 @@ class DoubleInputPanel(Panel):
         return read_color
 
 class ForhandlingCheckPanel(Panel):
-    def __init__(self, parent, checklist_data, priority_options, AddCustomLine=True):
+    def __init__(self, parent, checklist_data, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
         super().__init__(parent=parent)
         
         self.vars = {}
-        self.current_row_index = 0  # Track row numbers
+        self.current_row_index = 1  # Track row numbers
 
         self.priority_options = priority_options 
-        # first_key = list(self.priority_options.keys())[0]   # → "Fordel"
-        # self.var_priority = ctk.StringVar(value=first_key)
+
+        # set column labels.
+        for index, i in enumerate(columnLabels):
+            ctk.CTkLabel(self, text=i).grid(row=0, column=index, sticky='w', padx=5)
 
         # Indsæt alle eksempel linjer. 
         for label_text, data in checklist_data.items():
@@ -178,16 +180,19 @@ class ForhandlingCheckPanel(Panel):
                 comment=data.get("comment", "")
             )
 
-        # Add "+" button
+        # Indsæt "+" button til at tilføje punkt
         if AddCustomLine: 
             add_button = ctk.CTkButton(
                 self,
                 text="+ Tilføj punkt",
-                fg_color="#f08c2e",  # Orange
-                hover_color="#d37314",
-                command=self.add_line
-            )
-            add_button.grid(row=999, column=0, columnspan=4, pady=(10, 0), padx=10, sticky="ew")
+                command=self.add_line,
+                hover_color="#EC6E07", 
+                fg_color='transparent', 
+                border_color="#FF9100", 
+                border_width=2
+                )
+            
+            add_button.grid(row=999, column=1, columnspan=2, pady=(10, 5), padx=10, sticky="ew")
 
     def add_line(self, label_text="", checked=False, priority=None, comment=""):
         row = self.current_row_index

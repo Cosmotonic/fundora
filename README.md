@@ -1,9 +1,12 @@
 # Fundora – Boligværktøjet til førstegangskøbere 🏠
 
-# Github : https://github.com/Cosmotonic/fundora
-# Video Gennemgang (Prototype) af use-case: https://mailchi.mp/7e3556e15fa2/fundora
-# FIGMA UX:  https://www.figma.com/design/exSKN1FlEkSTZo6Fu3pDGP/Fundora?node-id=0-1&p=f
 # Link til build: https://drive.google.com/drive/folders/1Kk6bCB9Y0xjCmECYFvZ8gc98OJtKOcHU?usp=sharing
+
+# Github : https://github.com/Cosmotonic/fundora
+
+# Video Gennemgang (Prototype) af use-case: https://mailchi.mp/7e3556e15fa2/fundora
+
+# FIGMA UX:  https://www.figma.com/design/exSKN1FlEkSTZo6Fu3pDGP/Fundora?node-id=0-1&p=f
 
 
 **Fundora** er et interaktivt økonomiværktøj bygget i Python, som hjælper førstegangskøbere med at forstå deres finansielle situation, forberede sig på boligkøb og forhandle bedre. 

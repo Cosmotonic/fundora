@@ -2,19 +2,19 @@ import customtkinter as ctk
 from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel
 
 class Forhandling(ctk.CTkTabview): 
-    def __init__(self, parent, forhandlings_vars, forhandlings_Interesseliste_data, forhandlings_argumenter_data): 
+    def __init__(self, parent, forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data): 
         super().__init__(master = parent)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
         self.add("Konsessiv Forhandling")
         self.add("Argumentation")
-        self.add("Interesser")
+        self.add("Løsøre")
         self.add("Eksport")
 
         Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
-        Argument_tab(self.tab("Argumentation"), forhandlings_argumenter_data)
-        Interesser_tab(self.tab("Interesser"), forhandlings_Interesseliste_data)
-        Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_Interesseliste_data, forhandlings_argumenter_data)
+        Argument_tab(self.tab("Argumentation"), forhandlings_argumenter_data, forhandlings_vars)
+        Løsøre_tab(self.tab("Løsøre"), forhandlings_løsøre_data)
+        Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data)
     
 class Ackerman_tab(ctk.CTkFrame): 
     def __init__(self, parent, forhandlings_vars): 
@@ -38,7 +38,7 @@ class Ackerman_tab(ctk.CTkFrame):
         DoubleInputPanel(outputFrame, "4. Forhandlingsbud: ", forhandlings_vars['runde4_procent'], forhandlings_vars['runde4_pris'], readOption_A='disabled',  readOption_B='disabled') 
    
 class Argument_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_Argumenter_data): 
+    def __init__(self, parent, forhandlings_Argumenter_data, forhandlings_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
 
@@ -52,8 +52,13 @@ class Argument_tab(ctk.CTkFrame):
 
         # argumenter
         self.priority_options = {"Fordel": {"color": "#236752", "desc": "Skal prioriteres"},
-                                 "Ulempe": {"color": "#1554c0", "desc": "Godt at få med"}}
-        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Argumenter_data, priority_options=self.priority_options, AddCustomLine=False) # Get_results
+                                 "Ulempe":  {"color": "#b71c62", "desc": "Springes over"}}
+        
+        # Refactor til var for bedre PDF eksport. example: forhandlings_var['Arg_label_Column0'] 
+        self.columnLabels=['Til PDF', 'Argument', 'Fra købers perspektiv', 'Købers argumentation'] 
+
+        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Argumenter_data, 
+                                           priority_options=self.priority_options, AddCustomLine=False, columnLabels=self.columnLabels) # Get_results
         self.panel.pack(fill="both", expand=True)
 
         print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)
@@ -68,8 +73,8 @@ class Argument_tab(ctk.CTkFrame):
         return self.panel.get_results()
 
 
-class Interesser_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_Interesseliste_data): 
+class Løsøre_tab(ctk.CTkFrame): 
+    def __init__(self, parent, forhandlings_løsøre_data): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
 
@@ -79,13 +84,17 @@ class Interesser_tab(ctk.CTkFrame):
         FrameColoum1 = ctk.CTkFrame(self)
         FrameColoum1.grid(row=0, sticky='new', column=0, padx=5, pady=5)
 
-        self.forhandlings_Interesseliste_data = forhandlings_Interesseliste_data
+        self.forhandlings_løsøre_data = forhandlings_løsøre_data
 
         # interesse 
         self.priority_options1 = {   "Vigtigt": {"color": "#236752", "desc": "Skal prioriteres"},
                                     "Bonus": {"color": "#1554c0", "desc": "Godt at få med"},
                                     "Ikke relevant": {"color": "#b71c62", "desc": "Springes over"}}
-        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Interesseliste_data, priority_options=self.priority_options1) # Get_results
+        
+        self.columnLabels=['Forhandlet', 'Løsøre', 'Vigtighed', 'Egne noter'] 
+
+        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_løsøre_data, 
+                                           priority_options=self.priority_options1, columnLabels=self.columnLabels) 
         self.panel.pack(fill="both", expand=True)
 
         print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)
@@ -96,13 +105,12 @@ class Interesser_tab(ctk.CTkFrame):
         for punkt, info in resultater.items():
             print(f"{punkt}: {info}")
 
-
     def get_checklist_results(self):
         return self.panel.get_results()
 
 
 class Eksport_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_vars, forhandlings_Interesseliste_data, forhandlings_argumenter_data): 
+    def __init__(self, parent, forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
 
@@ -113,7 +121,6 @@ class Eksport_tab(ctk.CTkFrame):
         person_frame1.grid(row=1, column=0, columnspan=1, padx=5, pady=5, sticky='new')
         person_frame2 = ctk.CTkFrame(self)
         person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
-
 
                 # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
