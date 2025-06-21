@@ -289,7 +289,7 @@ class ForhandlingsPanel(Panel):
         super().__init__(parent=parent)
  
         self.udbudspris = udbudspris
-        self.columnconfigure(0, weight=1)  # ← allow frame to expand in its parent
+        self.columnconfigure(0, weight=1)  
 
         self.columnconfigure((0,1,2,3,4), weight=1)
         self.rowconfigure((0,1,2,3,4), weight=1)
@@ -317,7 +317,7 @@ class ForhandlingsPanel(Panel):
         except (ValueError, TypeError, AttributeError):
             return 0
         
-    def update_from_a(self, *args): # % 
+    def update_from_a(self, *args): 
         if self._suspend_trace:
             return
         self._suspend_trace = True
@@ -326,7 +326,6 @@ class ForhandlingsPanel(Panel):
         static_val  = self.safe_int(self.udbudspris.get())
 
         Value_for_b = round(((100-entry_val)/100) * static_val, 0)  
-        print (f'value for B: {Value_for_b}')
 
         self.entry_b_var.set(str(Value_for_b))
         self._suspend_trace = False
@@ -338,8 +337,6 @@ class ForhandlingsPanel(Panel):
         val         = self.safe_int(self.entry_b_var.get())
         static_val  = self.safe_int(self.udbudspris.get())
         Value_for_a = round(100 - (val / static_val * 100), 2)
-        #Value_for_a = round(((val/static_val) * -100 ) + 100, 2)
-        print (f'value for A: {Value_for_a}')
 
         self.entry_a_var.set(str(Value_for_a))
         self._suspend_trace = False

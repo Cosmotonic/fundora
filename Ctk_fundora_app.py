@@ -8,6 +8,7 @@ from Ctk_fundora_loanerValues import *
 from Ctk_fundora_hubview import * 
 from Ctk_fundora_forhandling import * 
 from Ctk_fundora_finansiering import * 
+from Ctk_fundora_renovering import * 
 
 class App(ctk.CTk): 
     def __init__(self):
@@ -194,6 +195,12 @@ class App(ctk.CTk):
             "Tilstandsrapport eller energimærke": {"checked": False, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
             }
 
+    def init_renovering_parameters(self):
+         self.forhandlings_vars = { 
+            "udbudspris"        : ctk.StringVar(value=UDBUDSPRIS), 
+            "forventet_procent" : ctk.StringVar(value=FORVENTET_PROCENT), 
+            }
+
     def manipulate_forhandling(self, *args):
         # Udregn når variabler ændres
         fuMath.Ackerman_Set_Values(self.forhandlings_vars)
@@ -223,6 +230,7 @@ class App(ctk.CTk):
 
     def menu_Rennovering(self):
         print ('Rennovering menu')
+        self.current_view = Renovering(self, self.rennovering_vars)
         # self.current_view = Rennovering(self, self.forhandlings_vars)
         self.hubview.grid_forget()
 

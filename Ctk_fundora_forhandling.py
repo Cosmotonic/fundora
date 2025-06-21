@@ -26,6 +26,8 @@ class Ackerman_tab(ctk.CTkFrame):
         FrameColoum1.grid(row=0, sticky='new', columnspan=3 ,column=0, padx=5, pady=5)
         SingleInputPanel(FrameColoum1, "Udbudspris", forhandlings_vars["udbudspris"])
 
+        # beregn forventet besparing i procent
+        
         ForhandlingsPanel(FrameColoum1, "Forventet procent afslag & max købspris",  forhandlings_vars['forventet_procent'], forhandlings_vars['forventet_pris'], forhandlings_vars['udbudspris'])
         SliderPanel(FrameColoum1, "Koncessiv forhandlingsaggressivitet", "0", forhandlings_vars["aggressivitet"], 1, 3, defaultValue=1, step_size=1)
         
@@ -58,7 +60,7 @@ class Argument_tab(ctk.CTkFrame):
         self.columnLabels=['Til PDF', 'Argument', 'Fra købers perspektiv', 'Købers argumentation'] 
 
         self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_Argumenter_data, 
-                                           priority_options=self.priority_options, AddCustomLine=False, columnLabels=self.columnLabels) # Get_results
+                                           priority_options=self.priority_options, AddCustomLine=True, columnLabels=self.columnLabels) # Get_results
         self.panel.pack(fill="both", expand=True)
 
         print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)
