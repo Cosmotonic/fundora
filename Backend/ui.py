@@ -7,35 +7,35 @@ ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
 app = ctk.CTk()
-app.title("Loan Calculator")
-app.geometry("400x300")
+app.title("Fundora Login")
+app.geometry("400x450")
 
-entry_principal = ctk.CTkEntry(app, placeholder_text="Loan Amount")
-entry_principal.pack(pady=10)
+email_entry = ctk.CTkEntry(app, placeholder_text="Email")
+email_entry.pack(pady=10)
 
-entry_rate = ctk.CTkEntry(app, placeholder_text="Interest Rate (%)")
-entry_rate.pack(pady=10)
+password_entry = ctk.CTkEntry(app, placeholder_text="Password", show="*")
+password_entry.pack(pady=10)
 
-entry_years = ctk.CTkEntry(app, placeholder_text="Loan Term (Years)")
-entry_years.pack(pady=10)
-
-result_label = ctk.CTkLabel(app, text="Result will appear here")
+result_label = ctk.CTkLabel(app, text="")
 result_label.pack(pady=20)
 
-def call_backend():
+def try_login():
+    payload = {
+        "email": email_entry.get(),
+        "password": password_entry.get()
+    }
     try:
-        payload = {
-            "principal": float(entry_principal.get()),
-            "annual_rate": float(entry_rate.get()),
-            "years": int(entry_years.get())
-        }
-        res = requests.post("http://127.0.0.1:8000/calculate", json=payload)
+        res = requests.post("http://127.0.0.1:8000/login", json=payload)
         data = res.json()
-        result_label.configure(text=f"Monthly: {data['monthly_payment']:.2f} DKK")
+        if data["status"] == "success":
+            user = data["user"]
+            result_label.configure(text=f"Welcome, {user['name']}!\nAddress: {user['address']}, \nPhone: {user['phone']}, \nAge: {user['age']}")
+        else:
+            result_label.configure(text="Login failed.")
     except Exception as e:
         result_label.configure(text=f"Error: {e}")
 
-btn = ctk.CTkButton(app, text="Calculate", command=call_backend)
-btn.pack(pady=10)
+login_button = ctk.CTkButton(app, text="Login", command=try_login)
+login_button.pack(pady=10)
 
 app.mainloop()
