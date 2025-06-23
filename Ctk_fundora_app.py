@@ -10,6 +10,7 @@ from Ctk_fundora_forhandling import *
 from Ctk_fundora_finansiering import * 
 from Ctk_fundora_renovering import * 
 
+
 class App(ctk.CTk): 
     def __init__(self):
         super().__init__()
@@ -27,6 +28,7 @@ class App(ctk.CTk):
         self.init_udgift_parameters()
         self.init_fremtid_parameters()
         self.init_eksport_parameters()
+        self.init_renovering_parameters()
 
         # Load hubview 
         self.to_hubview()
@@ -39,7 +41,7 @@ class App(ctk.CTk):
         self.mainloop()
 
     def to_hubview(self):
-        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling, købet = self.menu_Koebet, rennovering = self.menu_Rennovering) 
+        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling, købet = self.menu_Koebet, rennovering = self.menu_Renovering) 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
@@ -196,9 +198,13 @@ class App(ctk.CTk):
             }
 
     def init_renovering_parameters(self):
-         self.forhandlings_vars = { 
+         self.renovering_vars = { 
             "udbudspris"        : ctk.StringVar(value=UDBUDSPRIS), 
             "forventet_procent" : ctk.StringVar(value=FORVENTET_PROCENT), 
+            }
+         
+         self.renovering_data = {
+            "Pris": {"checked": False, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
             }
 
     def manipulate_forhandling(self, *args):
@@ -207,7 +213,6 @@ class App(ctk.CTk):
 
     # De fire hovedmenuer 
     def menu_Finansierng(self): 
-        print ('Finansiering menu')
         self.hubview.grid_forget() # Hide import buttons
         self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.eksport_vars)
         self.close_button = CloseSection(self, self.back_to_hub)
@@ -217,25 +222,19 @@ class App(ctk.CTk):
         #self.countdown()
 
     def menu_forhandling(self): 
-        print ('Forhandling menu')
         self.hubview.grid_forget()
         self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_løsøre_data, self.forhandlings_argumenter_data)
         self.close_button = CloseSection(self, self.back_to_hub)
         
     def menu_Koebet(self): 
-        print ('Koebet menu')
         self.hubview.grid_forget()
-        # self.current_view = Koebet(self, self.forhandlings_vars)
         self.close_button = CloseSection(self, self.back_to_hub)
 
-    def menu_Rennovering(self):
-        print ('Rennovering menu')
-        self.current_view = Renovering(self, self.rennovering_vars)
-        # self.current_view = Rennovering(self, self.forhandlings_vars)
+    def menu_Renovering(self):
+        self.current_view = Renovering(self, self.renovering_vars, self.renovering_data)
         self.hubview.grid_forget()
 
     def back_to_hub(self):
-        print ('Back to Hub view')
         self.current_view.grid_forget()
         self.to_hubview()
 

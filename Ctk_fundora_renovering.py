@@ -2,24 +2,23 @@ import customtkinter as ctk
 from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel
 
 
-
 class Renovering(ctk.CTkTabview): 
     def __init__(self, parent, rennovering_vars, renoveings_data): 
         super().__init__(master = parent)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
-        self.add("Konsessiv Forhandling")
-        self.add("Argumentation")
-        self.add("Løsøre")
+        self.add("Renoveringer")
+        self.add("Plan")
+        self.add("Huskeliste")
         self.add("Eksport")
 
-        Ackerman_tab(self.tab("Konsessiv Forhandling"), rennovering_vars)
-        Løsøre_tab(self.tab("Løsøre"), forhandlings_løsøre_data)
-        Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data)
+        Renovering_renovation_tab(self.tab("Renoveringer"), rennovering_vars)
+        Renovering_plan_tab(self.tab("Plan"), rennovering_vars)
+        Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
+        Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
 
-
-class Renovation_tab(ctk.CTkFrame): 
+class Renovering_renovation_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
@@ -28,7 +27,7 @@ class Renovation_tab(ctk.CTkFrame):
         FrameColoum1 = ctk.CTkFrame(self)
         FrameColoum1.grid(row=0, sticky='new', columnspan=3 ,column=0, padx=5, pady=5)
 
-class Plan_tab(ctk.CTkFrame): 
+class Renovering_plan_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
@@ -37,7 +36,7 @@ class Plan_tab(ctk.CTkFrame):
         FrameColoum1 = ctk.CTkFrame(self)
         FrameColoum1.grid(row=0, sticky='new', columnspan=3 ,column=0, padx=5, pady=5)
 
-class Huskeliste_tab(ctk.CTkFrame): 
+class Renovering_huskeliste_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
@@ -46,8 +45,7 @@ class Huskeliste_tab(ctk.CTkFrame):
         FrameColoum1 = ctk.CTkFrame(self)
         FrameColoum1.grid(row=0, sticky='new', columnspan=3 ,column=0, padx=5, pady=5)
 
-
-class Eksport_tab(ctk.CTkFrame): 
+class Renovering_eksport_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
