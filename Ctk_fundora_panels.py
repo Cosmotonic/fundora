@@ -10,6 +10,48 @@ class Panel(ctk.CTkFrame):
         self.pack_propagate(False)
         self.pack(fill='x', padx=4, pady=8)
 
+       
+class RenoveringsOpgavePanel(Panel): 
+    def __init__(self, parent, columnLabels=['1','2','3','4']):
+        super().__init__(parent=parent)
+
+        self.columnconfigure((0,1,2,3), weight=1)  # ← allow frame to expand in its parent
+        self.rowconfigure(0, weight=1)
+
+        OpgaveFrame = ctk.CTkFrame(self)
+        OpgaveFrame.grid(row=0, sticky='new', columnspan=4 ,column=0, padx=5, pady=5)
+        OpgaveFrame.columnconfigure((0, 1, 2, 3), weight=1)
+
+        hovedopgave_navn_var = ctk.StringVar(value="Badeværelse")
+
+        # Navngiv opgave
+        self.OpgaveNavn_entry = ctk.CTkEntry(OpgaveFrame, textvariable=hovedopgave_navn_var)
+        self.OpgaveNavn_entry.grid(row = 0, column=0, sticky = 'ew', padx=5, pady=5)
+
+        # Dropdown Prioritet 
+        self.priority_options = {"Skal gøres" :  {"color": "#16AD7E", "desc": "Skal gøres"},
+                                 "Bør gøres"  :  {"color": "#fa0060", "desc": "Bør gøres"},
+                                 "Kan gøres"  :  {"color": "#ffa600", "desc": "Kan gøres"}}
+    
+        hovedopgave_dropdown_var = ctk.IntVar(value=1)
+
+        self.dropdown = ctk.CTkOptionMenu(OpgaveFrame,
+                                            variable=hovedopgave_dropdown_var,
+                                            values=list(self.priority_options.keys()))
+        self.dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+
+        # Tilføj opgave button
+        self.tilføj_opgave_button = ctk.CTkButton(OpgaveFrame, 
+                                            text="+ Tilføj opgave", 
+                                            corner_radius=32, 
+                                            hover_color="#EC6E07", 
+                                            fg_color='transparent', 
+                                            border_color="#FF9100", 
+                                            border_width=2, )  
+               
+        self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'e')
+
+
 class BooleanInputPanel(Panel): 
     def __init__(self, parent, text, data_var): 
         super().__init__(parent=parent)
@@ -41,7 +83,6 @@ class SingleInputPanel(Panel):
         ctk.CTkLabel(self, text = text).grid(row=0, column=0, sticky='w', padx=5) 
         self.SingleEntry = ctk.CTkEntry(self, textvariable= data_var, state=readOption, fg_color=read_color)
         self.SingleEntry.grid(row=0, sticky=entry_sticky, column=1,  columnspan=1, padx=5, pady=5)
-
 
 class InlineDatePicker(Panel):
     def __init__(self, parent, text, date_vars):
@@ -144,10 +185,8 @@ class DoubleInputPanel(Panel):
 
         self.entry_a.grid(row=0, sticky='ew',column=3,  columnspan=1, padx=5, pady=5)
         self.entry_b.grid(row=0, sticky='ew',column=4,  columnspan=2, padx=5, pady=5)
-        
 
     def setBGColor(self, readState): 
-        
         if readState == 'normal':
             read_color = '#2b2b2b'
         elif readState == 'disabled':    

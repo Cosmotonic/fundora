@@ -27,7 +27,6 @@ class Ackerman_tab(ctk.CTkFrame):
         SingleInputPanel(FrameColoum1, "Udbudspris", forhandlings_vars["udbudspris"])
 
         # beregn forventet besparing i procent
-        
         ForhandlingsPanel(FrameColoum1, "Forventet procent afslag & max købspris",  forhandlings_vars['forventet_procent'], forhandlings_vars['forventet_pris'], forhandlings_vars['udbudspris'])
         SliderPanel(FrameColoum1, "Koncessiv forhandlingsaggressivitet", "0", forhandlings_vars["aggressivitet"], 1, 3, defaultValue=1, step_size=1)
         
@@ -89,7 +88,7 @@ class Løsøre_tab(ctk.CTkFrame):
         self.forhandlings_løsøre_data = forhandlings_løsøre_data
 
         # interesse 
-        self.priority_options1 = {   "Vigtigt": {"color": "#236752", "desc": "Skal prioriteres"},
+        self.priority_options1 = {  "Vigtigt": {"color": "#236752", "desc": "Skal prioriteres"},
                                     "Bonus": {"color": "#1554c0", "desc": "Godt at få med"},
                                     "Ikke relevant": {"color": "#b71c62", "desc": "Springes over"}}
         

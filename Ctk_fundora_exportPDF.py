@@ -241,7 +241,6 @@ class Export_To_PDF():
         self.pdf.cell(200, 10, f"___________________________________________________________", ln=True)
         self.pdf.ln(5)
 
-
     def add_loan_section(self, title, loan_data):
         
         if not loan_data or loan_data.get("Månedelig Cost", 0) == 0:

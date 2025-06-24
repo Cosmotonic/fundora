@@ -199,12 +199,14 @@ class App(ctk.CTk):
 
     def init_renovering_parameters(self):
          self.renovering_vars = { 
-            "udbudspris"        : ctk.StringVar(value=UDBUDSPRIS), 
-            "forventet_procent" : ctk.StringVar(value=FORVENTET_PROCENT), 
+            "renovering_opgave1": ctk.IntVar    (value=RENOVERING_OPGAVE1),
             }
-         
-         self.renovering_data = {
-            "Pris": {"checked": False, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
+                  
+         self.renovering_hovedopgave_data = {
+            "Badeværelse": {"priority": "Skal"},
+            }                  
+         self.renovering_underopgave_data = {
+            "VVS": {"prioritet": 1, "kommentar": "Køkkent skal laves først, så vi kan lave VVS på samme dag.", "tidsforbrug": 10, "løn/håndværker": 5000 },
             }
 
     def manipulate_forhandling(self, *args):
@@ -231,8 +233,9 @@ class App(ctk.CTk):
         self.close_button = CloseSection(self, self.back_to_hub)
 
     def menu_Renovering(self):
-        self.current_view = Renovering(self, self.renovering_vars, self.renovering_data)
         self.hubview.grid_forget()
+        self.current_view = Renovering(self, self.renovering_vars, self.renovering_hovedopgave_data, self.renovering_underopgave_data)
+        self.close_button = CloseSection(self, self.back_to_hub)
 
     def back_to_hub(self):
         self.current_view.grid_forget()
