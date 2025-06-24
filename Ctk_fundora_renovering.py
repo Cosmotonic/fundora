@@ -17,7 +17,6 @@ class Renovering(ctk.CTkTabview):
         Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
 
-
 class Renovering_renovation_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
@@ -25,23 +24,31 @@ class Renovering_renovation_tab(ctk.CTkFrame):
         # self.columnconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        # ← HUSK du får grid/pack conflict hvis du smider button i samme "self" fordi panels er packed inherited fra panel class. 
-        OpgaveFrame = ctk.CTkFrame(self)
-        # OpgaveFrame.grid(row=0, sticky='new',column=0,columnspan=3, padx=5, pady=5)
-        OpgaveFrame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-        RenoveringsOpgavePanel(OpgaveFrame)
+        self.current_row_index = 1  # Track row numbers
 
-        '''
+        # ← HUSK du får grid/pack conflict hvis du smider button i samme "self" fordi panels er packed inherited fra panel class. 
+        self.OpgaveFrame = ctk.CTkFrame(self)
+        self.OpgaveFrame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+
         # Udenfor opgave frame
         self.tilføj_opgave_button = ctk.CTkButton(self, 
                                             text="+ tilføj Renovering", 
+                                            command=self.add_line,
                                             corner_radius=32, 
                                             hover_color="#EC6E07", 
                                             fg_color='transparent', 
                                             border_color="#FF9100", 
                                             border_width=2)
         self.tilføj_opgave_button.grid(row=1, column=0, columnspan=3, pady=(0, 10), sticky="n")
-        '''
+        
+        #self.total_pris = ctk.CTkEntry()
+
+    def add_line(self, label_text="", checked=False, priority=None, comment=""):
+        row = self.current_row_index
+        self.rowconfigure(row, weight=0) 
+        RenoveringsOpgavePanel(self.OpgaveFrame)
+
+
 
 
 class Renovering_plan_tab(ctk.CTkFrame): 
