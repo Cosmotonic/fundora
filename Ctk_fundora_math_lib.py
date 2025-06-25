@@ -372,3 +372,23 @@ class Ackerman_Set_Values():
 
             self.forhandlings_vars[key_procent].set(procent_value)
             self.forhandlings_vars[key_pris].set(pris_value)
+
+
+def beregn_total_pris(data_dict):
+    total = 0
+
+    for opgavegruppe in data_dict.values():
+        print (opgavegruppe)
+        
+        for opgavenavn, opgavedata in opgavegruppe.items():
+            ekskludere = opgavedata.get("ekskludere", False)
+            pris_str = opgavedata.get("Pris", "0").strip()
+
+            if not ekskludere:
+                try:
+                    pris = float(pris_str.replace(".", "").replace(",", "."))
+                    total += pris
+                except ValueError:
+                    print(f"Advarsel: Kunne ikke tolke pris '{pris_str}' i opgave '{opgavenavn}'")
+
+    return round(total)

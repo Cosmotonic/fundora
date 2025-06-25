@@ -12,11 +12,16 @@ class Panel(ctk.CTkFrame):
 
        
 class RenoveringsOpgavePanel(Panel): 
-    def __init__(self, parent, columnLabels=['Inkluder','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
+    def __init__(self, parent, UID=1, columnLabels=['ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
         super().__init__(parent=parent)
         # Order panel
         self.columnconfigure((0,1,2,3), weight=1)  # ← allow frame to expand in its parent
         self.rowconfigure(0, weight=1)
+        
+        # giver mit renovation panel et unikt ID, i stedet for at dict har hardcoded "badeværelse" som overrider hver gang jeg opetter et nyt. 
+        self.uid = f"RenovationPanelID_{UID}" 
+
+        self.vars = {}
 
         # init values 
         self.columnLabels = columnLabels
@@ -29,8 +34,8 @@ class RenoveringsOpgavePanel(Panel):
         self.OpgaveFrame.columnconfigure((0, 1, 2, 3), weight=1)
 
         # Sæt Navn på opgave
-        hovedopgave_navn_var = ctk.StringVar(value="Badeværelse")
-        self.OpgaveNavn_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=hovedopgave_navn_var)
+        self.hovedopgave_navn_var = ctk.StringVar(value=f"Køkken etc.:") 
+        self.OpgaveNavn_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=self.hovedopgave_navn_var, font=("Helvetica", 18, "bold"))
         self.OpgaveNavn_entry.grid(row = 0, column=0, sticky = 'ew', padx=5, pady=5)
 
         # Sæt dropdown ind Prioritet 
@@ -42,16 +47,21 @@ class RenoveringsOpgavePanel(Panel):
         self.dropdown = ctk.CTkOptionMenu(self.OpgaveFrame,
                                             variable=hovedopgave_dropdown_var,
                                             values=list(self.priority_options.keys()))
-        self.dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        self.dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+        # Inkluder i budget checkbox 
+        self.inkluder_budget_var = ctk.BooleanVar(value=True)
+        self.inkluder_budget_check = ctk.CTkCheckBox(self, variable=self.inkluder_budget_var, text="Inkluder i budget  ", fg_color= "#16AD7E", bg_color= "#09573E", hover_color= "#1CCC94" )
+        self.inkluder_budget_check.grid(row=0, column=2, padx=(5,5), pady=5, sticky="w")
 
         # Tilføj opgave button
         self.tilføj_opgave_button = ctk.CTkButton(self.OpgaveFrame, 
                                             command=self.add_line,
                                             text="+ Tilføj opgave", 
                                             corner_radius=32, 
-                                            hover_color="#EC6E07", 
+                                            hover_color="#0798EC", 
                                             fg_color='transparent', 
-                                            border_color="#FF9100", 
+                                            border_color="#0077FF",  
                                             border_width=2, )  
                
         self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'e')
@@ -64,42 +74,41 @@ class RenoveringsOpgavePanel(Panel):
 
         # set column labels.
         ctk.CTkLabel(self.underopgave_frame, text=columnLabels[0]).grid(row=0, column=0, columnspan=1, padx=(10, 4), pady=2, sticky="w")
-        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[1]).grid(row=0, column=1,columnspan=2, sticky="ew", padx=5, pady=5)
-        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[2]).grid(row=0, column=3,columnspan=1, sticky="ew", padx=5, pady=5)
-        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[3]).grid(row=0, column=4,columnspan=6, sticky="ew", padx=5, pady=5)
-        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[4]).grid(row=0, column=10,columnspan=2, sticky="ew", padx=5, pady=5)
-        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[5]).grid(row=0, column=12,columnspan=3, sticky="ew", padx=5, pady=5)
-        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[6]).grid(row=0, column=15,columnspan=1, sticky="ew", padx=5, pady=5)
-
-        #ctk.CTkLabel(self.underopgave_frame, text=i).grid(row=0, column=index, sticky='w', padx=5)
+        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[1]).grid(row=0, column=1, columnspan=2, sticky="ew",  padx=5, pady=5)
+        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[2]).grid(row=0, column=3, columnspan=1, sticky="ew",  padx=5, pady=5)
+        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[3]).grid(row=0, column=4, columnspan=6, sticky="ew",  padx=5, pady=5)
+        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[4]).grid(row=0, column=10,columnspan=2, sticky="ew",  padx=5, pady=5)
+        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[5]).grid(row=0, column=12,columnspan=3, sticky="ew",  padx=5, pady=5)
+        ctk.CTkLabel(self.underopgave_frame, text=columnLabels[6]).grid(row=0, column=15,columnspan=1, sticky="ew",  padx=5, pady=5)
 
         # Total pris
-        OpgaveTotalPris = ctk.StringVar(value="100000")
-        self.total_pris = ctk.CTkEntry(self.OpgaveFrame, textvariable=OpgaveTotalPris)
-        self.total_pris.grid(row=99, column=3, sticky="e")
+        # OpgaveTotalPris = ctk.StringVar(value="100000")
+        # self.total_pris = ctk.CTkEntry(self.OpgaveFrame, textvariable=OpgaveTotalPris)
+        # self.total_pris.grid(row=99, column=3, sticky="e")
 
     def add_line(self, label_text="", checked=False, priority=None, comment=""):
         row = self.current_row_index
         self.rowconfigure(row, weight=0) 
         
         # Opret navne 
-        var_chk = ctk.BooleanVar(value=checked)
-        str1    = ctk.StringVar(value=self.columnLabels[1])
-        str2    = ctk.StringVar(value=self.columnLabels[2])
-        str3    = ctk.StringVar(value=self.columnLabels[3])
-        str4    = ctk.StringVar(value=self.columnLabels[4])
-        str5    = ctk.StringVar(value=self.columnLabels[5])
-        butStr  = ctk.StringVar(value=' - ')
+        var_chk     = ctk.BooleanVar(value=checked)
+        var_str1    = ctk.StringVar(value=self.columnLabels[1])
+        var_str2    = ctk.StringVar(value=self.columnLabels[2])
+        var_str3    = ctk.StringVar(value=self.columnLabels[3])
+        var_str4    = ctk.StringVar(value=self.columnLabels[4])
+        var_str5    = ctk.StringVar(value=self.columnLabels[5])
+        var_butStr  = ctk.StringVar(value=' - ')
 
         # Lav elements 
         checkbox = ctk.CTkCheckBox(self.underopgave_frame, text="", variable=var_chk)
-        entry1 = ctk.CTkEntry(self.underopgave_frame, textvariable=str1)
-        entry2 = ctk.CTkEntry(self.underopgave_frame, textvariable=str2)
-        entry3 = ctk.CTkEntry(self.underopgave_frame, textvariable=str3)
-        entry4 = ctk.CTkEntry(self.underopgave_frame, textvariable=str4)
-        entry5 = ctk.CTkEntry(self.underopgave_frame, textvariable=str5)
-        slet_but = ctk.CTkButton(self.underopgave_frame, textvariable=butStr, text=" - ")
-        
+        entry1 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str1)
+        entry2 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str2)
+        entry3 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str3)
+        entry4 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str4)
+        entry5 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str5)
+        slet_but = ctk.CTkButton(self.underopgave_frame, textvariable=var_butStr, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
+
+
         # Placer alt  
         checkbox.grid(row=row, column=0, columnspan=1, padx=5, pady=2, sticky="w")
         entry1.grid(row=row,   column=1, columnspan=2, sticky="ew", padx=5, pady=5)
@@ -109,10 +118,116 @@ class RenoveringsOpgavePanel(Panel):
         entry5.grid(row=row,   column=12,columnspan=3, sticky="ew", padx=5, pady=5)
         slet_but.grid(row=row, column=15,columnspan=1, sticky="ew", padx=5, pady=5)
 
+        
+        self.vars[f"row_{row}"] = {
+            self.columnLabels[0]: checkbox,        # e.g. 'Ekskludere' checkbox
+            self.columnLabels[1]: entry1,         # e.g. 'Opgave'
+            self.columnLabels[2]: entry2,         # e.g. 'Prio'
+            self.columnLabels[3]: entry3,         # e.g. 'Kommentar/Blokkere'
+            self.columnLabels[4]: entry4,         # e.g. 'Tidsforbrug'
+            self.columnLabels[5]: entry5,         # e.g. 'Pris'
+            self.columnLabels[6]: slet_but,         # e.g. 'button'
+        }
+
+        #self.update_dropdown_color(var_priority)
         self.current_row_index += 1
 
-        '''
-        var_chk = ctk.BooleanVar(value=checked) 
+    def get_results(self):
+        results = {}
+        for i, data in enumerate(self.vars.values()): 
+            # print (f'Var print::: {data}')
+            task_name = data[self.columnLabels[1]].get().strip()  # 'Opgave'
+            if not task_name:
+                task_name = f"Opgave_{i+1}"
+            key = f"{task_name}_{i+1}"  # Sikrer unikhed
+
+            results[key] = {
+                self.columnLabels[0]: data[self.columnLabels[0]].get(),  # Ekskludere
+                self.columnLabels[1]: task_name,
+                self.columnLabels[2]: data[self.columnLabels[2]].get(),  # 'Prio'
+                self.columnLabels[3]: data[self.columnLabels[3]].get(),  # 'Kommentar/Blokkere'
+                self.columnLabels[4]: data[self.columnLabels[4]].get(),  # 'Tidsforbrug'
+                self.columnLabels[5]: data[self.columnLabels[5]].get(),  # 'Pris'
+            }
+        return results
+
+    def load_data(self, data_dict):
+        for task_name, values in data_dict.items():
+            self.add_line(
+                include=values.get(self.columnLabels[0], False),   # 'Ekskludere'
+                opgave=task_name,                                  # 'Opgave'
+                prio=values.get(self.columnLabels[2], ""),         # 'Prio'
+                kommentar=values.get(self.columnLabels[3], ""),    # 'Kommentar/Blokkere'
+                tid=values.get(self.columnLabels[4], ""),          # 'Tidsforbrug'
+                pris=values.get(self.columnLabels[5], "")          # 'Pris'
+            )
+
+    def slet_opgave(self, row_id):
+        if row_id in self.vars:
+            print ("Fjern widgets fra UI")
+            for widget in self.vars[row_id].values():
+                if hasattr(widget, "grid_forget"):
+                    widget.grid_forget()
+                    widget.destroy()
+            del self.vars[row_id]
+     
+    # drop down color change not setup yet. 
+    def update_dropdown_color(self, var):
+        for item in self.vars.values():
+            if item["priority"] == var:
+                val = var.get()
+                options = item.get("priority_options", {})
+                color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
+                item["dropdown_widget"].configure(fg_color=color)
+
+
+    
+
+class ForhandlingCheckPanel(Panel):
+    def __init__(self, parent, checklist_data, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
+        super().__init__(parent=parent)
+        
+        self.columnLabels = columnLabels
+        self.vars = {}
+        self.current_row_index = 1  # Track row numbers
+
+        self.priority_options = priority_options 
+
+        # set column labels.
+        for index, i in enumerate(self.columnLabels):
+            ctk.CTkLabel(self, text=i).grid(row=0, column=index, sticky='w', padx=5)
+
+        # Indsæt alle eksempel linjer. 
+        for label_text, data in checklist_data.items():
+            priority_val = data.get("priority", list(self.priority_options.keys())[0])
+            priority_var = ctk.StringVar(value=priority_val)
+
+            self.add_line(
+                label_text=label_text,
+                checked=data.get("checked", False),
+                priority=priority_var,
+                comment=data.get("comment", "")
+            )
+
+        # Indsæt "+" button til at tilføje punkt
+        if AddCustomLine: 
+            add_button = ctk.CTkButton(
+                self,
+                text="+ Tilføj punkt",
+                command=self.add_line,
+                hover_color="#EC6E07", 
+                fg_color='transparent', 
+                border_color="#FF9100", 
+                border_width=2
+                )
+            
+            add_button.grid(row=999, column=1, columnspan=2, pady=(10, 5), padx=10, sticky="ew")
+
+    def add_line(self, label_text="", checked=False, priority=None, comment=""):
+        row = self.current_row_index
+        self.rowconfigure(row, weight=0)
+
+        var_chk = ctk.BooleanVar(value=checked)
         label_var = ctk.StringVar(value=label_text)
         comment_var = ctk.StringVar(value=comment)
 
@@ -150,7 +265,8 @@ class RenoveringsOpgavePanel(Panel):
 
         self.update_dropdown_color(var_priority)
         self.current_row_index += 1
-        '''
+
+
     def update_dropdown_color(self, var):
         for item in self.vars.values():
             if item["priority"] == var:
@@ -168,10 +284,6 @@ class RenoveringsOpgavePanel(Panel):
             }
             for data in self.vars.values()
         }
-
-
-
-
 
 class BooleanInputPanel(Panel): 
     def __init__(self, parent, text, data_var): 
@@ -314,108 +426,6 @@ class DoubleInputPanel(Panel):
             read_color ="#3a3a3a"
 
         return read_color
-
-class ForhandlingCheckPanel(Panel):
-    def __init__(self, parent, checklist_data, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
-        super().__init__(parent=parent)
-        
-        self.columnLabels = columnLabels
-        self.vars = {}
-        self.current_row_index = 1  # Track row numbers
-
-        self.priority_options = priority_options 
-
-        # set column labels.
-        for index, i in enumerate(self.columnLabels):
-            ctk.CTkLabel(self, text=i).grid(row=0, column=index, sticky='w', padx=5)
-
-        # Indsæt alle eksempel linjer. 
-        for label_text, data in checklist_data.items():
-            priority_val = data.get("priority", list(self.priority_options.keys())[0])
-            priority_var = ctk.StringVar(value=priority_val)
-
-            self.add_line(
-                label_text=label_text,
-                checked=data.get("checked", False),
-                priority=priority_var,
-                comment=data.get("comment", "")
-            )
-
-        # Indsæt "+" button til at tilføje punkt
-        if AddCustomLine: 
-            add_button = ctk.CTkButton(
-                self,
-                text="+ Tilføj punkt",
-                command=self.add_line,
-                hover_color="#EC6E07", 
-                fg_color='transparent', 
-                border_color="#FF9100", 
-                border_width=2
-                )
-            
-            add_button.grid(row=999, column=1, columnspan=2, pady=(10, 5), padx=10, sticky="ew")
-
-    def add_line(self, label_text="", checked=False, priority=None, comment=""):
-        row = self.current_row_index
-        self.rowconfigure(row, weight=0)
-
-        var_chk = ctk.BooleanVar(value=checked)
-        label_var = ctk.StringVar(value=label_text)
-        comment_var = ctk.StringVar(value=comment)
-
-        var_priority = priority or ctk.StringVar(value=list(self.priority_options.keys())[0])
-
-        checkbox = ctk.CTkCheckBox(self, text="", variable=var_chk)
-        checkbox.grid(row=row, column=0, padx=(10, 4), pady=2, sticky="w")
-
-        label_entry = ctk.CTkEntry(self, textvariable=label_var)
-        label_entry.grid(row=row, column=1, sticky="ew", padx=(0, 5))
-
-        dropdown = ctk.CTkOptionMenu(
-            self,
-            variable=var_priority,
-            values=list(self.priority_options.keys()),
-            command=lambda val, v=var_priority: self.update_dropdown_color(v)
-        )
-        dropdown.grid(row=row, column=2, padx=(5, 5), sticky="ew")
-
-        comment_entry = ctk.CTkEntry(self, textvariable=comment_var)
-        comment_entry.grid(row=row, column=3, padx=(5, 10), sticky="ew")
-
-        self.columnconfigure(3, weight=9)
-        self.columnconfigure((1,2), weight=3)
-        self.columnconfigure(0, weight=1)
-
-        self.vars[f"row_{row}"] = {
-            "checked": var_chk,
-            "priority": var_priority,
-            "comment": comment_var,
-            "label": label_var,
-            "dropdown_widget": dropdown,
-            "priority_options": self.priority_options,
-        }
-
-        self.update_dropdown_color(var_priority)
-        self.current_row_index += 1
-
-
-    def update_dropdown_color(self, var):
-        for item in self.vars.values():
-            if item["priority"] == var:
-                val = var.get()
-                options = item.get("priority_options", {})
-                color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
-                item["dropdown_widget"].configure(fg_color=color)
-
-    def get_results(self):
-        return {
-            data["label"].get(): {
-                "checked": data["checked"].get(),
-                "priority": data["priority"].get(),
-                "comment": data["comment"].get()
-            }
-            for data in self.vars.values()
-        }
 
 class xxInputPanel(Panel): 
     def __init__(self, parent, label_text, **input_fields): 
