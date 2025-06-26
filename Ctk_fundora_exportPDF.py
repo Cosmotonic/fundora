@@ -14,7 +14,7 @@ class FundoraPDF(FPDF):
         self.set_text_color(150, 150, 150)
         self.cell(0, 10, "Fundora - Boligværktøjet for førstegangskøbere", 0, 0, 'C')
         
-class Export_To_PDF(): 
+class Export_finansiering_PDF(): 
     def __init__(self, set_values, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars): 
 
         set_values()
@@ -269,44 +269,110 @@ class Export_To_PDF():
                                 f"Afdrag: {payment['Afdrag']:.0f} DKK, "
                                 f"Restgæld: {payment['Restgæld']:.0f} DKK", ln=True)
         self.pdf.ln(5)          
-        '''
-        # Add realkredit loan section
-        if bank_loan_results is None:
-            MonthlyInterest = round(real_loan_results["Månedelig Interest"], 0)
-            MonthlyAfdrag   = round(real_loan_results["Månedelig Afdrag"], 0)
-            MonthlyFradrag  = round(real_loan_results["Månedelig Rentefradrag"], 0)
-        else:
-            MonthlyInterest = round(real_loan_results["Månedelig Interest"], 0) + round(bank_loan_results["Månedelig Interest"], 0)
-            MonthlyAfdrag   = round(real_loan_results["Månedelig Afdrag"], 0) + round(bank_loan_results["Månedelig Afdrag"], 0)
-            MonthlyFradrag  = round(real_loan_results["Månedelig Rentefradrag"], 0) + round(bank_loan_results["Månedelig Rentefradrag"], 0)
-            
-        MonthlyYdelse = round(MonthlyInterest + MonthlyAfdrag, 0)
-        Raadighedsbeloeb = (after_tax_salary1 + after_tax_salary2 + MonthlyFradrag )-(expenses_no_loan + MonthlyYdelse) # fradraget skal ikke trækkes fra. Det får de jo tilbage i skat. 
 
-        self.pdf.set_font(TEXTFORMAT, style='B', size=14)
-        self.pdf.cell(200, 10, "Opsummering af månedlig låneydelse", ln=True, align="L")
-        self.pdf.set_font(TEXTFORMAT, size=12)
-        self.pdf.cell(200, 10, f"{locale.format_string('%.2f', float(MonthlyInterest), grouping=True)} DKK Månedelig Renter", ln=True)
-        self.pdf.cell(200, 10, f"{locale.format_string('%.2f', float(MonthlyAfdrag), grouping=True)} DKK Månedelig Afdrag", ln=True)
-        self.pdf.cell(200, 10, f"{locale.format_string('%.2f', float(MonthlyFradrag), grouping=True)} DKK Månedelig Fradrag", ln=True)
-        self.pdf.cell(200, 10, f"-------------", ln=True)
-        self.pdf.set_font(TEXTFORMAT, style='B', size=12)
-        self.pdf.cell(200, 10, f"{locale.format_string('%.2f', float(MonthlyYdelse), grouping=True)} DKK Ydelse", ln=True)
-        self.pdf.set_font(TEXTFORMAT, size=12)
-        self.pdf.cell(200, 10, f"-------------", ln=True)
+'''
+class Eksport_rennovation_budget_PDF():
+    def __init__(self, data):
 
-        self.pdf.cell(200, 10, f"{locale.format_string('%.2f', float(after_tax_salary1 
-                                                        + after_tax_salary2), grouping=True)} DKK Løn efter skat", ln=True)
+        print ('in export')
+        
+        # Open a file dialog 
+        self.file_path = filedialog.asksaveasfilename(defaultextension=".pdf", 
+                                            filetypes=[("PDF files", "*.pdf")],
+                                            initialfile="Låne_Rapport",
+                                            initialdir="~/Desktop")
+        if not self.file_path:  
+            return
 
-        self.pdf.cell(200, 10, f"{locale.format_string('%.2f', float(MonthlyFradrag), grouping=True)} DKK Rentefradrag", ln=True)
-        self.pdf.cell(200, 10, f" -{locale.format_string('%.2f', float(expenses_no_loan), grouping=True)} DKK Faste udgifter på ny bolig ", ln=True)
-        self.pdf.cell(200, 10, f" -{locale.format_string('%.2f', float(MonthlyYdelse), grouping=True)} DKK Ydelse for lån ", ln=True)
-        self.pdf.cell(200, 10,   f"-------------", ln=True)
-        self.pdf.set_font(TEXTFORMAT, style='B', size=12)
+        self.pdf = pdf = FundoraPDF() 
+        self.pdf.set_auto_page_break(auto=True, margin=15)
+        self.pdf.add_page()
+        self.pdf.set_font(TEXTFORMAT, style='', size=12)
 
-        self.pdf.cell(200, 10, f"Rådighedsbeløb: {locale.format_string('%.2f', float(Raadighedsbeloeb), grouping=True)} DKK", ln=True)
-        self.pdf.set_font(TEXTFORMAT, size=12)
-        '''
+        # Title
+        self.pdf.set_font(TEXTFORMAT, style='B', size=16)
+        self.pdf.cell(200, 9, "Rennovationsbudget", ln=True, align="C")
+    
+        self.pdf.ln(5)'''
 
+
+
+class Eksport_rennovation_budget_PDF:
+    def __init__(self, data_dict):
+        if not data_dict:
+            return
+
+        file_path = filedialog.asksaveasfilename(defaultextension=".pdf", 
+                                                 filetypes=[("PDF files", "*.pdf")],
+                                                 initialfile="Renoveringsbudget",
+                                                 initialdir="~/Desktop")
+        if not file_path:
+            return
+
+        self.pdf = FundoraPDF()
+        self.pdf.set_auto_page_break(auto=True, margin=15)
+        self.pdf.add_page()
+        self.pdf.set_font("Helvetica", style='B', size=16)
+        self.pdf.cell(200, 10, "Renoveringsbudget", ln=True, align="C")
         self.pdf.ln(5)
 
+        self.pdf.set_font("Helvetica", size=12)
+        total_price = 0
+
+        for reno_id, reno_data in data_dict.items():
+            if not reno_data.get("inkluder_i_budget", True):
+                continue
+
+            opgaver = reno_data.get("opgaver", {})
+            if not opgaver:
+                continue
+
+            self.add_renovation_section(reno_id, opgaver)
+            total_price += self.sum_renovation(opgaver)
+
+        # Samlet total
+        self.pdf.set_font("Helvetica", style='B', size=12)
+        self.pdf.cell(200, 10, f"Samlet totalpris: {total_price:,.0f} DKK", ln=True)
+        self.pdf.output(file_path)
+
+    def add_renovation_section(self, reno_id, opgaver):
+        self.pdf.set_font("Helvetica", style='B', size=14)
+        self.pdf.cell(200, 10, f"Renovering: {reno_id}", ln=True)
+        self.pdf.set_font("Helvetica", style='', size=11)
+
+        headers = ["Opgave", "Kommentar", "Tidsforbrug", "Pris", "Prio"]
+        col_widths = [50, 60, 30, 25, 25]
+
+        for header, width in zip(headers, col_widths):
+            self.pdf.cell(width, 8, header, border=1)
+        self.pdf.ln()
+
+        for opgavenavn, opgavedata in opgaver.items():
+            if opgavedata.get("ekskludere", False):
+                continue
+
+            values = [
+                opgavedata.get("Opgave", opgavenavn),
+                opgavedata.get("Kommentar/Blokkere", ""),
+                opgavedata.get("Tidsforbrug", ""),
+                opgavedata.get("Pris", "0"),
+                opgavedata.get("Prio", "")
+            ]
+
+            for val, width in zip(values, col_widths):
+                self.pdf.cell(width, 8, str(val), border=1)
+            self.pdf.ln()
+        self.pdf.ln(5)
+
+    def sum_renovation(self, opgaver):
+        total = 0
+        for opgavedata in opgaver.values():
+            if opgavedata.get("ekskludere", False):
+                continue
+            pris_str = opgavedata.get("Pris", "0").strip()
+            try:
+                pris = float(pris_str.replace(".", "").replace(",", "."))
+                total += pris
+            except ValueError:
+                pass
+        return total

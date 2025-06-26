@@ -12,14 +12,17 @@ class Panel(ctk.CTkFrame):
 
        
 class RenoveringsOpgavePanel(Panel): 
-    def __init__(self, parent, UID=1, columnLabels=['ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
+    def __init__(self, parent, delete_callback, UIDText='RenovationPanel', UID=1, columnLabels=['ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
         super().__init__(parent=parent)
         # Order panel
         self.columnconfigure((0,1,2,3), weight=1)  # ← allow frame to expand in its parent
         self.rowconfigure(0, weight=1)
-        
+
+        # delete entire panel
+        self.delete_callback = delete_callback
+
         # giver mit renovation panel et unikt ID, i stedet for at dict har hardcoded "badeværelse" som overrider hver gang jeg opetter et nyt. 
-        self.uid = f"RenovationPanelID_{UID}" 
+        self.uid = f"{UIDText}_{UID}" 
 
         self.vars = {}
 
@@ -41,12 +44,15 @@ class RenoveringsOpgavePanel(Panel):
         # Sæt dropdown ind Prioritet 
         self.priority_options = {"Skal gøres" :  {"color": "#16AD7E", "desc": "Skal gøres"},
                                  "Bør gøres"  :  {"color": "#fa0060", "desc": "Bør gøres"},
-                                 "Kan gøres"  :  {"color": "#ffa600", "desc": "Kan gøres"}}
+                                 "Kan gøres"  :  {"color": "#ca8300", "desc": "Kan gøres"}}
     
-        hovedopgave_dropdown_var = ctk.IntVar(value=1)
+        self.hovedopgave_dropdown_var = ctk.StringVar(value="Skal gøres")
+
         self.dropdown = ctk.CTkOptionMenu(self.OpgaveFrame,
-                                            variable=hovedopgave_dropdown_var,
-                                            values=list(self.priority_options.keys()))
+                                            variable=self.hovedopgave_dropdown_var,
+                                            values=list(self.priority_options.keys()),
+                                            command=self.update_dropdown_color)  # ← Hook here
+
         self.dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
         # Inkluder i budget checkbox 
@@ -65,6 +71,19 @@ class RenoveringsOpgavePanel(Panel):
                                             border_width=2, )  
                
         self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'e')
+
+        # Slet renovation button
+        self.tilføj_opgave_button = ctk.CTkButton(self.OpgaveFrame, 
+                                            command=self.delete_self,
+                                            text="+ Slet Hele renovation", 
+                                            corner_radius=32, 
+                                            hover_color="#EC075F", 
+                                            fg_color='transparent', 
+                                            border_color="#C00040",  
+                                            border_width=2 )  
+               
+        self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'w')
+
 
         # Tilføj underopgaver
         # Tilføj ny frame til underopgaver
@@ -129,7 +148,6 @@ class RenoveringsOpgavePanel(Panel):
             self.columnLabels[6]: slet_but,         # e.g. 'button'
         }
 
-        #self.update_dropdown_color(var_priority)
         self.current_row_index += 1
 
     def get_results(self):
@@ -172,15 +190,13 @@ class RenoveringsOpgavePanel(Panel):
             del self.vars[row_id]
      
     # drop down color change not setup yet. 
-    def update_dropdown_color(self, var):
-        for item in self.vars.values():
-            if item["priority"] == var:
-                val = var.get()
-                options = item.get("priority_options", {})
-                color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
-                item["dropdown_widget"].configure(fg_color=color)
-
-
+    def update_dropdown_color(self, selected_value):
+        color = self.priority_options.get(selected_value, {}).get("color", "#cccccc")
+        self.dropdown.configure(fg_color=color)
+        
+    def delete_self(self):
+        if self.delete_callback:
+            self.delete_callback(self)
     
 
 class ForhandlingCheckPanel(Panel):

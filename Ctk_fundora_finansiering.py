@@ -245,7 +245,7 @@ class Eksport_tab(ctk.CTkFrame):
                                             hover_color="#EC6E07", 
                                             fg_color='transparent', 
                                             border_color="#FF9100", 
-                                            border_width=2, command=lambda: export.Export_To_PDF(self.set_export_values, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars))
+                                            border_width=2, command=lambda: export.Export_finansiering_PDF(self.set_export_values, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars))
                     
         self.beregn_button.grid(row = 3, column=0, columnspan=2)
 

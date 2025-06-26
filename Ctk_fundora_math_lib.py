@@ -377,9 +377,11 @@ class Ackerman_Set_Values():
 def beregn_total_pris(data_dict):
     total = 0
 
-    for opgavegruppe in data_dict.values():
-        print (opgavegruppe)
-        
+    for renovation in data_dict.values():
+        if not renovation.get("inkluder_i_budget", True):
+            continue  # Skip entire renovation
+
+        opgavegruppe = renovation.get("opgaver", {})
         for opgavenavn, opgavedata in opgavegruppe.items():
             ekskludere = opgavedata.get("ekskludere", False)
             pris_str = opgavedata.get("Pris", "0").strip()
@@ -392,3 +394,4 @@ def beregn_total_pris(data_dict):
                     print(f"Advarsel: Kunne ikke tolke pris '{pris_str}' i opgave '{opgavenavn}'")
 
     return round(total)
+
