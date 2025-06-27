@@ -37,8 +37,8 @@ class RenoveringsOpgavePanel(Panel):
         self.OpgaveFrame.columnconfigure((0, 1, 2, 3), weight=1)
 
         # Sæt Navn på opgave
-        self.hovedopgave_navn_var = ctk.StringVar(value=f"Køkken etc.:") 
-        self.OpgaveNavn_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=self.hovedopgave_navn_var, font=("Helvetica", 18, "bold"))
+        self.Hovedoppgave_navn_var = ctk.StringVar(value=f"Køkken etc.:") 
+        self.OpgaveNavn_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=self.Hovedoppgave_navn_var, font=("Helvetica", 18, "bold"))
         self.OpgaveNavn_entry.grid(row = 0, column=0, sticky = 'ew', padx=5, pady=5)
 
         # Sæt dropdown ind Prioritet 
@@ -75,7 +75,7 @@ class RenoveringsOpgavePanel(Panel):
         # Slet renovation button
         self.tilføj_opgave_button = ctk.CTkButton(self.OpgaveFrame, 
                                             command=self.delete_self,
-                                            text="+ Slet Hele renovation", 
+                                            text="+ Slet Hovedoppgave", 
                                             corner_radius=32, 
                                             hover_color="#EC075F", 
                                             fg_color='transparent', 
@@ -111,12 +111,12 @@ class RenoveringsOpgavePanel(Panel):
         
         # Opret navne 
         var_chk     = ctk.BooleanVar(value=checked)
-        var_str1    = ctk.StringVar(value=self.columnLabels[1])
-        var_str2    = ctk.StringVar(value=self.columnLabels[2])
-        var_str3    = ctk.StringVar(value=self.columnLabels[3])
-        var_str4    = ctk.StringVar(value=self.columnLabels[4])
-        var_str5    = ctk.StringVar(value=self.columnLabels[5])
-        var_butStr  = ctk.StringVar(value=' - ')
+        var_str1    = ctk.StringVar(value="") #self.columnLabels[1])
+        var_str2    = ctk.StringVar(value="") #self.columnLabels[2])
+        var_str3    = ctk.StringVar(value="") #self.columnLabels[3])
+        var_str4    = ctk.StringVar(value="") #self.columnLabels[4])
+        var_str5    = ctk.StringVar(value="") #self.columnLabels[5])
+        var_butStr  = ctk.StringVar(value='-')
 
         # Lav elements 
         checkbox = ctk.CTkCheckBox(self.underopgave_frame, text="", variable=var_chk)

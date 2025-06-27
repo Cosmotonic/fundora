@@ -11,18 +11,18 @@ class Renovering(ctk.CTkTabview):
         super().__init__(master = parent)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
-        self.add("Renoveringer")
-        self.add("Plan")
-        self.add("Huskeliste")
-        self.add("Eksport")
+        self.add("Budget")
+        #self.add("Plan")
+        #self.add("Huskeliste")
+        #self.add("Eksport")
 
-        Renovering_renovation_tab(self.tab("Renoveringer"), rennovering_vars)
-        Renovering_plan_tab(self.tab("Plan"), rennovering_vars, renovering_hovedopgave_data, renovering_underopgave_data)
-        Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
-        Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
+        Renovering_budget_tab(self.tab("Budget"), rennovering_vars)
+        #Renovering_plan_tab(self.tab("Plan"), rennovering_vars, renovering_hovedopgave_data, renovering_underopgave_data)
+        #Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
+        #Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
 
-class Renovering_renovation_tab(ctk.CTkFrame): 
+class Renovering_budget_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
@@ -34,15 +34,19 @@ class Renovering_renovation_tab(ctk.CTkFrame):
         # ← HUSK du får grid/pack conflict hvis du smider button i samme "self" fordi panels er packed inherited fra panel class. 
 
         # Scrollable frame til opgaver
-        self.OpgaveFrame = ctk.CTkScrollableFrame(self, label_text="Renoveringsopgaver")
-        self.OpgaveFrame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.BudgetTitel = ctk.StringVar(value="--- ANGIV BUDGET NAVN HER --- ")
+        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=self.BudgetTitel, font=("Helvetica", 18, "bold"), justify="center")
+        self.budgetTitel_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
+               
+        self.OpgaveFrame = ctk.CTkScrollableFrame(self) #  label_text=self.BudgetTitel)
+        self.OpgaveFrame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
         self.OpgaveFrame.columnconfigure((0,1,2,3), weight=1)
         self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer
 
         # Frame for total result 
         # Udenfor opgave frame
         self.renovation_bottom_Frame = ctk.CTkFrame(self)
-        self.renovation_bottom_Frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self.renovation_bottom_Frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
         self.renovation_bottom_Frame.columnconfigure((0,1,2,3,4,5,6,7,8,9,10), weight=1)  # ← allow frame to expand in its parent
 
         self.tilføj_renovation_button = ctk.CTkButton(self.renovation_bottom_Frame, 
@@ -65,7 +69,7 @@ class Renovering_renovation_tab(ctk.CTkFrame):
                                                         border_color="#00B871", 
                                                         border_width=2, 
                                                         font=("Helvetica", 18, "bold"),
-                                                        command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results()))
+                                                        command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), budgetNavn=self.BudgetTitel.get()))
 
         self.eksport_budget_button.grid(row=0, column=6, columnspan=3,padx=5, pady=5,sticky="ew")
 
@@ -94,14 +98,15 @@ class Renovering_renovation_tab(ctk.CTkFrame):
         self.current_renovation_id += 1
 
         self.opgave_panels.append(new_panel)  # Gem den nye panel        
-        
+
     def get_all_results(self):
         result = {}
         for panel in self.opgave_panels:
             panel_results = panel.get_results()
             result[panel.uid] = {
                 "inkluder_i_budget": panel.inkluder_budget_var.get(),
-                "opgaver": panel_results
+                "hovedoppgave_navn": panel.Hovedoppgave_navn_var.get(), # <-- tilføj navnet
+                "opgaver": panel_results,
             }
         return result
 

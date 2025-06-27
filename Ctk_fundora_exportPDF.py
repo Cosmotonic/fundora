@@ -2,6 +2,7 @@ from fpdf import FPDF
 from Ctk_fundora_loanerValues import *
 from tkinter import filedialog
 import locale
+import os
 
 # Set locale to a European country (Danish example)
 # locale.setlocale(locale.LC_ALL, 'da_DK.UTF-8')  # Use 'de_DE.UTF-8' for Germany
@@ -298,14 +299,20 @@ class Eksport_rennovation_budget_PDF():
 
 
 class Eksport_rennovation_budget_PDF:
-    def __init__(self, data_dict):
+    def __init__(self, data_dict, budgetNavn='budget'):
+          
         if not data_dict:
             return
 
-        file_path = filedialog.asksaveasfilename(defaultextension=".pdf", 
-                                                 filetypes=[("PDF files", "*.pdf")],
-                                                 initialfile="Renoveringsbudget",
-                                                 initialdir="~/Desktop")
+        print (data_dict)
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf")],
+            initialfile="tinglysningsretten01",
+            initialdir=os.path.expanduser("~/Desktop")
+        )
+
         if not file_path:
             return
 
@@ -313,11 +320,20 @@ class Eksport_rennovation_budget_PDF:
         self.pdf.set_auto_page_break(auto=True, margin=15)
         self.pdf.add_page()
         self.pdf.set_font("Helvetica", style='B', size=16)
-        self.pdf.cell(200, 10, "Renoveringsbudget", ln=True, align="C")
+        self.pdf.cell(200, 10, budgetNavn, ln=True, align="C")
         self.pdf.ln(5)
 
         self.pdf.set_font("Helvetica", size=12)
         total_price = 0
+
+        # Byt rækkefølgen: 
+        headers = [" ", "Kommentar", "Tid", "Prio", "Pris"]
+        self.col_widths = [40, 70, 30, 25, 25]
+
+        for header, width in zip(headers, self.col_widths):
+            self.pdf.cell(width, 8, header, border=0)
+        self.pdf.ln()
+
 
         for reno_id, reno_data in data_dict.items():
             if not reno_data.get("inkluder_i_budget", True):
@@ -326,26 +342,30 @@ class Eksport_rennovation_budget_PDF:
             opgaver = reno_data.get("opgaver", {})
             if not opgaver:
                 continue
+            
+            Reno_navn = reno_data.get('hovedoppgave_navn')
+            print (f'Renovations navn: {Reno_navn}')
+            if not Reno_navn: 
+                continue
 
-            self.add_renovation_section(reno_id, opgaver)
+            self.add_renovation_section(reno_id, opgaver, renovation_Navn=Reno_navn)
             total_price += self.sum_renovation(opgaver)
 
-        # Samlet total
+        # Samlet total højrejusteret
         self.pdf.set_font("Helvetica", style='B', size=12)
-        self.pdf.cell(200, 10, f"Samlet totalpris: {total_price:,.0f} DKK", ln=True)
+        self.pdf.cell(0, 10, f"Samlet totalpris: {total_price:,.0f} DKK", ln=True, align="R")
         self.pdf.output(file_path)
+        print("PDF gemt som:", file_path)
+        if os.path.exists(file_path):
+            os.startfile(file_path)
 
-    def add_renovation_section(self, reno_id, opgaver):
+
+
+
+    def add_renovation_section(self, reno_id, opgaver, renovation_Navn):
         self.pdf.set_font("Helvetica", style='B', size=14)
-        self.pdf.cell(200, 10, f"Renovering: {reno_id}", ln=True)
+        self.pdf.cell(200, 10, f"{renovation_Navn}", ln=True)
         self.pdf.set_font("Helvetica", style='', size=11)
-
-        headers = ["Opgave", "Kommentar", "Tidsforbrug", "Pris", "Prio"]
-        col_widths = [50, 60, 30, 25, 25]
-
-        for header, width in zip(headers, col_widths):
-            self.pdf.cell(width, 8, header, border=1)
-        self.pdf.ln()
 
         for opgavenavn, opgavedata in opgaver.items():
             if opgavedata.get("ekskludere", False):
@@ -355,12 +375,12 @@ class Eksport_rennovation_budget_PDF:
                 opgavedata.get("Opgave", opgavenavn),
                 opgavedata.get("Kommentar/Blokkere", ""),
                 opgavedata.get("Tidsforbrug", ""),
-                opgavedata.get("Pris", "0"),
-                opgavedata.get("Prio", "")
+                opgavedata.get("Prio", ""),
+                opgavedata.get("Pris", "0")
             ]
 
-            for val, width in zip(values, col_widths):
-                self.pdf.cell(width, 8, str(val), border=1)
+            for val, width in zip(values, self.col_widths):
+                self.pdf.cell(width, 8, str(val), border=0)
             self.pdf.ln()
         self.pdf.ln(5)
 
