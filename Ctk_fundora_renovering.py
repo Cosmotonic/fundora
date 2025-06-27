@@ -1,7 +1,7 @@
 
 import customtkinter as ctk
 
-from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, RenoveringsOpgavePanel
+from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, RenoveringsOpgavePanel, SimpleContactLinePanel
 import Ctk_fundora_math_lib as fuMath
 import Ctk_fundora_exportPDF as export 
 
@@ -33,24 +33,38 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
         # ← HUSK du får grid/pack conflict hvis du smider button i samme "self" fordi panels er packed inherited fra panel class. 
 
-        # Scrollable frame til opgaver
-        self.BudgetTitel = ctk.StringVar(value="--- ANGIV BUDGET NAVN HER --- ")
-        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=self.BudgetTitel, font=("Helvetica", 18, "bold"), justify="center")
+        # budget navn
+        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=rennovering_vars['BudgetTitel'], font=("Helvetica", 18, "bold"), justify="center")
         self.budgetTitel_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
-               
+
+        # kontakt linje 
+        #self.Kontakt_info = SimpleContactLinePanel(self, rennovering_vars) 
+        self.kontaktFrame = ctk.CTkFrame(self)
+        self.kontaktFrame.grid(row=1, column=0, sticky='new', padx=5, pady=(5,1))
+        self.kontaktFrame.columnconfigure((0,1,2), weight=1)
+
+        self.kontakt_navn_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Kontaktperson', textvariable=rennovering_vars['kontakt_navn'],  justify="center")
+        self.kontakt_telefon_entry = ctk.CTkEntry(self.kontaktFrame, placeholder_text = 'Telefon', textvariable=rennovering_vars['kontakt_telefon'],  justify="center")
+        self.kontakt_mail_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Email', textvariable=rennovering_vars['kontakt_mail'],  justify="center")
+
+        self.kontakt_navn_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
+        self.kontakt_telefon_entry.grid(row=0, column=1, sticky="new", padx=5, pady=5)
+        self.kontakt_mail_entry.grid(row=0, column=2, sticky="new", padx=5, pady=5)
+
+        # Scrollable frame til opgaver
         self.OpgaveFrame = ctk.CTkScrollableFrame(self) #  label_text=self.BudgetTitel)
-        self.OpgaveFrame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+        self.OpgaveFrame.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
         self.OpgaveFrame.columnconfigure((0,1,2,3), weight=1)
         self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer
 
         # Frame for total result 
         # Udenfor opgave frame
         self.renovation_bottom_Frame = ctk.CTkFrame(self)
-        self.renovation_bottom_Frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        self.renovation_bottom_Frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
         self.renovation_bottom_Frame.columnconfigure((0,1,2,3,4,5,6,7,8,9,10), weight=1)  # ← allow frame to expand in its parent
 
         self.tilføj_renovation_button = ctk.CTkButton(self.renovation_bottom_Frame, 
-                                                        text="+ tilføj Renovering", 
+                                                        text="+ tilføj Hovedoppgave", 
                                                         command=self.tilføj_renovering,
                                                         corner_radius=32, 
                                                         hover_color="#0798EC", 
@@ -69,7 +83,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
                                                         border_color="#00B871", 
                                                         border_width=2, 
                                                         font=("Helvetica", 18, "bold"),
-                                                        command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), budgetNavn=self.BudgetTitel.get()))
+                                                        command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
 
         self.eksport_budget_button.grid(row=0, column=6, columnspan=3,padx=5, pady=5,sticky="ew")
 

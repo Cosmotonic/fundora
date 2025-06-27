@@ -10,7 +10,24 @@ class Panel(ctk.CTkFrame):
         self.pack_propagate(False)
         self.pack(fill='x', padx=4, pady=8)
 
-       
+
+class SimpleContactLinePanel(Panel): 
+    def __init__(self, parent, data_vars):
+        super().__init__(parent=parent)
+
+        self.kontaktFrame = ctk.CTkFrame(self)
+        self.kontaktFrame.grid(row=1, column=0, sticky='new', padx=5, pady=(5,1))
+        self.kontaktFrame.columnconfigure((0,1,2), weight=1)
+
+        self.kontakt_navn_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Kontaktperson', textvariable=data_vars['kontakt_navn'],  justify="center")
+        self.kontakt_telefon_entry = ctk.CTkEntry(self.kontaktFrame, placeholder_text = 'Telefon', textvariable=data_vars['kontakt_telefon'],  justify="center")
+        self.kontakt_mail_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Email', textvariable=data_vars['kontakt_mail'],  justify="center")
+
+        self.kontakt_navn_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
+        self.kontakt_telefon_entry.grid(row=0, column=1, sticky="new", padx=5, pady=5)
+        self.kontakt_mail_entry.grid(row=0, column=2, sticky="new", padx=5, pady=5)
+
+
 class RenoveringsOpgavePanel(Panel): 
     def __init__(self, parent, delete_callback, UIDText='RenovationPanel', UID=1, columnLabels=['ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
         super().__init__(parent=parent)

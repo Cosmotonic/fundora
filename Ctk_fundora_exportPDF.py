@@ -299,8 +299,8 @@ class Eksport_rennovation_budget_PDF():
 
 
 class Eksport_rennovation_budget_PDF:
-    def __init__(self, data_dict, budgetNavn='budget'):
-          
+    def __init__(self, data_dict, renovation_vars):
+        
         if not data_dict:
             return
 
@@ -309,7 +309,7 @@ class Eksport_rennovation_budget_PDF:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile="tinglysningsretten01",
+            initialfile=renovation_vars['BudgetTitel'],
             initialdir=os.path.expanduser("~/Desktop")
         )
 
@@ -317,16 +317,19 @@ class Eksport_rennovation_budget_PDF:
             return
 
         self.pdf = FundoraPDF()
+        # Lav første side
         self.pdf.set_auto_page_break(auto=True, margin=15)
         self.pdf.add_page()
         self.pdf.set_font("Helvetica", style='B', size=16)
-        self.pdf.cell(200, 10, budgetNavn, ln=True, align="C")
+        self.pdf.cell(200, 10, renovation_vars['BudgetTitel'].get(), ln=True, align="C")
         self.pdf.ln(5)
+
+        self.tilføj_kontakt_info(renovation_vars)
 
         self.pdf.set_font("Helvetica", size=12)
         total_price = 0
 
-        # Byt rækkefølgen: 
+        # Beskrivelse i rækkefølge: 
         headers = [" ", "Kommentar", "Tid", "Prio", "Pris"]
         self.col_widths = [40, 70, 30, 25, 25]
 
@@ -348,7 +351,7 @@ class Eksport_rennovation_budget_PDF:
             if not Reno_navn: 
                 continue
 
-            self.add_renovation_section(reno_id, opgaver, renovation_Navn=Reno_navn)
+            self.tilføj_renovation_sektion(reno_id, opgaver, renovation_Navn=Reno_navn)
             total_price += self.sum_renovation(opgaver)
 
         # Samlet total højrejusteret
@@ -359,10 +362,26 @@ class Eksport_rennovation_budget_PDF:
         if os.path.exists(file_path):
             os.startfile(file_path)
 
+    def tilføj_kontakt_info(self, kontakt_dict):
+        self.pdf.set_font("Helvetica", size=11)
+        self.pdf.ln(2)  # lidt afstand fra titlen
+
+        kontaktfelter = {
+            "Kontaktperson": kontakt_dict['kontakt_navn'].get(),
+            "Telefon": kontakt_dict['kontakt_telefon'].get(),
+            "Email": kontakt_dict['kontakt_mail'].get()
+        }
+
+        for label, value in kontaktfelter.items():
+            self.pdf.cell(30, 8, f"{label}:", border=0)
+            self.pdf.cell(100, 8, value, border=0, ln=True)
+
+        self.pdf.ln(5)  # lidt ekstra luft bagefter
 
 
 
-    def add_renovation_section(self, reno_id, opgaver, renovation_Navn):
+
+    def tilføj_renovation_sektion(self, reno_id, opgaver, renovation_Navn):
         self.pdf.set_font("Helvetica", style='B', size=14)
         self.pdf.cell(200, 10, f"{renovation_Navn}", ln=True)
         self.pdf.set_font("Helvetica", style='', size=11)

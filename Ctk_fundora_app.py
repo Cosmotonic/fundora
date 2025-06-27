@@ -199,7 +199,10 @@ class App(ctk.CTk):
 
     def init_renovering_parameters(self):
          self.renovering_vars = { 
-            "renovering_opgave1": ctk.IntVar    (value=RENOVERING_OPGAVE1),
+            'BudgetTitel'           : ctk.StringVar (value=BUDGETNAVN),
+            'kontakt_navn'          : ctk.StringVar (value=KONTAKT_NAVN),
+            'kontakt_telefon'       : ctk.StringVar (value=KONTAKT_TELEFON),
+            'kontakt_mail'          : ctk.StringVar (value=KONTAKT_MAIL)
             }
                   
          self.renovering_hovedopgave_data = {
