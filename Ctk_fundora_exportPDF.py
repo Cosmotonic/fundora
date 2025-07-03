@@ -271,32 +271,6 @@ class Export_finansiering_PDF():
                                 f"Restgæld: {payment['Restgæld']:.0f} DKK", ln=True)
         self.pdf.ln(5)          
 
-'''
-class Eksport_rennovation_budget_PDF():
-    def __init__(self, data):
-
-        print ('in export')
-        
-        # Open a file dialog 
-        self.file_path = filedialog.asksaveasfilename(defaultextension=".pdf", 
-                                            filetypes=[("PDF files", "*.pdf")],
-                                            initialfile="Låne_Rapport",
-                                            initialdir="~/Desktop")
-        if not self.file_path:  
-            return
-
-        self.pdf = pdf = FundoraPDF() 
-        self.pdf.set_auto_page_break(auto=True, margin=15)
-        self.pdf.add_page()
-        self.pdf.set_font(TEXTFORMAT, style='', size=12)
-
-        # Title
-        self.pdf.set_font(TEXTFORMAT, style='B', size=16)
-        self.pdf.cell(200, 9, "Rennovationsbudget", ln=True, align="C")
-    
-        self.pdf.ln(5)'''
-
-
 
 class Eksport_rennovation_budget_PDF:
     def __init__(self, data_dict, renovation_vars):
@@ -415,3 +389,143 @@ class Eksport_rennovation_budget_PDF:
             except ValueError:
                 pass
         return total
+
+
+
+
+
+from fpdf import FPDF
+from tkinter import filedialog
+import os
+
+class FundoraPDF(FPDF):
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Helvetica", size=8)
+        self.cell(0, 10, "Fundora - Din boligforhandler", align="C")
+
+class Eksport_forhandling_PDF:
+    def __init__(self, data_dict, forhandlings_løsøre_data, forhandlings_Argumenter_data): 
+        if not data_dict:
+            return
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf")],
+            initialfile=data_dict['Forhandling_Titel'],
+            initialdir=os.path.expanduser("~/Desktop")
+        )
+
+        if not file_path:
+            return
+
+        self.pdf = FundoraPDF()
+        self.pdf.set_auto_page_break(auto=True, margin=15)
+        self.pdf.add_page()
+
+        # Titel
+        self.pdf.set_font("Helvetica", style='B', size=16)
+        self.pdf.cell(200, 10, data_dict['Forhandling_Titel'].get(), ln=True, align="C")
+        self.pdf.ln(5)
+
+        self.pdf.set_font("Helvetica", size=12)
+
+        # Strategi
+        self.tilføj_afsnit("Strategi", data_dict["strategi_titel"].get())
+
+        # Løsøre tabel
+        self.tilføj_tabel("Løsøre", forhandlings_løsøre_data)
+
+        # Argumenter tabel
+        self.tilføj_tabel("Argumenter", forhandlings_Argumenter_data)
+
+        # Gem PDF
+        self.pdf.output(file_path)
+
+    def tilføj_afsnit(self, overskrift, tekst):
+        self.pdf.set_font("Helvetica", style='B', size=14)
+        self.pdf.cell(200, 10, overskrift, ln=True)
+        self.pdf.set_font("Helvetica", size=12)
+        self.pdf.multi_cell(0, 10, tekst)
+        self.pdf.ln(5)
+
+    def tilføj_tabel(self, titel, data_dict):
+        if not data_dict:
+            return
+
+        self.pdf.set_font("Helvetica", style='B', size=14)
+        self.pdf.cell(200, 10, titel, ln=True)
+        self.pdf.ln(2)
+
+        # Header
+        self.pdf.set_font("Helvetica", style='B', size=12)
+        self.pdf.cell(60, 10, "Punkt", 1)
+        self.pdf.cell(30, 10, "Valgt", 1)
+        self.pdf.cell(40, 10, "Prioritet", 1)
+        self.pdf.cell(60, 10, "Kommentar", 1)
+        self.pdf.ln()
+
+        # Rows
+        self.pdf.set_font("Helvetica", size=12)
+        for punkt, data in data_dict.items():
+            valgt = "Ja" if data.get("checked") else "Nej"
+            prioritet = data.get("priority", "")
+            kommentar = data.get("comment", "")
+
+            self.pdf.cell(60, 10, punkt, 1)
+            self.pdf.cell(30, 10, valgt, 1)
+            self.pdf.cell(40, 10, prioritet, 1)
+            self.pdf.cell(60, 10, kommentar, 1)
+            self.pdf.ln()
+
+        self.pdf.ln(5)
+
+
+
+
+
+
+'''
+
+
+class Eksport_forhandling_PDF:
+    def __init__(self, data_dict, forhandlings_løsøre_data, forhandlings_Argumenter_data): 
+        
+
+        #"Forhandling_Titel" 
+        #"strategi_titel"    
+        #"løsære_titel"      
+        #"argument_titel"    
+
+
+        if not data_dict:
+            return
+
+        print (data_dict)
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf")],
+            initialfile=data_dict['BudgetTitel'],
+            initialdir=os.path.expanduser("~/Desktop")
+        )
+
+        if not file_path:
+            return
+
+        self.pdf = FundoraPDF()
+        # Lav første side
+        self.pdf.set_auto_page_break(auto=True, margin=15)
+        self.pdf.add_page()
+        self.pdf.set_font("Helvetica", style='B', size=16)
+        self.pdf.cell(200, 10, data_dict['Forhandling_Titel'].get(), ln=True, align="C")
+        self.pdf.ln(5)
+
+        # self.tilføj_kontakt_info(renovation_vars)
+
+        self.pdf.set_font("Helvetica", size=12)
+        total_price = 0
+
+
+
+'''

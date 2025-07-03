@@ -266,12 +266,15 @@ class ForhandlingCheckPanel(Panel):
 
         var_priority = priority or ctk.StringVar(value=list(self.priority_options.keys())[0])
 
+        # inkluder
         checkbox = ctk.CTkCheckBox(self, text="", variable=var_chk)
         checkbox.grid(row=row, column=0, padx=(10, 4), pady=2, sticky="w")
 
+        # Navn 
         label_entry = ctk.CTkEntry(self, textvariable=label_var)
         label_entry.grid(row=row, column=1, sticky="ew", padx=(0, 5))
 
+        # prioritering
         dropdown = ctk.CTkOptionMenu(
             self,
             variable=var_priority,
@@ -279,9 +282,15 @@ class ForhandlingCheckPanel(Panel):
             command=lambda val, v=var_priority: self.update_dropdown_color(v)
         )
         dropdown.grid(row=row, column=2, padx=(5, 5), sticky="ew")
-
+        
+        # kommentar
         comment_entry = ctk.CTkEntry(self, textvariable=comment_var)
         comment_entry.grid(row=row, column=3, padx=(5, 10), sticky="ew")
+
+        # slet knap
+        varBut_str = ctk.StringVar(value='-')
+        self.slet_but = ctk.CTkButton(self, textvariable=varBut_str, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
+        self.slet_but.grid(row=row, column=4, sticky="ew", padx=5, pady=5)
 
         self.columnconfigure(3, weight=9)
         self.columnconfigure((1,2), weight=3)
@@ -289,11 +298,15 @@ class ForhandlingCheckPanel(Panel):
 
         self.vars[f"row_{row}"] = {
             "checked": var_chk,
+            "CheckBox_widget" : checkbox,
             "priority": var_priority,
-            "comment": comment_var,
-            "label": label_var,
             "dropdown_widget": dropdown,
+            "comment": comment_var,
+            "comment_entry": comment_entry,
+            "label": label_var,
+            "Løsøre_entry" : label_entry, 
             "priority_options": self.priority_options,
+            "Slet_but": self.slet_but
         }
 
         self.update_dropdown_color(var_priority)
@@ -317,6 +330,16 @@ class ForhandlingCheckPanel(Panel):
             }
             for data in self.vars.values()
         }
+
+    def slet_opgave(self, row_id):
+        if row_id in self.vars:
+            print ("Fjern widgets fra UI")
+            for widget in self.vars[row_id].values():
+                if hasattr(widget, "grid_forget"):
+                    widget.grid_forget()
+                    widget.destroy()
+            del self.vars[row_id]
+
 
 class BooleanInputPanel(Panel): 
     def __init__(self, parent, text, data_var): 

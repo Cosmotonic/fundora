@@ -13,13 +13,13 @@ class Finansering(ctk.CTkTabview):
         super().__init__(master = parent)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
-        self.add("Intro")
+        #self.add("Intro")
         self.add("Låne Evne")
         self.add("Bolig Udgift")
         self.add("Fremtidig Økonomi")
         self.add("Eksport")
 
-        Intro_tab(self.tab("Intro"))
+        #Intro_tab(self.tab("Intro"))
         Laane_Evne_tab(self.tab("Låne Evne"), finansiering_vars)
         Bolig_Udgift_tab(self.tab("Bolig Udgift"), finansiering_vars, udgift_vars)
         Fremtidig_Oekonomi_tab(self.tab("Fremtidig Økonomi"), finansiering_vars, udgift_vars, fremtid_vars, eksport_vars)

@@ -10,20 +10,33 @@ class hubview(ctk.CTkFrame):
         self.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # Let hubview_frame stretch its grid cells
-        self.grid_rowconfigure((0, 1), weight=1)
-        self.grid_columnconfigure((0, 1), weight=1)
 
         self.frames = []
 
-        # Add the menues (can be changed later)
-        for idx, (name, func) in enumerate(menues.items()):
-                row = idx // 2  
-                col = idx % 2   
+        # square menus
+        if len(menues.items())== 4: 
+            self.grid_rowconfigure((0, 1), weight=1)
+            self.grid_columnconfigure((0, 1), weight=1)
+            for idx, (name, func) in enumerate(menues.items()):
+                    row = idx // 2  
+                    col = idx % 2   
 
-                frame = OpenSection(self, func, button_text=name.capitalize())
-                frame.grid(row=row, column=col, padx=10, pady=10,  sticky="nsew")
+                    frame = OpenSection(self, func, button_text=name.upper())
+                    frame.grid(row=row, column=col, padx=10, pady=10,  sticky="nsew")
 
-                self.frames.append(frame)
+                    self.frames.append(frame)
+        
+        # row of menus
+        else: 
+            self.grid_rowconfigure((0), weight=8)
+            self.grid_rowconfigure((1), weight=2)
+            self.grid_columnconfigure((0,1,2), weight=1)
+            for idx, (name, func) in enumerate(menues.items()):
+                    frame = OpenSection(self, func, button_text=name.upper())
+                    frame.grid(row=0, column=idx, padx=10, pady=10,  sticky="nsew")
+
+                    self.frames.append(frame)
+            print ('Not 4 panels, but  %s ' % idx )
 
 class OpenSection(ctk.CTkFrame): 
     def __init__(self, parent, menu_section, button_text = 'Section X'): 
@@ -31,7 +44,7 @@ class OpenSection(ctk.CTkFrame):
         #self.grid(column = 0, columnspan = 2, row = 0, sticky = 'nsew')
         self.menu_func = menu_section 
 
-        self.but1 = ctk.CTkButton(self, text = button_text, command = self.menu_func, corner_radius=32, hover_color="#006AC0")
+        self.but1 = ctk.CTkButton(self, text = button_text, command = self.menu_func, corner_radius=32, hover_color="#006AC0", font=("Helvetica", 18, "bold"))
         self.but1.pack(expand=True, fill='both')
 
     def open_dialog(self):

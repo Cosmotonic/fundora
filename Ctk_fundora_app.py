@@ -41,7 +41,7 @@ class App(ctk.CTk):
         self.mainloop()
 
     def to_hubview(self):
-        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling, købet = self.menu_Koebet, rennovering = self.menu_Renovering) 
+        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  #  købet = self.menu_Koebet, 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
@@ -168,6 +168,10 @@ class App(ctk.CTk):
             "runde4_procent"    : ctk.StringVar(value=RUNDE4_PROCENT), 
             "runde4_pris"       : ctk.StringVar(value=RUNDE4_PRIS), 
             "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET),
+            "Forhandling_Titel" : ctk.StringVar(value=FORHANDLING_TITEL),
+            "strategi_titel"    : ctk.StringVar(value=FORHANDLING_STRATEGI),
+            "løsære_titel"      : ctk.StringVar(value=FORHANDLING_LØSØRE),
+            "argument_titel"    : ctk.StringVar(value=FORHANDLING_ARGUMENT),
             } 
                 
         self.forhandlings_løsøre_data = {

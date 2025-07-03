@@ -1,5 +1,7 @@
 import customtkinter as ctk
 from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel
+import Ctk_fundora_exportPDF as export 
+
 
 class Forhandling(ctk.CTkTabview): 
     def __init__(self, parent, forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data): 
@@ -111,7 +113,7 @@ class Løsøre_tab(ctk.CTkFrame):
 
 
 class Eksport_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data): 
+    def __init__(self, parent, forhandlings_vars, forhandlings_løsøre_data, forhandlings_Argumenter_data): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
 
@@ -130,6 +132,9 @@ class Eksport_tab(ctk.CTkFrame):
                                             hover_color="#EC6E07", 
                                             fg_color='transparent', 
                                             border_color="#FF9100", 
-                                            border_width=2, )
+                                            border_width=2,
+                                            command=lambda: export.Eksport_forhandling_PDF(forhandlings_vars, forhandlings_løsøre_data, forhandlings_Argumenter_data))
                     
         self.beregn_button.grid(row = 3, column=0, columnspan=2)
+
+        
