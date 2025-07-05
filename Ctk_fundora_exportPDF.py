@@ -392,27 +392,23 @@ class Eksport_rennovation_budget_PDF:
 
 
 
-
-
-from fpdf import FPDF
-from tkinter import filedialog
-import os
-
 class FundoraPDF(FPDF):
     def footer(self):
         self.set_y(-15)
         self.set_font("Helvetica", size=8)
         self.cell(0, 10, "Fundora - Din boligforhandler", align="C")
 
+
+
 class Eksport_forhandling_PDF:
-    def __init__(self, data_dict, forhandlings_løsøre_data, forhandlings_Argumenter_data): 
-        if not data_dict:
+    def __init__(self, data_vars, forhandlings_arg_løs): 
+        if not forhandlings_arg_løs:
             return
 
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile=data_dict['Forhandling_Titel'],
+            initialfile=data_vars['Forhandling_Titel'],
             initialdir=os.path.expanduser("~/Desktop")
         )
 
@@ -425,22 +421,50 @@ class Eksport_forhandling_PDF:
 
         # Titel
         self.pdf.set_font("Helvetica", style='B', size=16)
-        self.pdf.cell(200, 10, data_dict['Forhandling_Titel'].get(), ln=True, align="C")
+        self.pdf.cell(200, 10, data_vars['Forhandling_Titel'].get(), ln=True, align="C")
         self.pdf.ln(5)
 
         self.pdf.set_font("Helvetica", size=12)
 
         # Strategi
-        self.tilføj_afsnit("Strategi", data_dict["strategi_titel"].get())
-
-        # Løsøre tabel
-        self.tilføj_tabel("Løsøre", forhandlings_løsøre_data)
+        strategi_tekst = self.lav_forhandlings_strategi_tekst(data_vars)
+        self.tilføj_afsnit("Forhandlingsstrategi", strategi_tekst)
 
         # Argumenter tabel
-        self.tilføj_tabel("Argumenter", forhandlings_Argumenter_data)
+        #print (f"Argumenter: {forhandlings_arg_løs["argumenter"]}")
+        self.pdf.add_page()
+        self.tilføj_tabel("Argumenter", forhandlings_arg_løs["argumenter"])
+
+        # Løsøre tabel
+        #print (f"Løsøre: {forhandlings_arg_løs["argumenter"]}")
+        self.pdf.add_page()
+        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["løsøre"])
 
         # Gem PDF
         self.pdf.output(file_path)
+        #print("PDF gemt som:", file_path)
+        if os.path.exists(file_path):
+            os.startfile(file_path)
+
+    def lav_forhandlings_strategi_tekst(self, data_vars):
+        udbudspris     = data_vars["udbudspris"].get()
+        afslagsprocent = data_vars["forventet_procent"].get()
+        maxpris        = data_vars["forventet_pris"].get()
+        aggressivitet  = data_vars["aggressivitet"].get()
+
+        tekst =  f"Udbudspris: {udbudspris} kr.\n"
+        tekst += f"Forventet afslag (%): {afslagsprocent}%\n"
+        tekst += f"Maks købspris: {maxpris} kr.\n"
+        tekst += f"Aggressivitet (slider): {aggressivitet}\n\n"
+
+        for i in range(1, 5):
+            procent = data_vars[f"runde{i}_procent"].get()
+            pris    = data_vars[f"runde{i}_pris"].get()
+            tekst += f"{i}. Bud: {procent}% -> {pris} kr.\n"
+
+        return tekst    
+
+
 
     def tilføj_afsnit(self, overskrift, tekst):
         self.pdf.set_font("Helvetica", style='B', size=14)
@@ -460,25 +484,26 @@ class Eksport_forhandling_PDF:
         # Header
         self.pdf.set_font("Helvetica", style='B', size=12)
         self.pdf.cell(60, 10, "Punkt", 1)
-        self.pdf.cell(30, 10, "Valgt", 1)
-        self.pdf.cell(40, 10, "Prioritet", 1)
-        self.pdf.cell(60, 10, "Kommentar", 1)
+        self.pdf.cell(30, 10, "Prioritet", 1)
+        self.pdf.cell(100, 10, "Kommentar", 1)
         self.pdf.ln()
 
         # Rows
         self.pdf.set_font("Helvetica", size=12)
         for punkt, data in data_dict.items():
-            valgt = "Ja" if data.get("checked") else "Nej"
-            prioritet = data.get("priority", "")
-            kommentar = data.get("comment", "")
+            #print (f"challenge area: {data.get('checked')}")
+            if data.get("checked") == True: 
+                prioritet = data.get("priority", "")
+                kommentar = data.get("comment", "")
 
-            self.pdf.cell(60, 10, punkt, 1)
-            self.pdf.cell(30, 10, valgt, 1)
-            self.pdf.cell(40, 10, prioritet, 1)
-            self.pdf.cell(60, 10, kommentar, 1)
-            self.pdf.ln()
+                self.pdf.cell(60, 10, punkt, 1)
+                self.pdf.cell(30, 10, prioritet, 1)
+                self.pdf.cell(100, 10, kommentar, 1)
+                self.pdf.ln()
 
         self.pdf.ln(5)
+
+
 
 
 
@@ -525,7 +550,5 @@ class Eksport_forhandling_PDF:
 
         self.pdf.set_font("Helvetica", size=12)
         total_price = 0
-
-
 
 '''

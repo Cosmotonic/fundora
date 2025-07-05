@@ -41,7 +41,7 @@ class App(ctk.CTk):
         self.mainloop()
 
     def to_hubview(self):
-        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  #  købet = self.menu_Koebet, 
+        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  # 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
@@ -173,32 +173,33 @@ class App(ctk.CTk):
             "løsære_titel"      : ctk.StringVar(value=FORHANDLING_LØSØRE),
             "argument_titel"    : ctk.StringVar(value=FORHANDLING_ARGUMENT),
             } 
+
                 
         self.forhandlings_løsøre_data = {
-            "Pris": {"checked": False, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
+            "Pris": {"checked": True, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
             "Overtagelsesdato": {"checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
-            "Gardiner": {"checked": False, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
-            "Skabe og opbevaring": {"checked": False, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
-            "Forbedringer": {"checked": False, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
-            "Hvidevarer": {"checked": False, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
-            "Aconto og restancer": {"checked": False, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
-            "Vedligeholdelsesplan": {"checked": False, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
-            "Møbler": {"checked": False, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
-            "Havemøbler ": {"checked": False, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
-            "Haveredskaber": {"checked": False, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
+            "Gardiner": {"checked": True, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
+            "Skabe og opbevaring": {"checked": True, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
+            "Forbedringer": {"checked": True, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
+            "Hvidevarer": {"checked": True, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
+            "Aconto og restancer": {"checked": True, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
+            "Vedligeholdelsesplan": {"checked": True, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
+            "Møbler": {"checked": True, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
+            "Havemøbler ": {"checked": True, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
+            "Haveredskaber": {"checked": True, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
             }
 
         self.forhandlings_argumenter_data = {
-            "Liggetid": {"checked": False, "priority": "Fordel", "comment": ""},
+            "Liggetid": {"checked": True, "priority": "Fordel", "comment": ""},
             "Boligmarkedet": {"checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
-            "Prisniveau i området": {"checked": False, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
-            "Stand og vedligeholdelse": {"checked": False, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
-            "Boligens størrelse og planløsning": {"checked": False, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
-            "Tidspres for sælger": {"checked": False, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
-            "Ejendomsskat og fællesudgifter": {"checked": False, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
-            "Udbud og efterspørgsel": {"checked": False, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
-            "Naboer eller støjforhold": {"checked": False, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
-            "Tilstandsrapport eller energimærke": {"checked": False, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
+            "Prisniveau i området": {"checked": True, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
+            "Stand og vedligeholdelse": {"checked": True, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
+            "Boligens størrelse og planløsning": {"checked": True, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
+            "Tidspres for sælger": {"checked": True, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
+            "Ejendomsskat og fællesudgifter": {"checked": True, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
+            "Udbud og efterspørgsel": {"checked": True, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
+            "Naboer eller støjforhold": {"checked": True, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
+            "Tilstandsrapport eller energimærke": {"checked": True, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
             }
 
     def init_renovering_parameters(self):

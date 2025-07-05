@@ -14,10 +14,12 @@ class Forhandling(ctk.CTkTabview):
         self.add("Eksport")
 
         Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
-        Argument_tab(self.tab("Argumentation"), forhandlings_argumenter_data, forhandlings_vars)
-        Løsøre_tab(self.tab("Løsøre"), forhandlings_løsøre_data)
-        Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data)
+        # Eksport_tab(self.tab("Eksport"), forhandlings_vars, forhandlings_løsøre_data, forhandlings_argumenter_data)
+        self.argument_tab = Argument_tab(self.tab("Argumentation"), forhandlings_argumenter_data, forhandlings_vars)
+        self.løsøre_tab   = Løsøre_tab(self.tab("Løsøre"), forhandlings_løsøre_data)
     
+        self.eksport_tab = Eksport_tab(self.tab("Eksport"), forhandlings_vars, argumenter_getter_func=self.argument_tab.get_results, løsøre_getter_func=self.løsøre_tab.get_results)
+
 class Ackerman_tab(ctk.CTkFrame): 
     def __init__(self, parent, forhandlings_vars): 
         super().__init__(master=parent, fg_color="transparent")
@@ -64,13 +66,14 @@ class Argument_tab(ctk.CTkFrame):
                                            priority_options=self.priority_options, AddCustomLine=True, columnLabels=self.columnLabels) # Get_results
         self.panel.pack(fill="both", expand=True)
 
-        print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)
-        print_button.grid(row=1, column=0, pady=10, padx=10, sticky="new")
+        #print_button = ctk.CTkButton(self, text="Print resultater", command=self.get_results)
+        #print_button.grid(row=1, column=0, pady=10, padx=10, sticky="new")
 
-    def print_results(self):
+    def get_results(self):
         resultater = self.panel.get_results()
-        for punkt, info in resultater.items():
-            print(f"{punkt}: {info}")
+        return resultater
+        #for punkt, info in resultater.items():
+            #print(f"{punkt}: {info}")
 
     def get_checklist_results(self):
         return self.panel.get_results()
@@ -94,28 +97,34 @@ class Løsøre_tab(ctk.CTkFrame):
                                     "Bonus": {"color": "#1554c0", "desc": "Godt at få med"},
                                     "Ikke relevant": {"color": "#b71c62", "desc": "Springes over"}}
         
-        self.columnLabels=['Forhandlet', 'Løsøre', 'Vigtighed', 'Egne noter'] 
+        self.columnLabels=['TIL PDF', 'Løsøre', 'Vigtighed', 'Egne noter'] 
 
         self.panel = ForhandlingCheckPanel(parent=FrameColoum1, checklist_data=self.forhandlings_løsøre_data, 
                                            priority_options=self.priority_options1, columnLabels=self.columnLabels) 
         self.panel.pack(fill="both", expand=True)
 
-        print_button = ctk.CTkButton(self, text="Print resultater", command=self.print_results)
-        print_button.grid(row=1, column=0, pady=10, padx=10, sticky="new")
+        #print_button = ctk.CTkButton(self, text="Print resultater", command=self.get_results)
+        #print_button.grid(row=1, column=0, pady=10, padx=10, sticky="new")
 
-    def print_results(self):
+    def get_results(self):
         resultater = self.panel.get_results()
-        for punkt, info in resultater.items():
-            print(f"{punkt}: {info}")
+        return resultater
+
+        #for punkt, info in resultater.items():
+            #print(f"{punkt}: {info}")
 
     def get_checklist_results(self):
         return self.panel.get_results()
 
 
 class Eksport_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_vars, forhandlings_løsøre_data, forhandlings_Argumenter_data): 
+    def __init__(self, parent, forhandlings_vars,  argumenter_getter_func, løsøre_getter_func): # vi skal ikke have init dicts med ind her fordi vi skal generer dem hver gang vi trykker eksport, derfor skal de laves i panel. 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
+
+
+        self.argumenter_getter_func = argumenter_getter_func
+        self.løsøre_getter_func     = løsøre_getter_func
 
         self.columnconfigure((0, 1), weight=1)
 
@@ -125,16 +134,22 @@ class Eksport_tab(ctk.CTkFrame):
         person_frame2 = ctk.CTkFrame(self)
         person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
 
-                # Beregning 
+        # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
-                                            text="Eksporter PDF", 
+                                            text="Eksporter PDF - bug: exportere kun den oprindelige dict", 
                                             corner_radius=32, 
                                             hover_color="#EC6E07", 
                                             fg_color='transparent', 
                                             border_color="#FF9100", 
                                             border_width=2,
-                                            command=lambda: export.Eksport_forhandling_PDF(forhandlings_vars, forhandlings_løsøre_data, forhandlings_Argumenter_data))
-                    
+                                            command=lambda: export.Eksport_forhandling_PDF(forhandlings_vars, self.get_all_results()))
+
         self.beregn_button.grid(row = 3, column=0, columnspan=2)
 
-        
+    def get_all_results(self):
+        #print(self.argumenter_getter_func())  
+        #print(self.løsøre_getter_func())
+        return {
+            "argumenter": self.argumenter_getter_func(),
+            "løsøre": self.løsøre_getter_func()
+        }
