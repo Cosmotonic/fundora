@@ -4,13 +4,12 @@ from tkinter import filedialog, Canvas
 from Ctk_fundora_loanerValues import * 
 
 class hubview(ctk.CTkFrame): 
-    def __init__(self, parent, **menues): 
+    def __init__(self, parent, logout_callback, **menues): 
         super().__init__(master = parent)
 
         self.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # Let hubview_frame stretch its grid cells
-
         self.frames = []
 
         # square menus
@@ -37,6 +36,18 @@ class hubview(ctk.CTkFrame):
 
                     self.frames.append(frame)
             print ('Not 4 panels, but  %s ' % idx )
+
+
+        # make logout button
+        self.lotout_button = ctk.CTkButton(self, text="Log out", hover_color="#EC006E", 
+                                 fg_color='transparent', 
+                                 border_color="#BE0059", 
+                                 border_width=2,
+                                 command=logout_callback)
+        
+        self.lotout_button.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
+
+
 
 class OpenSection(ctk.CTkFrame): 
     def __init__(self, parent, menu_section, button_text = 'Section X'): 

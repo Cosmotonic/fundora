@@ -1,28 +1,31 @@
 # Lav ny Class hver gang den skal kaldes fra main scriptet. Image_output Image_Import
+# brug alle udnerfoldere 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
 
 import customtkinter as ctk
-import Ctk_fundora_exportPDF as export 
-import Ctk_fundora_math_lib as fuMath 
+import backend.Ctk_fundora_exportPDF as export 
+import backend.Ctk_fundora_math_lib as fuMath 
 
 from Ctk_fundora_loanerValues import *
-from Ctk_fundora_hubview import * 
-from Ctk_fundora_forhandling import * 
-from Ctk_fundora_finansiering import * 
-from Ctk_fundora_renovering import * 
+from gui.Ctk_fundora_hubview import * 
+from gui.Ctk_fundora_forhandling import * 
+from gui.Ctk_fundora_finansiering import * 
+from gui.Ctk_fundora_renovering import * 
+from gui.Ctk_fundora_loginview import LoginFrame
+
 
 
 class App(ctk.CTk): 
     def __init__(self):
         super().__init__()
-        
         self.current_view = None
-
-        # Setup 
-        ctk.set_appearance_mode('dark') # ("light")
+        ctk.set_appearance_mode('dark')
         self.geometry('1280x720')
         self.title('Fundora 0.2')
         self.minsize(800,500)
-        
+
         self.init_Finansiering_parameters()
         self.init_Forhandling_parameters()
         self.init_udgift_parameters()
@@ -30,18 +33,25 @@ class App(ctk.CTk):
         self.init_eksport_parameters()
         self.init_renovering_parameters()
 
-        # Load hubview 
-        self.to_hubview()
+        # Start med login view
+        self.show_login_view()
 
-        # Let the main App window stretch
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        # initiate window 
         self.mainloop()
 
+    def show_login_view(self):
+        if self.current_view:
+            self.current_view.destroy()
+        self.current_view = LoginFrame(self, on_success=self.on_login_success)
+        self.current_view.grid(row=0, column=0, sticky="nsew")
+
+    def on_login_success(self, email):
+        self.logged_in_email = email
+        self.to_hubview()  # Når login er korrekt
+
     def to_hubview(self):
-        self.hubview = hubview(self, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  # 
+        self.hubview = hubview(self, logout_callback=self.back_to_login, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  # 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
@@ -248,6 +258,10 @@ class App(ctk.CTk):
     def back_to_hub(self):
         self.current_view.grid_forget()
         self.to_hubview()
+
+    def back_to_login(self):
+        self.current_view.grid_forget()
+        self.show_login_view()        
 
     # count down 
     def countdown(self):

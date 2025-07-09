@@ -1,9 +1,9 @@
 
 import customtkinter as ctk
 
-from Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, RenoveringsOpgavePanel, SimpleContactLinePanel
-import Ctk_fundora_math_lib as fuMath
-import Ctk_fundora_exportPDF as export 
+from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, RenoveringsOpgavePanel, SimpleContactLinePanel
+import backend.Ctk_fundora_math_lib as fuMath
+import backend.Ctk_fundora_exportPDF as export 
 
 
 class Renovering(ctk.CTkTabview): 

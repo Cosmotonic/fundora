@@ -24,7 +24,7 @@ SKATTEPROCENT2      = 0
 SAMLET_INDTAEGT     = 0 
 
 # FREMTIDIG 
-REAL_LÅNPERIODE         = 30 
+REAL_LÅNPERIODE    = 30 
 REAL_NOMINEL       = 2.25
 REAL_BIDRAGSSATS   = 0.85
 REAL_TERMINER      = 4
@@ -45,7 +45,33 @@ FASTE_UDGIFTER              = 0
 FASTE_UDGIFTER_INKL_YDELSER = 0 
 RÅDIGHEDSBELØB              = 0 
 
-# Eksport values
+
+# UDGIFTER
+EJER_UDGIFT                 = 6500
+FORBRUG                     = 1500
+MAD_DAGLIGVARE              = 2500
+TRANSPORT                   = 3500
+FORSIKRINGER                = 700
+TELEFON_INT_MEDIE           = 1000
+PERSONLIG_PLEJE_TOEJ        = 500
+FRITID_FORNOEJELSER         = 1500
+PASNING_FRITIDSAKTIVITETER  = 0 
+FLEXUDGVAR1                 = 0
+FLEXUDGSTRING1              = "Indsæt Beskrivelse"
+FLEXUDGVAR2                 = 0
+FLEXUDGSTRING2              = "Indsæt Beskrivelse"
+FLEXUDGVAR3                 = 0
+FLEXUDGSTRING3              = "Indsæt Beskrivelse"
+    
+GÆLDSFAKTOR                 = 0
+BANKLÅN                     = 0
+REALKREDITLÅN               = 0
+SAMLETLÅN                   = 0
+ALLEFASTEUDGIFTER           = 0
+FORVENTETPRIS               = 0
+
+
+# PERSONLIGE OPLYSNINGER
 FORNAVN1 = "Fornavn" 
 EFTERNAVN1 = "Efternavn"      
 TELEFON1 = 10203040
@@ -76,29 +102,6 @@ NY_ADDR = "Vejnavn på ny adresse"
 LINK_ADDR = "http://"
 RAPPORTNAVN = "Låne_Rapport.pdf"
 
-# UDGIFTER
-EJER_UDGIFT                 = 6500
-FORBRUG                     = 1500
-MAD_DAGLIGVARE              = 2500
-TRANSPORT                   = 3500
-FORSIKRINGER                = 700
-TELEFON_INT_MEDIE           = 1000
-PERSONLIG_PLEJE_TOEJ        = 500
-FRITID_FORNOEJELSER         = 1500
-PASNING_FRITIDSAKTIVITETER  = 0 
-FLEXUDGVAR1                 = 0
-FLEXUDGSTRING1              = "Indsæt Beskrivelse"
-FLEXUDGVAR2                 = 0
-FLEXUDGSTRING2              = "Indsæt Beskrivelse"
-FLEXUDGVAR3                 = 0
-FLEXUDGSTRING3              = "Indsæt Beskrivelse"
-    
-GÆLDSFAKTOR                 = 0
-BANKLÅN                     = 0
-REALKREDITLÅN               = 0
-SAMLETLÅN                   = 0
-ALLEFASTEUDGIFTER           = 0
-FORVENTETPRIS               = 0
 
 # LAANEEVNE default values 
 BLUR_DEFAULT = 0

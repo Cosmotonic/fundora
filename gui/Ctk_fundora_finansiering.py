@@ -1,12 +1,12 @@
 # Ctk_fundora_finansiering
 
 import customtkinter as ctk
-import Ctk_fundora_exportPDF as export 
+import backend.Ctk_fundora_exportPDF as export 
 
-from Ctk_fundora_panels import ( SingleInputPanel, FlexibleInputPanel, ForhandlingsPanel, DoubleInputPanel, SliderPanel, 
+from components.Ctk_fundora_panels import ( SingleInputPanel, FlexibleInputPanel, ForhandlingsPanel, DoubleInputPanel, SliderPanel, 
                                 RadioInputPanel, BooleanInputPanel, xxInputPanel, InlineDatePicker, CloseSection )
 from Ctk_fundora_loanerValues import *
-import Ctk_fundora_math_lib as fuMath 
+import backend.Ctk_fundora_math_lib as fuMath 
 
 class Finansering(ctk.CTkTabview): 
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars): 
@@ -17,13 +17,13 @@ class Finansering(ctk.CTkTabview):
         self.add("Låne Evne")
         self.add("Bolig Udgift")
         self.add("Fremtidig Økonomi")
-        self.add("Eksport")
+        self.add("Person Oplysninger & Eksport")
 
         #Intro_tab(self.tab("Intro"))
         Laane_Evne_tab(self.tab("Låne Evne"), finansiering_vars)
         Bolig_Udgift_tab(self.tab("Bolig Udgift"), finansiering_vars, udgift_vars)
         Fremtidig_Oekonomi_tab(self.tab("Fremtidig Økonomi"), finansiering_vars, udgift_vars, fremtid_vars, eksport_vars)
-        Eksport_tab(self.tab("Eksport"), finansiering_vars, udgift_vars, fremtid_vars, eksport_vars)
+        Eksport_tab(self.tab("Person Oplysninger & Eksport"), finansiering_vars, udgift_vars, fremtid_vars, eksport_vars)
         
 class Intro_tab(ctk.CTkFrame): 
     def __init__(self, parent): 
@@ -248,6 +248,61 @@ class Eksport_tab(ctk.CTkFrame):
                                             border_width=2, command=lambda: export.Export_finansiering_PDF(self.set_export_values, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars))
                     
         self.beregn_button.grid(row = 3, column=0, columnspan=2)
+        
+        
+        # Database Temp UI
+
+        # Eksporter til database 
+        self.export_data_button = ctk.CTkButton(self, 
+                                            text="Eksporter til Database MySQL", 
+                                            corner_radius=32, 
+                                            hover_color="#07ECA0", 
+                                            fg_color='transparent', 
+                                            border_color="#00C479", 
+                                            border_width=2,
+                                            command=self.eksporter_data_til_db )
+                    
+        self.export_data_button.grid(row = 4, column=0, columnspan=1)
+        # Importer til database 
+        self.import_data_button = ctk.CTkButton(self, 
+                                            text="Importer til Database MySQL", 
+                                            corner_radius=32, 
+                                            hover_color="#9C009C", 
+                                            fg_color='transparent', 
+                                            border_color="#7E0069", 
+                                            border_width=2, 
+                                            command=self.importer_data_fra_db )
+                    
+        self.import_data_button.grid(row = 4, column=1, columnspan=1)
+
+
+    def eksporter_data_til_db(self):
+        data = {
+            "fornavn1": self.eksport_vars["Fornavn1"].get(),
+            "efternavn1": self.eksport_vars["Efternavn1"].get(),
+            "adresse_vej1": self.eksport_vars["Adresse_vej1"].get(),
+            "adresse_postnr1": self.eksport_vars["Adresse_postnr1"].get(),
+            "adresse_by1": self.eksport_vars["Adresse_by1"].get(),
+        }
+
+        from database.Fundora_data_handler import gem_person_data
+        gem_person_data(self.master.logged_in_email, data)
+
+    def importer_data_fra_db(self):
+        from database.Fundora_data_handler import hent_person_data
+
+        # Den henter alt data på db basseret på login-mail-adressen
+        data = hent_person_data(self.master.logged_in_email) 
+
+        if data:
+            # Du kan bare bruge set direkte på dine eksport_vars
+            self.eksport_vars["Fornavn1"].set(data.get("fornavn1", ""))
+            self.eksport_vars["Efternavn1"].set(data.get("efternavn1", ""))
+            self.eksport_vars["Adresse_vej1"].set(data.get("adresse_vej1", ""))
+            self.eksport_vars["Adresse_postnr1"].set(data.get("adresse_postnr1", ""))
+            self.eksport_vars["Adresse_by1"].set(data.get("adresse_by1", ""))
+
+
 
     def set_export_values(self): 
         # Tracking event jeg vil bruge senere som bliver ført over til anden fuction. Obj program for life. 

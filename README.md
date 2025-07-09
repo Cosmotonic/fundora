@@ -9,6 +9,7 @@
 # FIGMA UX:  https://www.figma.com/design/exSKN1FlEkSTZo6Fu3pDGP/Fundora?node-id=0-1&p=f
 
 
+
 **Fundora** er et interaktivt økonomiværktøj bygget i Python, som hjælper førstegangskøbere med at forstå deres finansielle situation, forberede sig på boligkøb og forhandle bedre. 
 
 Version udgivet 0.1. 
