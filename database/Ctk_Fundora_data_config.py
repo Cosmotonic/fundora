@@ -5,3 +5,4 @@ DB_CONFIG = {
     'password': 'Acmv13d2tv2450kbhsv*',
     'database': 'fundora'
 }
+

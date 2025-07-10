@@ -4,7 +4,7 @@ from tkinter import filedialog, Canvas
 from Ctk_fundora_loanerValues import * 
 
 class hubview(ctk.CTkFrame): 
-    def __init__(self, parent, logout_callback, **menues): 
+    def __init__(self, parent, importer_data_fra_db, eksporter_data_til_db, logout_callback, **menues): 
         super().__init__(master = parent)
 
         self.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
@@ -46,6 +46,32 @@ class hubview(ctk.CTkFrame):
                                  command=logout_callback)
         
         self.lotout_button.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
+
+        # Database Temp UI
+        # Eksporter til database 
+        self.export_data_button = ctk.CTkButton(self, 
+                                            text="Eksporter til Database MySQL", 
+                                            corner_radius=32, 
+                                            hover_color="#07ECA0", 
+                                            fg_color='transparent', 
+                                            border_color="#00C479", 
+                                            border_width=2,
+                                            command=eksporter_data_til_db )
+                    
+        self.export_data_button.grid(row = 4, column=0, columnspan=1)
+        # Importer til database 
+        self.import_data_button = ctk.CTkButton(self, 
+                                            text="Importer til Database MySQL", 
+                                            corner_radius=32, 
+                                            hover_color="#9C009C", 
+                                            fg_color='transparent', 
+                                            border_color="#7E0069", 
+                                            border_width=2, 
+                                            command=importer_data_fra_db )
+                    
+        self.import_data_button.grid(row = 4, column=1, columnspan=1)
+
+
 
 
 

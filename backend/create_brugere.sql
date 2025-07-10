@@ -2,6 +2,7 @@ DESCRIBE brugere;
 ALTER TABLE brugere
 ADD COLUMN password VARCHAR(255);
 
+-- mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 'samletadresse1' in 'field list'
 
 CREATE TABLE brugere (
     id INT AUTO_INCREMENT PRIMARY KEY,

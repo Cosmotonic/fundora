@@ -26,12 +26,8 @@ class App(ctk.CTk):
         self.title('Fundora 0.2')
         self.minsize(800,500)
 
-        self.init_Finansiering_parameters()
-        self.init_Forhandling_parameters()
-        self.init_udgift_parameters()
-        self.init_fremtid_parameters()
-        self.init_eksport_parameters()
-        self.init_renovering_parameters()
+        # set all parameters. Needs def so it can be called after logout and login. 
+        self.reset_all_parameters()
 
         # Start med login view
         self.show_login_view()
@@ -49,18 +45,28 @@ class App(ctk.CTk):
     def on_login_success(self, email):
         self.logged_in_email = email
         self.to_hubview()  # Når login er korrekt
+        self.reset_all_parameters() # Reset to default config params. 
+        # self.import_data_fra_db() # skal laves. 
 
     def to_hubview(self):
-        self.hubview = hubview(self, logout_callback=self.back_to_login, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  # 
+        self.hubview = hubview(self, self.importer_data_fra_db, self.eksporter_data_til_db, logout_callback=self.back_to_login, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  # 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
         for var in self.combined:
             var.trace('w', self.manipulate_forhandling)
 
+    def reset_all_parameters(self):
+        self.init_Finansiering_parameters()
+        self.init_Forhandling_parameters()
+        self.init_udgift_parameters()
+        self.init_fremtid_parameters()
+        self.person_info_parameters()
+        self.init_renovering_parameters()
+
     def init_Finansiering_parameters(self): 
         self.finansiering_vars = {
-            "indtaegt_1"        : ctk.DoubleVar(value=PERSON1_LOEN), 
+            "indtaegt_1"        : ctk.DoubleVar(value=PERSON1_LOEN),              
             "pension_1"         : ctk.DoubleVar(value=PERSON1_PENSION), 
             "opsparring_1"      : ctk.DoubleVar(value=PERSON1_SAVINGS),
             "gaeld_1"           : ctk.DoubleVar(value=PERSON1_GAELD),
@@ -70,10 +76,10 @@ class App(ctk.CTk):
             "opsparring_2"      : ctk.DoubleVar(value=PERSON2_SAVINGS),
             "gaeld_2"           : ctk.DoubleVar(value=PERSON2_GAELD),
 
-            "Samlet_Indtægt"    : ctk.DoubleVar(value=SAMLET_INDTAEGT),
-            "max_lån"           : ctk.DoubleVar(value=MAX_LAAN),
-            "løn_efter_skat1"   : ctk.DoubleVar(value=LOEN_EFTER_SKAT1),
-            "løn_efter_skat2"   : ctk.DoubleVar(value=LOEN_EFTER_SKAT2),
+            "samlet_indtaegt"    : ctk.DoubleVar(value=SAMLET_INDTAEGT),
+            "max_laan"           : ctk.DoubleVar(value=MAX_LAAN),
+            "lon_efter_skat1"   : ctk.DoubleVar(value=LOEN_EFTER_SKAT1),
+            "lon_efter_skat2"   : ctk.DoubleVar(value=LOEN_EFTER_SKAT2),
             "skatteprocent1"    : ctk.DoubleVar(value=SKATTEPROCENT1),
             "skatteprocent2"    : ctk.DoubleVar(value=SKATTEPROCENT2),
             "samlet_efter_skat" : ctk.DoubleVar(value=SAMLET_INDTAEGT)
@@ -81,87 +87,90 @@ class App(ctk.CTk):
         
     def init_udgift_parameters(self): 
         self.udgift_vars = {    
-            "bolig_udgift"              : ctk.DoubleVar(value=EJER_UDGIFT), 
-            "forbrug"                   : ctk.DoubleVar(value=FORBRUG), 
-            "mad_dagligvare"            : ctk.DoubleVar(value=MAD_DAGLIGVARE),
-            "transport"                 : ctk.DoubleVar(value=TRANSPORT),
-            "forsikringer"              : ctk.DoubleVar(value=FORSIKRINGER),
-            "telefon_int_medie"         : ctk.DoubleVar(value=TELEFON_INT_MEDIE),
-            "personlig_pleje_toej"      : ctk.DoubleVar(value=PERSONLIG_PLEJE_TOEJ),
-            "fritid_fornoejelser"       : ctk.DoubleVar(value=FRITID_FORNOEJELSER),
-            "pasning_fritidsaktiv"      : ctk.DoubleVar(value=PASNING_FRITIDSAKTIVITETER), 
+            "bolig_udgift"            : ctk.DoubleVar(value=EJER_UDGIFT), 
+            "forbrug"                 : ctk.DoubleVar(value=FORBRUG), 
+            "mad_dagligvare"          : ctk.DoubleVar(value=MAD_DAGLIGVARE),
+            "transport"               : ctk.DoubleVar(value=TRANSPORT),
+            "forsikringer"            : ctk.DoubleVar(value=FORSIKRINGER),
+            "telefon_int_medie"       : ctk.DoubleVar(value=TELEFON_INT_MEDIE),
+            "personlig_pleje_toej"    : ctk.DoubleVar(value=PERSONLIG_PLEJE_TOEJ),
+            "fritid_fornoejelser"     : ctk.DoubleVar(value=FRITID_FORNOEJELSER),
+            "pasning_fritidsaktiv"    : ctk.DoubleVar(value=PASNING_FRITIDSAKTIVITETER), 
 
-            "flexUdgiftString1"         : ctk.StringVar(value=FLEXUDGSTRING1),
-            "flexUdgiftVar1"            : ctk.DoubleVar(value=FLEXUDGVAR1),
-            "flexUdgiftString2"         : ctk.StringVar(value=FLEXUDGSTRING2),
-            "flexUdgiftVar2"            : ctk.DoubleVar(value=FLEXUDGVAR2),
-            "flexUdgiftString3"         : ctk.StringVar(value=FLEXUDGSTRING3),
-            "flexUdgiftVar3"            : ctk.DoubleVar(value=FLEXUDGVAR3), 
+            "flex_udgift_string1"     : ctk.StringVar(value=FLEXUDGSTRING1),
+            "flex_udgift_var1"        : ctk.DoubleVar(value=FLEXUDGVAR1),
+            "flex_udgift_string2"     : ctk.StringVar(value=FLEXUDGSTRING2),
+            "flex_udgift_var2"        : ctk.DoubleVar(value=FLEXUDGVAR2),
+            "flex_udgift_string3"     : ctk.StringVar(value=FLEXUDGSTRING3),
+            "flex_udgift_var3"        : ctk.DoubleVar(value=FLEXUDGVAR3), 
             
-            "gældsfaktor"               : ctk.DoubleVar(value=GÆLDSFAKTOR),
-            "banklån"                   : ctk.DoubleVar(value=BANKLÅN),
-            "realkreditlån"             : ctk.DoubleVar(value=REALKREDITLÅN),
-            "samlet_lån"                : ctk.DoubleVar(value=SAMLETLÅN),
-            "alle_faste_udgifter"       : ctk.DoubleVar(value=ALLEFASTEUDGIFTER),
-            "forventet_pris"            : ctk.DoubleVar(value=FORVENTETPRIS)
-            }
+            "gaeldsfaktor"            : ctk.DoubleVar(value=GÆLDSFAKTOR),
+            "banklaan"                : ctk.DoubleVar(value=BANKLÅN),
+            "realkreditlaan"          : ctk.DoubleVar(value=REALKREDITLÅN),
+            "samlet_laan"             : ctk.DoubleVar(value=SAMLETLÅN),
+            "alle_faste_udgifter"     : ctk.DoubleVar(value=ALLEFASTEUDGIFTER),
+            "forventet_pris"          : ctk.DoubleVar(value=FORVENTETPRIS)
+        }
         
     def init_fremtid_parameters(self): 
         self.fremtid_vars = {  
-            "bolig_udgift"                  : ctk.DoubleVar (value=EJER_UDGIFT), 
-            "realkredit_låneperiode"        : ctk.IntVar    (value=REAL_LÅNPERIODE ), 
-            "realkredit_nominel"            : ctk.DoubleVar (value=REAL_NOMINEL),
-            "realkredit_bidragssats"        : ctk.DoubleVar (value=REAL_BIDRAGSSATS),
-            "realkredit_terminer"           : ctk.IntVar    (value=REAL_TERMINER),
+            "bolig_udgift"                  : ctk.DoubleVar(value=EJER_UDGIFT), 
+            "realkredit_laaneperiode"       : ctk.IntVar(value=REAL_LÅNPERIODE), 
+            "realkredit_nominel"            : ctk.DoubleVar(value=REAL_NOMINEL),
+            "realkredit_bidragssats"        : ctk.DoubleVar(value=REAL_BIDRAGSSATS),
+            "realkredit_terminer"           : ctk.IntVar(value=REAL_TERMINER),
             "afdragsfri"                    : ctk.BooleanVar(value=AFDRAGSFRI),
-            "realkredit_låneberegning"      : BANK_LAANEBEREGNING, 
 
-            "bank_nominel"                  : ctk.DoubleVar (value=BANK_NOMINEL),
-            "bank_terminer"                 : ctk.IntVar    (value=BANK_TERMINER),
-            "bank_låneperiode"              : ctk.IntVar    (value=REAL_LÅNPERIODE),
-            "bank_låneberegning"            : BANK_LAANEBEREGNING, 
+            "bank_nominel"                  : ctk.DoubleVar(value=BANK_NOMINEL),
+            "bank_terminer"                 : ctk.IntVar(value=BANK_TERMINER),
+            "bank_laaneperiode"             : ctk.IntVar(value=REAL_LÅNPERIODE),
 
             "rente_betaling"                : ctk.DoubleVar(value=RENTE_BETALING), 
             "rente_afdrag"                  : ctk.DoubleVar(value=RENTE_AFDRAG),  
             "rentefradrag"                  : ctk.DoubleVar(value=RENTEFRADRAG), 
-            "Rentefradrag_procent"          : ctk.DoubleVar(value=RENTEFRADRAGPROCENT), 
+            "rentefradrag_procent"          : ctk.DoubleVar(value=RENTEFRADRAGPROCENT), 
             "samlet_ydelse"                 : ctk.DoubleVar(value=SAMLET_YDELSE), 
             "fast_udgifter"                 : ctk.DoubleVar(value=FASTE_UDGIFTER), 
             "fast_udgifter_inkl_ydelser"    : ctk.DoubleVar(value=FASTE_UDGIFTER_INKL_YDELSER), 
-            "rådighedsbeløb"                : ctk.DoubleVar(value=RÅDIGHEDSBELØB)           
-            }
+            "raadighedsbeloeb"              : ctk.DoubleVar(value=RÅDIGHEDSBELØB)           
+        }
 
-    def init_eksport_parameters(self): 
-        self.eksport_vars = {  
+        self.fremtid_dicts = {
+            "realkredit_laaneberegning": BANK_LAANEBEREGNING,
+            "bank_laaneberegning"      : REAL_LAANEBEREGNING,
+        }
+
+    def person_info_parameters (self): 
+        self.person_info_vars = {  
             "Fornavn1"                          : ctk.StringVar (value=FORNAVN1), 
             "Efternavn1"                        : ctk.StringVar (value=EFTERNAVN1),             
             "telefon1"                          : ctk.StringVar (value=TELEFON1),
             "mail1"                             : ctk.StringVar (value=MAIL1),
-            "Adresse_vej1"                      : ctk.StringVar (value=ADRESSES_VEJ1),
-            "Adresse_postnr1"                   : ctk.StringVar (value=ADRESSE_POSTNR1),
-            "Adresse_by1"                       : ctk.StringVar (value=ADRESSE_BY1),
-            "SamletAdresse1"                    : ctk.StringVar (value=ADRESSE_SAMLET2),
-            "fødselsdag_dag1"                   : ctk.IntVar    (value=FØDSELSDAG_DAG1), 
-            "fødselsdag_måned1"                 : ctk.IntVar    (value=FØDSELSDAG_MÅNED1), 
-            "fødselsdag_år1"                    : ctk.IntVar    (value=FØDSELSDAG_ÅR1), 
-            "fødselsdag_DMÅ1"                   : ctk.StringVar (value=DATO_DMO1),
+            "adresse_vej1"                      : ctk.StringVar (value=ADRESSES_VEJ1),
+            "adresse_postnr1"                   : ctk.StringVar (value=ADRESSE_POSTNR1),
+            "adresse_by1"                       : ctk.StringVar (value=ADRESSE_BY1),
+            "adresse_samlet1"                   : ctk.StringVar (value=ADRESSE_SAMLET2),
+            "fodselsdag_dag1"                   : ctk.IntVar    (value=FØDSELSDAG_DAG1), 
+            "fodselsdag_maaned1"                : ctk.IntVar    (value=FØDSELSDAG_MÅNED1), 
+            "fodselsdag_aar1"                   : ctk.IntVar    (value=FØDSELSDAG_ÅR1), 
+            "dato_dmo1"                         : ctk.StringVar (value=DATO_DMO1),
 
             "Fornavn2"                          : ctk.StringVar (value=FORNAVN2), 
             "Efternavn2"                        : ctk.StringVar (value=EFTERNAVN2), 
             "telefon2"                          : ctk.StringVar (value=TELEFON2),
             "mail2"                             : ctk.StringVar (value=MAIL2),            
-            "Adresse_vej2"                      : ctk.StringVar (value=ADRESSES_VEJ2),
-            "Adresse_postnr2"                   : ctk.StringVar (value=ADRESSE_POSTNR2),
-            "Adresse_by2"                       : ctk.StringVar (value=ADRESSE_BY2),
-            "SamletAdresse1"                    : ctk.StringVar (value=ADRESSE_SAMLET2),
-            "fødselsdag_dag2"                   : ctk.IntVar    (value=FØDSELSDAG_DAG2), 
-            "fødselsdag_måned2"                 : ctk.IntVar    (value=FØDSELSDAG_MÅNED2), 
-            "fødselsdag_år2"                    : ctk.IntVar    (value=FØDSELSDAG_ÅR2), 
-            "fødselsdag_DMÅ2"                   : ctk.StringVar (value=DATO_DMO2),
+            "adresse_vej2"                      : ctk.StringVar (value=ADRESSES_VEJ2),
+            "adresse_postnr2"                   : ctk.StringVar (value=ADRESSE_POSTNR2),
+            "adresse_by2"                       : ctk.StringVar (value=ADRESSE_BY2),
+            "adresse_samlet2"                   : ctk.StringVar (value=ADRESSE_SAMLET2),
+            "fodselsdag_dag2"                   : ctk.IntVar    (value=FØDSELSDAG_DAG2), 
+            "fodselsdag_maaned2"                : ctk.IntVar    (value=FØDSELSDAG_MÅNED2), 
+            "fodselsdag_aar2"                   : ctk.IntVar    (value=FØDSELSDAG_ÅR2), 
+            "dato_dmo2"                         : ctk.StringVar (value=DATO_DMO2),
 
-            "Ny_Adresse_Navn"                   : ctk.StringVar (value=NY_ADDR),
-            "Link_adresse"                      : ctk.StringVar (value=LINK_ADDR),
-            "Lånrapport"                        : ctk.StringVar (value=RAPPORTNAVN)
+            "ny_adresse_vej"                    : ctk.StringVar (value=NY_ADDR),
+            "link_til_ny_adresse"               : ctk.StringVar (value=LINK_ADDR),
+            "rapportnavn"                       : ctk.StringVar (value=RAPPORTNAVN)
             }
 
     def init_Forhandling_parameters(self):
@@ -214,7 +223,7 @@ class App(ctk.CTk):
 
     def init_renovering_parameters(self):
          self.renovering_vars = { 
-            'BudgetTitel'           : ctk.StringVar (value=BUDGETNAVN),
+            'budget_titel'           : ctk.StringVar (value=BUDGETNAVN),
             'kontakt_navn'          : ctk.StringVar (value=KONTAKT_NAVN),
             'kontakt_telefon'       : ctk.StringVar (value=KONTAKT_TELEFON),
             'kontakt_mail'          : ctk.StringVar (value=KONTAKT_MAIL)
@@ -234,7 +243,7 @@ class App(ctk.CTk):
     # De fire hovedmenuer 
     def menu_Finansierng(self): 
         self.hubview.grid_forget() # Hide import buttons
-        self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.eksport_vars)
+        self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars,  mainApp=self)
         self.close_button = CloseSection(self, self.back_to_hub)
         
         # return menu after 5 sec. 
@@ -262,6 +271,55 @@ class App(ctk.CTk):
     def back_to_login(self):
         self.current_view.grid_forget()
         self.show_login_view()        
+
+
+    # eksporter alle variabler på person data 
+    def eksporter_data_til_db(self):
+        data = {}
+
+        for var_dict in [self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars]:
+        
+            for key, var in var_dict.items():
+                try:
+                    data[key.lower()] = var.get()
+                except Exception as e:
+                    print(f"Fejl ved hentning af '{key}': {e}")
+
+        from database.Fundora_data_handler import gem_person_data
+        gem_person_data(self.logged_in_email, data)
+
+    def importer_data_fra_db(self):
+        from database.Fundora_data_handler import hent_person_data
+
+        data = hent_person_data(self.logged_in_email)
+
+        if not data:
+            print("Ingen data fundet for bruger.")
+            return
+
+        # Liste over alle variable-dictionaries
+        all_var_dicts = [
+            self.person_info_vars,
+            self.finansiering_vars,
+            self.udgift_vars,
+            self.fremtid_vars,
+            self.renovering_vars,
+        ]
+
+        for var_dict in all_var_dicts:
+            for key, var in var_dict.items():
+                try:
+                    value = data.get(key.lower())
+                    if value is not None:
+                        var.set(value)
+                    else:
+                        # Reset til default, hvis data mangler
+                        var.set("" if isinstance(var, ctk.StringVar) else 0)
+                except Exception as e:
+                    print(f"Fejl ved indsætning af '{key}': {e}")
+
+
+
 
     # count down 
     def countdown(self):

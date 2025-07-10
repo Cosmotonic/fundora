@@ -29,10 +29,10 @@ def udregn_Indkomst(data_var):
     total_after_tax_income = after_tax_salary1 + after_tax_salary2
 
     # Format number with correct thousand separators
-    data_var["Samlet_Indtægt"].set(total_income)
-    data_var["max_lån"].set(max_laan)
-    data_var["løn_efter_skat1"].set(after_tax_salary1)
-    data_var["løn_efter_skat2"].set(after_tax_salary2)
+    data_var["samlet_indtaegt"].set(total_income)
+    data_var["max_laan"].set(max_laan)
+    data_var["lon_efter_skat1"].set(after_tax_salary1)
+    data_var["lon_efter_skat2"].set(after_tax_salary2)
     data_var["samlet_efter_skat"].set(total_after_tax_income)
 
 
@@ -85,7 +85,7 @@ def beregn_netto_maanedsloen( maanedsloen_brutto, kommuneskat_sats=0.2497, perso
 def udregn_Bolig_Udgift_output(finansiering_vars, udgift_var):  
 
     gældsfaktor = ((udgift_var['forventet_pris'].get() + finansiering_vars['gaeld_1'].get() + finansiering_vars['gaeld_2'].get())
-                   - (finansiering_vars['opsparring_1'].get() + finansiering_vars['opsparring_2'].get())) / (finansiering_vars['Samlet_Indtægt'].get()*12)
+                   - (finansiering_vars['opsparring_1'].get() + finansiering_vars['opsparring_2'].get())) / (finansiering_vars['samlet_indtaegt'].get()*12)
     
     opsparing = finansiering_vars['opsparring_1'].get() + finansiering_vars['opsparring_2'].get()
     huspris = udgift_var['forventet_pris'].get()
@@ -103,31 +103,30 @@ def udregn_Bolig_Udgift_output(finansiering_vars, udgift_var):
     samlede_udgifter = (   udgift_var["bolig_udgift"].get() + udgift_var["forbrug"].get()  + udgift_var["mad_dagligvare"].get()
                          + udgift_var["transport"].get() + udgift_var["forsikringer"].get() + udgift_var["telefon_int_medie"].get()
                          + udgift_var["personlig_pleje_toej"].get() + udgift_var["fritid_fornoejelser"].get() + udgift_var["pasning_fritidsaktiv"].get()
-                         + udgift_var["flexUdgiftVar1"].get() + udgift_var["flexUdgiftVar2"].get() + udgift_var["flexUdgiftVar3"].get())
+                         + udgift_var["flex_udgift_var1"].get() + udgift_var["flex_udgift_var2"].get() + udgift_var["flex_udgift_var3"].get())
 
     # Set output values 
-    udgift_var["gældsfaktor"].set(round(gældsfaktor, 2)) 
+    udgift_var["gaeldsfaktor"].set(round(gældsfaktor, 2)) 
     udgift_var["alle_faste_udgifter"].set(round(samlede_udgifter, 2)) 
 
-    udgift_var["banklån"].set(round(TotalBanklån, 2)) 
-    udgift_var["realkreditlån"].set(round(TotalRealLån, 2)) 
-    udgift_var["samlet_lån"].set(round(TotalRealLån+TotalBanklån, 2)) 
+    udgift_var["banklaan"].set(round(TotalBanklån, 2)) 
+    udgift_var["realkreditlaan"].set(round(TotalRealLån, 2)) 
+    udgift_var["samlet_laan"].set(round(TotalRealLån+TotalBanklån, 2)) 
 
 
 # Fremtidig Økonomi
-def udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, eksport_vars):
+def udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, eksport_vars, mainApp):
     huspris     = udgift_vars['forventet_pris'].get()
 
-    print ("test")
     # Realkredit information 
     real_rente      = float (fremtid_vars['realkredit_nominel'].get())        if float(fremtid_vars['realkredit_nominel'].get()) else 0 
-    real_periode    = int   (fremtid_vars['realkredit_låneperiode'].get())    if int  (fremtid_vars['realkredit_låneperiode'].get()) else 0 
+    real_periode    = int   (fremtid_vars['realkredit_laaneperiode'].get())    if int  (fremtid_vars['realkredit_laaneperiode'].get()) else 0 
     real_terminer   = int   (fremtid_vars['realkredit_terminer'].get())       if int  (fremtid_vars['realkredit_terminer'].get()) else 0 
     real_bidragssats= float (fremtid_vars['realkredit_bidragssats'].get())    if float(fremtid_vars['realkredit_bidragssats'].get()) else 0 
 
     # Bank information 
     bank_rente      = float (fremtid_vars['bank_nominel'].get())              if float(fremtid_vars['bank_nominel'].get()) else 0 
-    bank_periode    = int   (fremtid_vars['bank_låneperiode'].get())          if int  (fremtid_vars['bank_låneperiode'].get()) else 0 
+    bank_periode    = int   (fremtid_vars['bank_laaneperiode'].get())          if int  (fremtid_vars['bank_laaneperiode'].get()) else 0 
     bank_terminer   = int   (fremtid_vars['bank_terminer'].get())             if int  (fremtid_vars['bank_terminer'].get()) else 0 
     
     opsparing = finansiering_vars['opsparring_1'].get() + finansiering_vars['opsparring_2'].get()
@@ -144,8 +143,10 @@ def udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, eksp
         realkredit_lån_resultat = calculate_loan_scenario(real_loan, real_rente, real_periode, payments_per_year=real_terminer, bidragssats=real_bidragssats)      
         bank_lån_resultat = calculate_loan_scenario(bank_loan, bank_rente, bank_periode, payments_per_year=bank_terminer, bidragssats=0) 
         
-        fremtid_vars['realkredit_låneberegning'] = realkredit_lån_resultat
-        fremtid_vars['bank_låneberegning']       = bank_lån_resultat
+        mainApp.fremtid_dicts['realkredit_laaneberegning'] = realkredit_lån_resultat
+        mainApp.fremtid_dicts['bank_laaneberegning'] = realkredit_lån_resultat
+        #fremtid_vars['realkredit_laaneberegning'] = realkredit_lån_resultat
+        # fremtid_vars['bank_laaneberegning']       = bank_lån_resultat
 
         real_first_payment = realkredit_lån_resultat["Amortization Schedule"][0]
         bank_first_payment = bank_lån_resultat["Amortization Schedule"][0]
@@ -181,7 +182,9 @@ def udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, eksp
         SavingPercentage        = opsparing / huspris
         real_loan               = huspris - opsparing   
         realkredit_lån_resultat       = calculate_loan_scenario(real_loan, real_rente, real_periode, payments_per_year=4, bidragssats=real_bidragssats) #  fradragsprocent=fradragsprocent)
-        fremtid_vars['realkredit_låneberegning'] = realkredit_lån_resultat
+        
+        mainApp.fremtid_dicts['realkredit_laaneberegning'] = realkredit_lån_resultat
+        #fremtid_vars['realkredit_laaneberegning'] = realkredit_lån_resultat # flyttet ud af vars for bedre db struktur
 
         interest_grand_total    = float(f"{realkredit_lån_resultat["Total Interest"]}") 
         Total_rentefradrag, udregnet_fradragsprocent = beregn_rentefradrag_enkelt_person(interest_grand_total)
@@ -320,19 +323,19 @@ def Output_financial_Monthly_future(finansiering_vars, udgift_vars, fremtid_vars
                                     RenteUdgifterPrMd=0, TotalAfdragPrMd=0, TotalRentefradragPrMd=0, RentefradraProcent=33.1):
 
     total_expenses = (udgift_vars['alle_faste_udgifter'].get() + RenteUdgifterPrMd + TotalAfdragPrMd) #+ TotalRentefradragPrMd
-    rådighedsbeløb = (round(finansiering_vars['løn_efter_skat1'].get(), 0)+round(finansiering_vars['løn_efter_skat2'].get(),0) +TotalRentefradragPrMd)-total_expenses
+    rådighedsbeløb = (round(finansiering_vars['lon_efter_skat1'].get(), 0)+round(finansiering_vars['lon_efter_skat2'].get(),0) +TotalRentefradragPrMd)-total_expenses
     samletYdelse = (RenteUdgifterPrMd+TotalAfdragPrMd)
     
     fremtid_vars['rente_betaling'].set(round(RenteUdgifterPrMd,0))
     fremtid_vars['rente_afdrag'].set(round(TotalAfdragPrMd,0))
     fremtid_vars['rentefradrag'].set(round(TotalRentefradragPrMd,0))
-    fremtid_vars['Rentefradrag_procent'].set(RentefradraProcent*100)
+    fremtid_vars['rentefradrag_procent'].set(RentefradraProcent*100)
 
     fremtid_vars['samlet_ydelse'].set(round(samletYdelse,0))
     fremtid_vars['fast_udgifter'].set(round(udgift_vars['alle_faste_udgifter'].get(),0))
     fremtid_vars['fast_udgifter_inkl_ydelser'].set(round(total_expenses,0))
 
-    fremtid_vars['rådighedsbeløb'].set(round(rådighedsbeløb,0))
+    fremtid_vars['raadighedsbeloeb'].set(round(rådighedsbeløb,0))
 
 
 # Udregn Ackerman forhandling 

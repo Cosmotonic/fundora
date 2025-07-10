@@ -16,7 +16,7 @@ class FundoraPDF(FPDF):
         self.cell(0, 10, "Fundora - Boligværktøjet for førstegangskøbere", 0, 0, 'C')
         
 class Export_finansiering_PDF(): 
-    def __init__(self, set_values, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars): 
+    def __init__(self, set_values, mainApp, finansiering_vars, udgift_vars, fremtid_vars, eksport_vars): 
 
         set_values()
 
@@ -58,13 +58,14 @@ class Export_finansiering_PDF():
         self.pdf.add_page()
 
         # page 
-        self.add_loan_section("Realkredit lån", fremtid_vars["realkredit_låneberegning"])
-        self.add_loan_expectations(fremtid_vars["realkredit_låneberegning"], fremtid_vars['realkredit_nominel'].get(), fremtid_vars['realkredit_terminer'].get(),
-                            fremtid_vars['realkredit_låneperiode'].get(), fremtid_vars['realkredit_bidragssats'].get())
-        
-        self.add_loan_section("Bank lån", fremtid_vars["bank_låneberegning"])
-        self.add_loan_expectations(fremtid_vars["bank_låneberegning"], fremtid_vars['bank_nominel'].get(), fremtid_vars['bank_terminer'].get(),
-                            fremtid_vars['bank_låneperiode'].get())
+
+        self.add_loan_section("Realkredit lån",  mainApp.fremtid_dicts['realkredit_laaneberegning'])
+        self.add_loan_expectations(mainApp.fremtid_dicts['realkredit_laaneberegning'], fremtid_vars['realkredit_nominel'].get(), fremtid_vars['realkredit_terminer'].get(),
+                            fremtid_vars['realkredit_laaneperiode'].get(), fremtid_vars['realkredit_bidragssats'].get())
+
+        self.add_loan_section("Bank lån",         mainApp.fremtid_dicts['bank_laaneberegning'])
+        self.add_loan_expectations(        mainApp.fremtid_dicts['bank_laaneberegning'], fremtid_vars['bank_nominel'].get(), fremtid_vars['bank_terminer'].get(),
+                            fremtid_vars['bank_laaneperiode'].get())
         
         #self.AddFooter()
 
@@ -74,8 +75,8 @@ class Export_finansiering_PDF():
     
     def bolig_information(self): 
         self.pdf.set_font(TEXTFORMAT, size=12)
-        self.pdf.cell(200, 9, f"Navn på boligen: {self.eksport_vars["Ny_Adresse_Navn"].get()}", ln=True, align="W") 
-        self.pdf.cell(0, 10,  "Salgsopstilling: Link (Højrekli - Åbn i ny fane)", link=self.eksport_vars["Link_adresse"].get(), align="W", ln=True) 
+        self.pdf.cell(200, 9, f"Navn på boligen: {self.eksport_vars["ny_adresse_vej"].get()}", ln=True, align="W") 
+        self.pdf.cell(0, 10,  "Salgsopstilling: Link (Højrekli - Åbn i ny fane)", link=self.eksport_vars["link_til_ny_adresse"].get(), align="W", ln=True) 
         self.pdf.cell(200, 9, f"Forventet Købspris: {self.udgift_vars["forventet_pris"].get()}", ln=True, align="W") 
         
     def add_personal_information(self):
@@ -94,18 +95,18 @@ class Export_finansiering_PDF():
 
         # alder
         self.pdf.cell(col_widthHeader, 10, f"Alder:", border=0) 
-        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['fødselsdag_DMÅ1'].get()}", border=0, align="W" )
-        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['fødselsdag_DMÅ2'].get()}", border=0, align="W" , ln=True)
+        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['dato_dmo1'].get()}", border=0, align="W" )
+        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['dato_dmo2'].get()}", border=0, align="W" , ln=True)
 
         # Vej
         self.pdf.cell(col_widthHeader, 10, f"Vej:", border=0)
-        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['Adresse_vej1'].get()}", border=0, align="W" )
-        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['Adresse_vej2'].get()}", border=0, align="W", ln=True)
+        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['adresse_vej1'].get()}", border=0, align="W" )
+        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['adresse_vej2'].get()}", border=0, align="W", ln=True)
         
         # Pst nr + by 
         self.pdf.cell(col_widthHeader, 10, f"By:", border=0)
-        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['Adresse_postnr1'].get()} {self.eksport_vars['Adresse_by1'].get()}", border=0, align="W" ) 
-        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['Adresse_postnr2'].get()} {self.eksport_vars['Adresse_by2'].get()}", border=0, align="W", ln=True)
+        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['adresse_postnr1'].get()} {self.eksport_vars['adresse_by1'].get()}", border=0, align="W" ) 
+        self.pdf.cell(col_widthEntry, 10, f"{self.eksport_vars['adresse_postnr2'].get()} {self.eksport_vars['adresse_by2'].get()}", border=0, align="W", ln=True)
 
         # Phone Number
         self.pdf.cell(col_widthHeader, 10, f"Tlf:", border=0)
@@ -124,8 +125,8 @@ class Export_finansiering_PDF():
 
         # Løn
         self.pdf.cell(col_widthHeader, 10, f"Netto løn:", border=0)
-        self.pdf.cell(col_widthEntry, 10, f"{locale.format_string('%.0f', float(self.finansiering_vars['løn_efter_skat1'].get()), grouping=True)} DKK", border=0, align="W")
-        self.pdf.cell(col_widthEntry, 10, f"{locale.format_string('%.0f', float(self.finansiering_vars['løn_efter_skat2'].get()), grouping=True)} DKK", border=0, align="W", ln=True)
+        self.pdf.cell(col_widthEntry, 10, f"{locale.format_string('%.0f', float(self.finansiering_vars['lon_efter_skat1'].get()), grouping=True)} DKK", border=0, align="W")
+        self.pdf.cell(col_widthEntry, 10, f"{locale.format_string('%.0f', float(self.finansiering_vars['lon_efter_skat2'].get()), grouping=True)} DKK", border=0, align="W", ln=True)
 
         # Pension
         self.pdf.cell(col_widthHeader, 10, f"Pension:", border=0)
@@ -180,17 +181,17 @@ class Export_finansiering_PDF():
         self.pdf.cell(col_width, 10, f"{self.udgift_vars['pasning_fritidsaktiv'].get()} DKK", border=1, ln=True, align='R')
 
         # Andre udgifter
-        Andre_Beskrivelse1 = self.udgift_vars['flexUdgiftString1'].get()
+        Andre_Beskrivelse1 = self.udgift_vars['flex_udgift_string1'].get()
         self.pdf.cell(col_width, 10, f"Andre udgifter: %s" % Andre_Beskrivelse1, border=1)
-        self.pdf.cell(col_width, 10, f"{self.udgift_vars['flexUdgiftVar1'].get()} DKK", border=1, ln=True, align='R')
+        self.pdf.cell(col_width, 10, f"{self.udgift_vars['flex_udgift_var1'].get()} DKK", border=1, ln=True, align='R')
         
-        Andre_Beskrivelse2 = self.udgift_vars['flexUdgiftString2'].get()
+        Andre_Beskrivelse2 = self.udgift_vars['flex_udgift_string2'].get()
         self.pdf.cell(col_width, 10, f"Andre udgifter: %s" % Andre_Beskrivelse2, border=1)
-        self.pdf.cell(col_width, 10, f"{self.udgift_vars['flexUdgiftVar2'].get()} DKK", border=1, ln=True, align='R')
+        self.pdf.cell(col_width, 10, f"{self.udgift_vars['flex_udgift_var2'].get()} DKK", border=1, ln=True, align='R')
         
-        Andre_Beskrivelse3 = self.udgift_vars['flexUdgiftString3'].get()
+        Andre_Beskrivelse3 = self.udgift_vars['flex_udgift_string3'].get()
         self.pdf.cell(col_width, 10, f"Andre udgifter: %s" % Andre_Beskrivelse3, border=1)
-        self.pdf.cell(col_width, 10, f"{self.udgift_vars['flexUdgiftVar3'].get()} DKK", border=1, ln=True, align='R')
+        self.pdf.cell(col_width, 10, f"{self.udgift_vars['flex_udgift_var3'].get()} DKK", border=1, ln=True, align='R')
         
         # Samlede udgifter
         expenses_no_loan = round(self.udgift_vars['alle_faste_udgifter'].get(),0)
@@ -214,7 +215,7 @@ class Export_finansiering_PDF():
             self.pdf.cell(200, 10, f"-------------", ln=True)
 
             # pdf.set_font("Arial", style='B', size=12)
-            self.pdf.cell(200, 10, f"{locale.format_string('%.0f', self.finansiering_vars['løn_efter_skat1'].get() + self.finansiering_vars['løn_efter_skat2'].get(), grouping=True)} DKK Løn efter skat", ln=True)
+            self.pdf.cell(200, 10, f"{locale.format_string('%.0f', self.finansiering_vars['lon_efter_skat1'].get() + self.finansiering_vars['lon_efter_skat2'].get(), grouping=True)} DKK Løn efter skat", ln=True)
             #pdf.set_font("Arial", size=12)
             self.pdf.cell(200, 10, f"{locale.format_string('%.0f', float(self.fremtid_vars['rentefradrag'].get()), grouping=True)} DKK Rentefradrag", ln=True)
             self.pdf.cell(200, 10, f" -{locale.format_string('%.0f', self.fremtid_vars['fast_udgifter'].get(), grouping=True)} DKK Faste udgifter på ny bolig ", ln=True)
@@ -222,7 +223,7 @@ class Export_finansiering_PDF():
             self.pdf.cell(200, 10,   f"-------------", ln=True)
             self.pdf.set_font(TEXTFORMAT, style='B', size=12)
 
-            self.pdf.cell(200, 10, f"Rådighedsbeløb: {locale.format_string('%.0f', float(self.fremtid_vars['rådighedsbeløb'].get()), grouping=True)} DKK", ln=True)
+            self.pdf.cell(200, 10, f"Rådighedsbeløb: {locale.format_string('%.0f', float(self.fremtid_vars['raadighedsbeloeb'].get()), grouping=True)} DKK", ln=True)
             self.pdf.set_font(TEXTFORMAT, size=12)
 
             self.pdf.ln(5)
@@ -230,7 +231,7 @@ class Export_finansiering_PDF():
     def add_loan_expectations(self, loan_data, RenteSats = 0, terminer = 0, periode = 0, bidragssats = 0):
         
         if not loan_data or loan_data.get("Månedelig Cost", 0) == 0:
-            print ("Månedelig Cost value ikke fundet")
+            print ("Månedelig Cost value ikke fundet - Kan skyldes der kun er real og ikke bank lån")
 
             return
         self.pdf.set_font(TEXTFORMAT, style='', size=12)
@@ -295,7 +296,7 @@ class Eksport_rennovation_budget_PDF:
         self.pdf.set_auto_page_break(auto=True, margin=15)
         self.pdf.add_page()
         self.pdf.set_font("Helvetica", style='B', size=16)
-        self.pdf.cell(200, 10, renovation_vars['BudgetTitel'].get(), ln=True, align="C")
+        self.pdf.cell(200, 10, renovation_vars['budget_titel'].get(), ln=True, align="C")
         self.pdf.ln(5)
 
         self.tilføj_kontakt_info(renovation_vars)
