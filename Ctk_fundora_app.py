@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "."))
 import customtkinter as ctk
 import backend.Ctk_fundora_exportPDF as export 
 import backend.Ctk_fundora_math_lib as fuMath 
+import database.Fundora_data_handler as dbhandler
 
 from Ctk_fundora_loanerValues import *
 from gui.Ctk_fundora_hubview import * 
@@ -274,51 +275,28 @@ class App(ctk.CTk):
 
 
     # eksporter alle variabler på person data 
+    
+   
     def eksporter_data_til_db(self):
-        data = {}
+        # dicts er kaldt efter deres tabeller i db
+        data_dicts = {
+            "brugere": self.person_info_vars,
+            "finansiering": self.finansiering_vars,
+            "udgift": self.udgift_vars,
+            "fremtid": self.fremtid_vars
+        }
 
-        for var_dict in [self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars]:
-        
-            for key, var in var_dict.items():
-                try:
-                    data[key.lower()] = var.get()
-                except Exception as e:
-                    print(f"Fejl ved hentning af '{key}': {e}")
-
-        from database.Fundora_data_handler import gem_person_data
-        gem_person_data(self.logged_in_email, data)
+        dbhandler.eksporter_data_til_db(self.logged_in_email, data_dicts)
 
     def importer_data_fra_db(self):
-        from database.Fundora_data_handler import hent_person_data
-
-        data = hent_person_data(self.logged_in_email)
-
-        if not data:
-            print("Ingen data fundet for bruger.")
-            return
-
-        # Liste over alle variable-dictionaries
-        all_var_dicts = [
-            self.person_info_vars,
-            self.finansiering_vars,
-            self.udgift_vars,
-            self.fremtid_vars,
-            self.renovering_vars,
-        ]
-
-        for var_dict in all_var_dicts:
-            for key, var in var_dict.items():
-                try:
-                    value = data.get(key.lower())
-                    if value is not None:
-                        var.set(value)
-                    else:
-                        # Reset til default, hvis data mangler
-                        var.set("" if isinstance(var, ctk.StringVar) else 0)
-                except Exception as e:
-                    print(f"Fejl ved indsætning af '{key}': {e}")
-
-
+        # dicts er kaldt efter deres tabeller i db
+        data_dicts = {
+            "brugere": self.person_info_vars,
+            "finansiering": self.finansiering_vars,
+            "udgift": self.udgift_vars,
+            "fremtid": self.fremtid_vars,
+        }
+        dbhandler.importer_data_fra_db(self.logged_in_email, data_dicts)
 
 
     # count down 

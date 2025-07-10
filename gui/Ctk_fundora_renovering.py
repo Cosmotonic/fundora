@@ -34,7 +34,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
         # ← HUSK du får grid/pack conflict hvis du smider button i samme "self" fordi panels er packed inherited fra panel class. 
 
         # budget navn
-        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=rennovering_vars['BudgetTitel'], font=("Helvetica", 18, "bold"), justify="center")
+        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=rennovering_vars['budget_titel'], font=("Helvetica", 18, "bold"), justify="center")
         self.budgetTitel_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
 
         # kontakt linje 
@@ -52,7 +52,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.kontakt_mail_entry.grid(row=0, column=2, sticky="new", padx=5, pady=5)
 
         # Scrollable frame til opgaver
-        self.OpgaveFrame = ctk.CTkScrollableFrame(self) #  label_text=self.BudgetTitel)
+        self.OpgaveFrame = ctk.CTkScrollableFrame(self) 
         self.OpgaveFrame.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
         self.OpgaveFrame.columnconfigure((0,1,2,3), weight=1)
         self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer

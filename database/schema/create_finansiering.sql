@@ -1,9 +1,7 @@
-USE fundora;
--- DROP TABLE IF EXISTS finansiering;
+DROP TABLE IF EXISTS finansiering;
 
 CREATE TABLE finansiering (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    bruger_id INT NOT NULL,
+    logged_in_email VARCHAR(255),
 
     indtaegt_1 DECIMAL(12,2),
     pension_1 DECIMAL(5,2),
@@ -23,6 +21,5 @@ CREATE TABLE finansiering (
     skatteprocent2 DECIMAL(5,2),
     samlet_efter_skat DECIMAL(12,2),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (bruger_id) REFERENCES brugere(id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

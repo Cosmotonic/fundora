@@ -1,6 +1,7 @@
+DROP TABLE IF EXISTS udgift;
+
 CREATE TABLE udgift (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    bruger_id INT NOT NULL,
+    logged_in_email VARCHAR(255),
 
     bolig_udgift DECIMAL(12,2),
     forbrug DECIMAL(12,2),
@@ -26,7 +27,5 @@ CREATE TABLE udgift (
     alle_faste_udgifter DECIMAL(12,2),
     forventet_pris DECIMAL(12,2),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (bruger_id) REFERENCES brugere(id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

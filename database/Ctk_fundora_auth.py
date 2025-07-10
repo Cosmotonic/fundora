@@ -20,7 +20,7 @@ def register_user(email, password):
         cursor = conn.cursor()
 
         # Vi antager at tabellen "bruger" har kolonnerne: mail1 og password
-        cursor.execute("INSERT INTO brugere (mail1, password) VALUES (%s, %s)", (email, hashed_pw))
+        cursor.execute("INSERT INTO brugere (logged_in_email, password) VALUES (%s, %s)", (email, hashed_pw))
         conn.commit()
         print("brugere oprettet.")
 
@@ -39,7 +39,7 @@ def login_user(email, password):
         cursor = conn.cursor()
 
         # Hent den gemte hashed adgangskode fra databasen
-        cursor.execute("SELECT password FROM brugere WHERE mail1 = %s", (email,))
+        cursor.execute("SELECT password FROM brugere WHERE logged_in_email = %s", (email,))
         result = cursor.fetchone()
 
         if result is None:
@@ -59,9 +59,11 @@ def login_user(email, password):
         cursor.close()
         conn.close()
 
-
+'''
 # Funktion til at opdatere brugerens data (f.eks. loen1, alder osv.)
 # "data" er en dictionary med felter: {"loen1": 50000, "alder": 36}
+
+
 def save_user_data(email, data):
     if not data:
         print("Ingen data at gemme.")
@@ -74,7 +76,9 @@ def save_user_data(email, data):
     fields = ', '.join([f"{key} = %s" for key in data])
     values = list(data.values()) + [email]
 
-    sql = f"UPDATE brugere SET {fields} WHERE mail1 = %s"
+ 
+
+    sql = f"UPDATE brugere SET {fields} WHERE logged_in_email = %s"
     cursor.execute(sql, values)
     conn.commit()
     conn.close()
@@ -87,7 +91,7 @@ def get_user_data(email):
     conn = get_mysql_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM brugere WHERE mail1 = %s", (email,))
+    cursor.execute("SELECT * FROM brugere WHERE logged_in_email = %s", (email,))
     row = cursor.fetchone()
     col_names = [desc[0] for desc in cursor.description]
 
@@ -108,4 +112,4 @@ save_user_data("kasper@voca.com", {
     "fornavn1": "Kasper",
     "efternavn1": "Larsson",
     "adresse_vej1": "Testvej 12"
-})
+})'''

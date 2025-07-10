@@ -1,7 +1,7 @@
+DROP TABLE IF EXISTS fremtid;
 
 CREATE TABLE fremtid (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    bruger_id INT NOT NULL,
+    logged_in_email VARCHAR(255),
 
     bolig_udgift DECIMAL(12,2),
     realkredit_laaneperiode INT,
@@ -23,7 +23,5 @@ CREATE TABLE fremtid (
     fast_udgifter_inkl_ydelser DECIMAL(10,2),
     raadighedsbeloeb DECIMAL(10,2),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (bruger_id) REFERENCES brugere(id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
