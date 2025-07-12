@@ -82,8 +82,8 @@ class App(ctk.CTk):
             "opsparring_2"      : ctk.DoubleVar(value=PERSON2_SAVINGS),
             "gaeld_2"           : ctk.DoubleVar(value=PERSON2_GAELD),
 
-            "samlet_indtaegt"    : ctk.DoubleVar(value=SAMLET_INDTAEGT),
-            "max_laan"           : ctk.DoubleVar(value=MAX_LAAN),
+            "samlet_indtaegt"   : ctk.DoubleVar(value=SAMLET_INDTAEGT),
+            "max_laan"          : ctk.DoubleVar(value=MAX_LAAN),
             "lon_efter_skat1"   : ctk.DoubleVar(value=LOEN_EFTER_SKAT1),
             "lon_efter_skat2"   : ctk.DoubleVar(value=LOEN_EFTER_SKAT2),
             "skatteprocent1"    : ctk.DoubleVar(value=SKATTEPROCENT1),
@@ -237,7 +237,7 @@ class App(ctk.CTk):
                   
          self.budgetvaerktoej_dict = {
             "Badeværelse": {"priority": "Skal"},
-            }                  
+            }  
 
     def init_feedback_parameters(self):
          self.feedback_dict = { 
