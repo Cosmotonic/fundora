@@ -300,7 +300,7 @@ class ForhandlingCheckPanel(Panel):
         comment_entry.grid(row=row, column=3, padx=(5, 10), sticky="ew")
 
         # slet knap
-        varBut_str = ctk.StringVar(value='-')
+        varBut_str    = ctk.StringVar(value='-')
         self.slet_but = ctk.CTkButton(self, textvariable=varBut_str, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
         self.slet_but.grid(row=row, column=4, sticky="ew", padx=5, pady=5)
 
@@ -328,22 +328,15 @@ class ForhandlingCheckPanel(Panel):
         self.update_dropdown_color(var_priority)
         self.current_row_index += 1
 
-    def update_dropdown_color(self, var):
-        for item in self.vars.values():
-            if item["priority"] == var:
-                val = var.get()
-                options = item.get("priority_options", {})
-                color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
-                item["dropdown_widget"].configure(fg_color=color)
-
     def get_results(self):        
         return {
             id: {
-                "checked": data["checked"].get(),
-                "priority": data["priority"].get(),
-                "comment": data["comment"].get(),
-                "label": data["label"].get()
+                "checked"   : data["checked"].get(),
+                "priority"  : data["priority"].get(),
+                "comment"   : data["comment"].get(),
+                "label"     : data["label"].get()
             }
+
             # id referere til dict navnet på hver entry fx. Møbler(løsøre), liggetid(argument)   
             for id, data in self.vars.items()
         }
@@ -362,6 +355,13 @@ class ForhandlingCheckPanel(Panel):
                     widget.destroy()
             del self.vars[row_id]
 
+    def update_dropdown_color(self, var):
+        for item in self.vars.values():
+            if item["priority"] == var:
+                val = var.get()
+                options = item.get("priority_options", {})
+                color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
+                item["dropdown_widget"].configure(fg_color=color)
 
 class BooleanInputPanel(Panel): 
     def __init__(self, parent, text, data_var): 
@@ -688,7 +688,6 @@ class Open_Feedback_button(ctk.CTkButton):
     def load_feedback_window(self): 
         feedback_window = Feedback_Window(self.mainApp)
 
-
 class Feedback_Window(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -711,18 +710,19 @@ class FeedbackPanel(Panel):
         # Order panel
         self.columnconfigure(0, weight=1)  
         self.rowconfigure(0, weight=1)
-
-        mainApp.appVersion 
+        
+        self.window = parent
+        self.mainApp = mainApp
 
         self.pc_data_var = ctk.BooleanVar()
         self.version_var = ctk.StringVar(value=mainApp.appVersion )
         self.feedback_text = ctk.CTkTextbox(self, height=120)
         
-        dato_var = date.today().strftime("%Y-%m-%d")              # "2025-07-12"
-        tidspunkt_var = datetime.now().strftime("%Y-%m-%d %H:%M") # "2025-07-12 11:30"
+        self.dato = date.today().strftime("%Y-%m-%d")              # "2025-07-12"
+        self.tidspunkt = datetime.now().strftime("%Y-%m-%d %H:%M") # "2025-07-12 11:30"
 
         # Timestamp label
-        self.timestamp_label = ctk.CTkLabel(self, text=f"Dato: {dato_var} | Tid: {tidspunkt_var}")
+        self.timestamp_label = ctk.CTkLabel(self, text=f"Dato: {self.dato} | Tid: {self.tidspunkt}")
         self.timestamp_label.grid(row=1, column=0, sticky="w", padx=10, pady=2)
 
         # Versionsfelt
@@ -733,7 +733,7 @@ class FeedbackPanel(Panel):
         self.feedback_text.grid(row=3, column=0, sticky="nsew", padx=10, pady=(10, 2))
 
         # Submit-knap
-        self.submit_button = ctk.CTkButton(self, text="Send feedback", command=mainApp.eksporter_data_til_db) # bør være en input dict fra app / accumalitive
+        self.submit_button = ctk.CTkButton(self, text="Send feedback", command=self.increment_feedback_dict ) # bør være en input dict fra app / accumalitive
         self.submit_button.grid(row=4, column=0, sticky="e", padx=10, pady=(10, 10))
 
         # Inkluder pc-data checkbox
@@ -745,4 +745,22 @@ class FeedbackPanel(Panel):
         self.rowconfigure(3, weight=1)
         self.columnconfigure(0, weight=1)
 
-    
+    def increment_feedback_dict(self): 
+
+        # imoprt first to make I have latest. 
+        self.mainApp.importer_data_fra_db
+        
+        # find a new space on dict for feedback
+        row = len(self.mainApp.feedback_dict)
+             
+        # exporter på main app // flyttes til data handler senere. 
+        self.mainApp.feedback_dict[f"row_{row}"] = {
+                                            "feedback"   : self.feedback_text.get("1.0", "end").strip(),
+                                            "pc_data"    : self.pc_data_var.get(),
+                                            "date"       : self.dato,
+                                            "time"       : self.tidspunkt,
+                                            "version"    : self.version_var.get(),
+                                        }
+        
+        self.mainApp.eksporter_data_til_db()
+        self.window.destroy()

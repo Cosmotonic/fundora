@@ -287,7 +287,7 @@ class App(ctk.CTk):
             "forhandling": self.forhandlings_vars,
         }
 
-        dbhandler.eksporter_data_til_db(self.logged_in_email, vars_dicts)
+        dbhandler.eksporter_vars_til_db(self.logged_in_email, vars_dicts)
 
         # export UGC
         ugc_dict = { 
@@ -308,7 +308,7 @@ class App(ctk.CTk):
 
 
     def importer_data_fra_db(self):
-        # dicts er kaldt efter deres tabeller i db
+        # hent vars på db
         vars_dicts = {
             "brugere": self.person_info_vars,
             "finansiering": self.finansiering_vars,
@@ -318,8 +318,16 @@ class App(ctk.CTk):
             "forhandling": self.forhandlings_vars,
         }
 
-        dbhandler.importer_data_fra_db(self.logged_in_email, vars_dicts)
+        dbhandler.importer_vars_fra_db(self.logged_in_email, vars_dicts)
 
+        # hent User generaated dictionaries
+        ugc_dict = { 
+        "feedback": self.feedback_dict,
+        #"argumentation": self.forhandlings_argumenter_dict,
+        #"loesoere": self.forhandlings_løsøre_dict,
+        #"budgetvaerktoej": self.budgetvaerktoej_dict,
+        }
+        dbhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
 
     # count down 
     def countdown(self):

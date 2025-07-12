@@ -6,7 +6,7 @@ import json
 # from database.Fundora_data_handler import gem_person_data
 
 # GEM Data til databasen.  eksporter_data_til_db gem_person_data importer_data_fra_db hent_person_data
-def eksporter_data_til_db(email, data_dicts):
+def eksporter_vars_til_db(email, data_dicts):
 
     for table_name, var_dict in data_dicts.items():
         print (f"TABEL NAME :::: {table_name}")
@@ -49,8 +49,6 @@ def gem_person_data(email, table_name, var_dict):
     cursor.close()
     connection.close()
 
-
-
 def eksporter_ugc_til_db(logged_in_email, ugc_dict):
     connection = mysql.connector.connect(**DB_CONFIG)
     cursor = connection.cursor()
@@ -89,12 +87,8 @@ def eksporter_ugc_til_db(logged_in_email, ugc_dict):
         connection.close()
 
 
-
-
-
-
 # HENT data fra databasen. 
-def importer_data_fra_db(email, data_dicts):
+def importer_vars_fra_db(email, data_dicts):
 
     # iterate de forskellige dicts 
     for table_name, var_dict in data_dicts.items():
@@ -129,10 +123,7 @@ def hent_person_data(email, table_name):
     return result
 
 
-
-
-
-def importer_ugc_fra_db(logged_in_email):
+def importer_ugc_fra_db(logged_in_email, target_dicts):
     connection = mysql.connector.connect(**DB_CONFIG)
     cursor = connection.cursor()
 
@@ -142,27 +133,25 @@ def importer_ugc_fra_db(logged_in_email):
 
         if not row:
             print("Ingen data fundet for bruger:", logged_in_email)
-            return {}
+            return
 
         columns = [desc[0] for desc in cursor.description]
         data_dict = dict(zip(columns, row))
 
-        result = {}
-        for key in data_dict:
-            if key == "logged_in_email":
+        for key, target_dict in target_dicts.items():
+            if key not in data_dict:
                 continue
             try:
-                result[key] = json.loads(data_dict[key])
-                print(f"Indlæst {key}: {result[key]}")
+                json_data = json.loads(data_dict[key])
+                target_dict.clear()
+                target_dict.update(json_data)
+                print(f"Importerede {key}: {json_data}")
             except Exception as e:
                 print(f"Kunne ikke loade JSON for {key}: {e}")
-                result[key] = None
-
-        return result
 
     except Exception as e:
         print("Fejl under import:", e)
-        return {}
     finally:
         cursor.close()
         connection.close()
+
