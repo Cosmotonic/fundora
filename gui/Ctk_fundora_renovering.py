@@ -7,17 +7,17 @@ import backend.Ctk_fundora_exportPDF as export
 
 
 class Renovering(ctk.CTkTabview): 
-    def __init__(self, parent, rennovering_vars, renovering_hovedopgave_data, renovering_underopgave_data): 
+    def __init__(self, parent, rennovering_vars): 
         super().__init__(master = parent)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
         self.add("Budget")
-        #self.add("Plan")
+        #self.add("Gantt Plan")
         #self.add("Huskeliste")
         #self.add("Eksport")
 
         Renovering_budget_tab(self.tab("Budget"), rennovering_vars)
-        #Renovering_plan_tab(self.tab("Plan"), rennovering_vars, renovering_hovedopgave_data, renovering_underopgave_data)
+        #Renovering_huskeliste_tab(self.tab("Gantt Plan"), rennovering_vars)
         #Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
         #Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 

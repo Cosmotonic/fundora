@@ -1,6 +1,7 @@
 import mysql.connector
 from database.Ctk_Fundora_data_config import DB_CONFIG
 import customtkinter as ctk
+import json
 
 # from database.Fundora_data_handler import gem_person_data
 
@@ -8,7 +9,6 @@ import customtkinter as ctk
 def eksporter_data_til_db(email, data_dicts):
 
     for table_name, var_dict in data_dicts.items():
-        print (f"TABEL NAME :::: {table_name}")
         print (f"TABEL NAME :::: {table_name}")
         gem_person_data(email, table_name, var_dict)
 
@@ -51,6 +51,48 @@ def gem_person_data(email, table_name, var_dict):
 
 
 
+def eksporter_ugc_til_db(logged_in_email, ugc_dict):
+    connection = mysql.connector.connect(**DB_CONFIG)
+    cursor = connection.cursor()
+
+    # Konverter til JSON-strenge
+    json_data = {key: json.dumps(value) for key, value in ugc_dict.items()}
+    print("JSON-klargjorte data til eksport:")
+    for key, val in json_data.items():
+        print(f"  {key}: {val}")
+
+    # Byg SQL-delen
+    columns = ', '.join(['logged_in_email'] + list(json_data.keys()))
+    placeholders = ', '.join(['%s'] * (1 + len(json_data)))
+    values = [logged_in_email] + list(json_data.values())
+
+    update_clause = ', '.join([f"{key} = VALUES({key})" for key in json_data.keys()])
+
+    query = f"""
+        INSERT INTO ugc_data ({columns})
+        VALUES ({placeholders})
+        ON DUPLICATE KEY UPDATE
+        {update_clause}
+    """
+
+    print("SQL forespørgsel klar:")
+    print(query)
+
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+        print("Data eksporteret til ugc_data.")
+    except Exception as e:
+        print("Fejl under eksport:", e)
+    finally:
+        cursor.close()
+        connection.close()
+
+
+
+
+
+
 # HENT data fra databasen. 
 def importer_data_fra_db(email, data_dicts):
 
@@ -86,3 +128,41 @@ def hent_person_data(email, table_name):
     connection.close()
     return result
 
+
+
+
+
+def importer_ugc_fra_db(logged_in_email):
+    connection = mysql.connector.connect(**DB_CONFIG)
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM ugc_data WHERE logged_in_email = %s", (logged_in_email,))
+        row = cursor.fetchone()
+
+        if not row:
+            print("Ingen data fundet for bruger:", logged_in_email)
+            return {}
+
+        columns = [desc[0] for desc in cursor.description]
+        data_dict = dict(zip(columns, row))
+
+        result = {}
+        for key in data_dict:
+            if key == "logged_in_email":
+                continue
+            try:
+                result[key] = json.loads(data_dict[key])
+                print(f"Indlæst {key}: {result[key]}")
+            except Exception as e:
+                print(f"Kunne ikke loade JSON for {key}: {e}")
+                result[key] = None
+
+        return result
+
+    except Exception as e:
+        print("Fejl under import:", e)
+        return {}
+    finally:
+        cursor.close()
+        connection.close()

@@ -15,6 +15,7 @@ from gui.Ctk_fundora_forhandling import *
 from gui.Ctk_fundora_finansiering import * 
 from gui.Ctk_fundora_renovering import * 
 from gui.Ctk_fundora_loginview import LoginFrame
+from components.Ctk_fundora_panels import *
 
 
 
@@ -24,7 +25,10 @@ class App(ctk.CTk):
         self.current_view = None
         ctk.set_appearance_mode('dark')
         self.geometry('1280x720')
-        self.title('Fundora 0.2')
+        self.appVersion = "0.2"
+
+        self.title(f'Fundora v.{self.appVersion}')
+
         self.minsize(800,500)
 
         # set all parameters. Needs def so it can be called after logout and login. 
@@ -47,10 +51,10 @@ class App(ctk.CTk):
         self.logged_in_email = email
         self.to_hubview()  # Når login er korrekt
         self.reset_all_parameters() # Reset to default config params. 
-        # self.import_data_fra_db() # skal laves. 
+        self.importer_data_fra_db() # automatically load data from cb based on logged in email
 
     def to_hubview(self):
-        self.hubview = hubview(self, self.importer_data_fra_db, self.eksporter_data_til_db, logout_callback=self.back_to_login, finansiering = self.menu_Finansierng, forhandling = self.menu_forhandling,rennovering = self.menu_Renovering)  # 
+        self.hubview = hubview(self, self.importer_data_fra_db, self.eksporter_data_til_db, logout_callback=self.back_to_login, finansiering = self.menu_finansierng, forhandling = self.menu_forhandling, budgetværktøj = self.menu_budgetvaerktoej)  # 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
@@ -62,8 +66,9 @@ class App(ctk.CTk):
         self.init_Forhandling_parameters()
         self.init_udgift_parameters()
         self.init_fremtid_parameters()
-        self.person_info_parameters()
-        self.init_renovering_parameters()
+        self.init_person_info_parameters()
+        self.init_budgetvaerktoej_parameters()
+        self.init_feedback_parameters()
 
     def init_Finansiering_parameters(self): 
         self.finansiering_vars = {
@@ -141,7 +146,7 @@ class App(ctk.CTk):
             "bank_laaneberegning"      : REAL_LAANEBEREGNING,
         }
 
-    def person_info_parameters (self): 
+    def init_person_info_parameters (self): 
         self.person_info_vars = {  
             "Fornavn1"                          : ctk.StringVar (value=FORNAVN1), 
             "Efternavn1"                        : ctk.StringVar (value=EFTERNAVN1),             
@@ -188,82 +193,79 @@ class App(ctk.CTk):
             "runde4_procent"    : ctk.StringVar(value=RUNDE4_PROCENT), 
             "runde4_pris"       : ctk.StringVar(value=RUNDE4_PRIS), 
             "aggressivitet"     : ctk.IntVar(value=AGGRESSIVITET),
-            "Forhandling_Titel" : ctk.StringVar(value=FORHANDLING_TITEL),
+            "forhandling_titel" : ctk.StringVar(value=FORHANDLING_TITEL),
             "strategi_titel"    : ctk.StringVar(value=FORHANDLING_STRATEGI),
-            "løsære_titel"      : ctk.StringVar(value=FORHANDLING_LØSØRE),
+            "losore_titel"      : ctk.StringVar(value=FORHANDLING_LØSØRE),
             "argument_titel"    : ctk.StringVar(value=FORHANDLING_ARGUMENT),
             } 
 
                 
-        self.forhandlings_løsøre_data = {
-            "Pris": {"checked": True, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
-            "Overtagelsesdato": {"checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
-            "Gardiner": {"checked": True, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
-            "Skabe og opbevaring": {"checked": True, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
-            "Forbedringer": {"checked": True, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
-            "Hvidevarer": {"checked": True, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
-            "Aconto og restancer": {"checked": True, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
-            "Vedligeholdelsesplan": {"checked": True, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
-            "Møbler": {"checked": True, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
-            "Havemøbler ": {"checked": True, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
-            "Haveredskaber": {"checked": True, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
+        self.forhandlings_løsøre_dict = {
+            "row_0":    {"label": "Pris","checked": True, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
+            "row_1":    {"label": "Overtagelsesdato","checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
+            "row_2":    {"label": "Gardiner","checked": True, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
+            "row_3":    {"label": "Skabe og opbevaring","checked": True, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
+            "row_4":    {"label": "Forbedringer","checked": True, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
+            "row_5":    {"label": "Hvidevarer","checked": True, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
+            "row_6":    {"label": "Aconto og restancer","checked": True, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
+            "row_7":    {"label": "Vedligeholdelsesplan","checked": True, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
+            "row_8":    {"label": "Møbler","checked": True, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
+            "row_9 ":   {"label": "Havemøbler","checked": True, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
+            "row_10":   {"label": "Haveredskaber","checked": True, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
             }
 
-        self.forhandlings_argumenter_data = {
-            "Liggetid": {"checked": True, "priority": "Fordel", "comment": ""},
-            "Boligmarkedet": {"checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
-            "Prisniveau i området": {"checked": True, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
-            "Stand og vedligeholdelse": {"checked": True, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
-            "Boligens størrelse og planløsning": {"checked": True, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
-            "Tidspres for sælger": {"checked": True, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
-            "Ejendomsskat og fællesudgifter": {"checked": True, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
-            "Udbud og efterspørgsel": {"checked": True, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
-            "Naboer eller støjforhold": {"checked": True, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
-            "Tilstandsrapport eller energimærke": {"checked": True, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
+        self.forhandlings_argumenter_dict = {
+            "row_0":    {"label": "Liggetid", "checked": True, "priority": "Fordel", "comment": ""},
+            "row_1":    {"label": "Boligmarkedet", "checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
+            "row_2":    {"label": "Prisniveau i området", "checked": True, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
+            "row_3":    {"label": "Stand og vedligeholdelse", "checked": True, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
+            "row_4":    {"label": "Boligens størrelse og planløsning", "checked": True, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
+            "row_5":    {"label": "Tidspres for sælger", "checked": True, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
+            "row_6":    {"label": "Ejendomsskat og fællesudgifter", "checked": True, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
+            "row_7":    {"label": "Udbud og efterspørgsel", "checked": True, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
+            "row_8":    {"label": "Naboer eller støjforhold", "checked": True, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
+            "row_9":    {"label": "Tilstandsrapport eller energimærke", "checked": True, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
             }
 
-    def init_renovering_parameters(self):
-         self.renovering_vars = { 
-            'budget_titel'           : ctk.StringVar (value=BUDGETNAVN),
+    def init_budgetvaerktoej_parameters(self):
+         self.budgetvaerktoej_vars = { 
+            'budget_titel'          : ctk.StringVar (value=BUDGETNAVN),
             'kontakt_navn'          : ctk.StringVar (value=KONTAKT_NAVN),
             'kontakt_telefon'       : ctk.StringVar (value=KONTAKT_TELEFON),
             'kontakt_mail'          : ctk.StringVar (value=KONTAKT_MAIL)
             }
                   
-         self.renovering_hovedopgave_data = {
+         self.budgetvaerktoej_dict = {
             "Badeværelse": {"priority": "Skal"},
             }                  
-         self.renovering_underopgave_data = {
-            "VVS": {"prioritet": 1, "kommentar": "Køkkent skal laves først, så vi kan lave VVS på samme dag.", "tidsforbrug": 10, "løn/håndværker": 5000 },
-            }
+
+    def init_feedback_parameters(self):
+         self.feedback_dict = { 
+            "row_0":    {"feedback": "This works well, this doesnt", "pc_data": True, "date": "dd/mm/yyyy", "time": "16:28", "version": "0.1"},
+         }
 
     def manipulate_forhandling(self, *args):
         # Udregn når variabler ændres
         fuMath.Ackerman_Set_Values(self.forhandlings_vars)
 
     # De fire hovedmenuer 
-    def menu_Finansierng(self): 
+    def menu_finansierng(self): 
         self.hubview.grid_forget() # Hide import buttons
         self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars,  mainApp=self)
         self.close_button = CloseSection(self, self.back_to_hub)
-        
-        # return menu after 5 sec. 
-        #self.seconds_left = 5 
-        #self.countdown()
+        self.feedback_button = Open_Feedback_button(self)
 
     def menu_forhandling(self): 
         self.hubview.grid_forget()
-        self.current_view = Forhandling(self, self.forhandlings_vars, self.forhandlings_løsøre_data, self.forhandlings_argumenter_data)
+        self.current_view = Forhandling(self, self.forhandlings_vars)
         self.close_button = CloseSection(self, self.back_to_hub)
+        self.feedback_button = Open_Feedback_button(self)
         
-    def menu_Koebet(self): 
+    def menu_budgetvaerktoej(self):
         self.hubview.grid_forget()
+        self.current_view = Renovering(self, self.budgetvaerktoej_vars)
         self.close_button = CloseSection(self, self.back_to_hub)
-
-    def menu_Renovering(self):
-        self.hubview.grid_forget()
-        self.current_view = Renovering(self, self.renovering_vars, self.renovering_hovedopgave_data, self.renovering_underopgave_data)
-        self.close_button = CloseSection(self, self.back_to_hub)
+        self.feedback_button = Open_Feedback_button(self)
 
     def back_to_hub(self):
         self.current_view.grid_forget()
@@ -273,34 +275,58 @@ class App(ctk.CTk):
         self.current_view.grid_forget()
         self.show_login_view()        
 
-
-    # eksporter alle variabler på person data 
-    
-   
+      
     def eksporter_data_til_db(self):
-        # dicts er kaldt efter deres tabeller i db
-        data_dicts = {
+        # Export Vars
+        vars_dicts = {
             "brugere": self.person_info_vars,
             "finansiering": self.finansiering_vars,
             "udgift": self.udgift_vars,
-            "fremtid": self.fremtid_vars
+            "fremtid": self.fremtid_vars, 
+            "budgetvaerktoej": self.budgetvaerktoej_vars,
+            "forhandling": self.forhandlings_vars,
         }
 
-        dbhandler.eksporter_data_til_db(self.logged_in_email, data_dicts)
+        dbhandler.eksporter_data_til_db(self.logged_in_email, vars_dicts)
+
+        # export UGC
+        ugc_dict = { 
+        "argumentation": self.forhandlings_argumenter_dict,
+        "loesoere": self.forhandlings_løsøre_dict,
+        "feedback": self.feedback_dict,
+        #"budgetvaerktoej": self.budgetvaerktoej_dict,
+        }
+
+        #print (f"----------")
+        #print (f"FORHANDLINGS DICT:{self.forhandlings_argumenter_dict}")
+        #print (f"----------")
+        #print (f"LØSØRE DICT:{self.forhandlings_løsøre_dict}")
+        print (f"----------")
+        print (f"Feedback Dict: {self.feedback_dict}")
+
+        dbhandler.eksporter_ugc_til_db(self.logged_in_email, ugc_dict)
+
 
     def importer_data_fra_db(self):
         # dicts er kaldt efter deres tabeller i db
-        data_dicts = {
+        vars_dicts = {
             "brugere": self.person_info_vars,
             "finansiering": self.finansiering_vars,
             "udgift": self.udgift_vars,
             "fremtid": self.fremtid_vars,
+            "budgetvaerktoej": self.budgetvaerktoej_vars,
+            "forhandling": self.forhandlings_vars,
         }
-        dbhandler.importer_data_fra_db(self.logged_in_email, data_dicts)
+
+        dbhandler.importer_data_fra_db(self.logged_in_email, vars_dicts)
 
 
     # count down 
     def countdown(self):
+                
+        # return menu after 5 sec. 
+        #self.seconds_left = 5 
+        #self.countdown()
         print ('counter started')
         if self.seconds_left > 0:
             print (self.seconds_left)
@@ -309,7 +335,6 @@ class App(ctk.CTk):
         else:
             print("Countdown done — Back to hubview!")
             self.to_hubview()
-
 
 
 App() 

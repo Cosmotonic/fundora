@@ -1,7 +1,10 @@
 
 import customtkinter as ctk
+from customtkinter import CTkImage
+
 from tkinter import filedialog, Canvas
 from Ctk_fundora_loanerValues import * 
+from PIL import Image
 
 class hubview(ctk.CTkFrame): 
     def __init__(self, parent, importer_data_fra_db, eksporter_data_til_db, logout_callback, **menues): 
@@ -19,8 +22,7 @@ class hubview(ctk.CTkFrame):
             for idx, (name, func) in enumerate(menues.items()):
                     row = idx // 2  
                     col = idx % 2   
-
-                    frame = OpenSection(self, func, button_text=name.upper())
+                    frame = OpenSection(self, func, button_text=name.upper(), imagePath="")
                     frame.grid(row=row, column=col, padx=10, pady=10,  sticky="nsew")
 
                     self.frames.append(frame)
@@ -31,13 +33,11 @@ class hubview(ctk.CTkFrame):
             self.grid_rowconfigure((1), weight=2)
             self.grid_columnconfigure((0,1,2), weight=1)
             for idx, (name, func) in enumerate(menues.items()):
-                    frame = OpenSection(self, func, button_text=name.upper())
+                    imagePath = f"C:/Projects/Fundora/Images/0{idx+1}_Hub.png" 
+                    frame = OpenSection(self, func, button_text=name.upper(), imagePath=imagePath)
                     frame.grid(row=0, column=idx, padx=10, pady=10,  sticky="nsew")
 
                     self.frames.append(frame)
-            print ('Not 4 panels, but  %s ' % idx )
-
-
         # make logout button
         self.lotout_button = ctk.CTkButton(self, text="Log out", hover_color="#EC006E", 
                                  fg_color='transparent', 
@@ -58,7 +58,9 @@ class hubview(ctk.CTkFrame):
                                             border_width=2,
                                             command=eksporter_data_til_db )
                     
-        self.export_data_button.grid(row = 4, column=0, columnspan=1)
+        self.export_data_button.grid(row = 4, column=1, columnspan=1)
+        
+        '''
         # Importer til database 
         self.import_data_button = ctk.CTkButton(self, 
                                             text="Importer til Database MySQL", 
@@ -70,18 +72,20 @@ class hubview(ctk.CTkFrame):
                                             command=importer_data_fra_db )
                     
         self.import_data_button.grid(row = 4, column=1, columnspan=1)
-
-
-
-
+        '''
 
 class OpenSection(ctk.CTkFrame): 
-    def __init__(self, parent, menu_section, button_text = 'Section X'): 
+    def __init__(self, parent, menu_section, button_text = 'Section X', imagePath=""): 
         super().__init__(master = parent)
         #self.grid(column = 0, columnspan = 2, row = 0, sticky = 'nsew')
         self.menu_func = menu_section 
 
-        self.but1 = ctk.CTkButton(self, text = button_text, command = self.menu_func, corner_radius=32, hover_color="#006AC0", font=("Helvetica", 18, "bold"))
+        # print (f"IMAGE PATH {imagePath}")
+        pil_image = Image.open(imagePath)
+        resizedImg = pil_image.resize((800, 1200)) 
+        butImg = CTkImage(light_image=resizedImg, dark_image=resizedImg, size=(800, 1200))
+
+        self.but1 = ctk.CTkButton(self, text = button_text, command = self.menu_func, image=butImg, compound="top", corner_radius=32, fg_color='transparent', font=("Poppins", 20, "bold")) #Helvetica  hover_color="#006AC0", hover_color="#006AC0"
         self.but1.pack(expand=True, fill='both')
 
     def open_dialog(self):

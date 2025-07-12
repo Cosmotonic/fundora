@@ -284,7 +284,7 @@ class Eksport_rennovation_budget_PDF:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile=renovation_vars['BudgetTitel'],
+            initialfile=renovation_vars['budget_titel'],
             initialdir=os.path.expanduser("~/Desktop")
         )
 
@@ -409,7 +409,7 @@ class Eksport_forhandling_PDF:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile=data_vars['Forhandling_Titel'],
+            initialfile=data_vars['forhandling_titel'],
             initialdir=os.path.expanduser("~/Desktop")
         )
 
@@ -422,14 +422,14 @@ class Eksport_forhandling_PDF:
 
         # Titel
         self.pdf.set_font("Helvetica", style='B', size=16)
-        self.pdf.cell(200, 10, data_vars['Forhandling_Titel'].get(), ln=True, align="C")
+        self.pdf.cell(200, 10, data_vars['forhandling_titel'].get(), ln=True, align="C")
         self.pdf.ln(5)
 
         self.pdf.set_font("Helvetica", size=12)
 
         # Strategi
         strategi_tekst = self.lav_forhandlings_strategi_tekst(data_vars)
-        self.tilføj_afsnit("Forhandlingsstrategi", strategi_tekst)
+        self.tilføj_afsnit("forhandlingsstrategi", strategi_tekst)
 
         # Argumenter tabel
         #print (f"Argumenter: {forhandlings_arg_løs["argumenter"]}")
@@ -439,7 +439,7 @@ class Eksport_forhandling_PDF:
         # Løsøre tabel
         #print (f"Løsøre: {forhandlings_arg_løs["argumenter"]}")
         self.pdf.add_page()
-        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["løsøre"])
+        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["losore"])
 
         # Gem PDF
         self.pdf.output(file_path)
@@ -507,49 +507,3 @@ class Eksport_forhandling_PDF:
 
 
 
-
-
-
-
-'''
-
-
-class Eksport_forhandling_PDF:
-    def __init__(self, data_dict, forhandlings_løsøre_data, forhandlings_Argumenter_data): 
-        
-
-        #"Forhandling_Titel" 
-        #"strategi_titel"    
-        #"løsære_titel"      
-        #"argument_titel"    
-
-
-        if not data_dict:
-            return
-
-        print (data_dict)
-
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".pdf",
-            filetypes=[("PDF files", "*.pdf")],
-            initialfile=data_dict['BudgetTitel'],
-            initialdir=os.path.expanduser("~/Desktop")
-        )
-
-        if not file_path:
-            return
-
-        self.pdf = FundoraPDF()
-        # Lav første side
-        self.pdf.set_auto_page_break(auto=True, margin=15)
-        self.pdf.add_page()
-        self.pdf.set_font("Helvetica", style='B', size=16)
-        self.pdf.cell(200, 10, data_dict['Forhandling_Titel'].get(), ln=True, align="C")
-        self.pdf.ln(5)
-
-        # self.tilføj_kontakt_info(renovation_vars)
-
-        self.pdf.set_font("Helvetica", size=12)
-        total_price = 0
-
-'''

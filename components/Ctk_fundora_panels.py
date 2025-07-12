@@ -2,7 +2,8 @@
 
 import customtkinter as ctk
 from Ctk_fundora_loanerValues import * 
-from datetime import date
+from datetime import date, datetime
+import platform
 
 class Panel(ctk.CTkFrame):
     def __init__(self, parent): 
@@ -217,12 +218,13 @@ class RenoveringsOpgavePanel(Panel):
     
 
 class ForhandlingCheckPanel(Panel):
-    def __init__(self, parent, checklist_data, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
+    def __init__(self, parent, ref_dict, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
         super().__init__(parent=parent)
         
+        self.ref_dict = ref_dict
         self.columnLabels = columnLabels
         self.vars = {}
-        self.current_row_index = 1  # Track row numbers
+        # self.current_row_index = 1  # Track row numbers
 
         self.priority_options = priority_options 
 
@@ -231,16 +233,8 @@ class ForhandlingCheckPanel(Panel):
             ctk.CTkLabel(self, text=i).grid(row=0, column=index, sticky='w', padx=5)
 
         # Indsæt alle eksempel linjer. 
-        for label_text, data in checklist_data.items():
-            priority_val = data.get("priority", list(self.priority_options.keys())[0])
-            priority_var = ctk.StringVar(value=priority_val)
-
-            self.add_line(
-                label_text=label_text,
-                checked=data.get("checked", False),
-                priority=priority_var,
-                comment=data.get("comment", "")
-            )
+        self.init_copy_dict = ref_dict
+        self.initial_dict_on_load()
 
         # Indsæt "+" button til at tilføje punkt
         if AddCustomLine: 
@@ -256,7 +250,25 @@ class ForhandlingCheckPanel(Panel):
             
             add_button.grid(row=999, column=1, columnspan=2, pady=(10, 5), padx=10, sticky="ew")
 
-    def add_line(self, label_text="", checked=False, priority=None, comment=""):
+    def initial_dict_on_load(self):
+        
+        # 3 entries: row_0, row_1, row_2 - bliver len(self.init_copy_dict) giver 3
+        self.current_row_index = len(self.init_copy_dict)
+
+        for id, data in self.init_copy_dict.items():
+            priority_val = data.get("priority", list(self.priority_options.keys())[0])
+            priority_var = ctk.StringVar(value=priority_val)
+
+            print (data.get("label", ""))
+            self.add_line(
+                label_text= data.get("label", ""),
+                checked=data.get("checked", False),
+                priority=priority_var,
+                comment=data.get("comment", ""),
+                on_start=True
+            )
+
+    def add_line(self, label_text="", checked=False, priority=None, comment="", on_start=False):
         row = self.current_row_index
         self.rowconfigure(row, weight=0)
 
@@ -270,7 +282,7 @@ class ForhandlingCheckPanel(Panel):
         checkbox = ctk.CTkCheckBox(self, text="", variable=var_chk)
         checkbox.grid(row=row, column=0, padx=(10, 4), pady=2, sticky="w")
 
-        # Navn 
+        # Key Navn på liste
         label_entry = ctk.CTkEntry(self, textvariable=label_var)
         label_entry.grid(row=row, column=1, sticky="ew", padx=(0, 5))
 
@@ -306,12 +318,15 @@ class ForhandlingCheckPanel(Panel):
             "label": label_var,
             "Løsøre_entry" : label_entry, 
             "priority_options": self.priority_options,
-            "Slet_but": self.slet_but
+            "Slet_but": self.slet_but,
+            "ID": "row_{row}"
         }
+
+        if on_start == False: 
+            self.update_ref_dict()
 
         self.update_dropdown_color(var_priority)
         self.current_row_index += 1
-
 
     def update_dropdown_color(self, var):
         for item in self.vars.values():
@@ -321,15 +336,22 @@ class ForhandlingCheckPanel(Panel):
                 color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
                 item["dropdown_widget"].configure(fg_color=color)
 
-    def get_results(self):
+    def get_results(self):        
         return {
-            data["label"].get(): {
+            id: {
                 "checked": data["checked"].get(),
                 "priority": data["priority"].get(),
-                "comment": data["comment"].get()
+                "comment": data["comment"].get(),
+                "label": data["label"].get()
             }
-            for data in self.vars.values()
+            # id referere til dict navnet på hver entry fx. Møbler(løsøre), liggetid(argument)   
+            for id, data in self.vars.items()
         }
+
+    def update_ref_dict(self):
+        # skal senere bruges som "gem" knap ogsaa
+        self.ref_dict.clear()
+        self.ref_dict.update(self.get_results()) 
 
     def slet_opgave(self, row_id):
         if row_id in self.vars:
@@ -645,4 +667,82 @@ class CloseSection(ctk.CTkButton):
         
         self.place(relx = 0.99, rely = 0.01, anchor = 'ne')
 
-# class meterPanel(ctk.)
+# Feedback system
+class Open_Feedback_button(ctk.CTkButton):
+    def __init__(self, parent):
+        super().__init__(
+            master=parent, 
+            text = ' Indsend Feedback ', 
+            command = self.load_feedback_window, 
+            text_color=WHITE, 
+            fg_color='transparent', 
+            width=40, 
+            height=40, 
+            corner_radius=0,
+            hover_color=HIGHLIGHT_COLOR)
+        
+        self.place(relx = 0.94, rely = 0.01, anchor = 'ne')
+
+        self.mainApp = parent
+
+    def load_feedback_window(self): 
+        feedback_window = Feedback_Window(self.mainApp)
+
+
+class Feedback_Window(ctk.CTkToplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Indsend Feedback")
+        self.geometry("400x400")
+        self.resizable(False, False)
+
+        mainApp = parent
+
+        # Optional: set modal behavior
+        self.grab_set()
+
+        # Insert the actual panel
+        self.feedback_panel = FeedbackPanel(self, mainApp)
+        self.feedback_panel.pack(fill="both", expand=True)
+
+class FeedbackPanel(Panel): 
+    def __init__(self, parent, mainApp):
+        super().__init__(parent=parent)
+        # Order panel
+        self.columnconfigure(0, weight=1)  
+        self.rowconfigure(0, weight=1)
+
+        mainApp.appVersion 
+
+        self.pc_data_var = ctk.BooleanVar()
+        self.version_var = ctk.StringVar(value=mainApp.appVersion )
+        self.feedback_text = ctk.CTkTextbox(self, height=120)
+        
+        dato_var = date.today().strftime("%Y-%m-%d")              # "2025-07-12"
+        tidspunkt_var = datetime.now().strftime("%Y-%m-%d %H:%M") # "2025-07-12 11:30"
+
+        # Timestamp label
+        self.timestamp_label = ctk.CTkLabel(self, text=f"Dato: {dato_var} | Tid: {tidspunkt_var}")
+        self.timestamp_label.grid(row=1, column=0, sticky="w", padx=10, pady=2)
+
+        # Versionsfelt
+        self.version_entry = ctk.CTkEntry(self, textvariable=self.version_var, placeholder_text="Programversion")
+        self.version_entry.grid(row=2, column=0, sticky="we", padx=10, pady=2)
+
+        # Feedback tekstboks
+        self.feedback_text.grid(row=3, column=0, sticky="nsew", padx=10, pady=(10, 2))
+
+        # Submit-knap
+        self.submit_button = ctk.CTkButton(self, text="Send feedback", command=mainApp.eksporter_data_til_db) # bør være en input dict fra app / accumalitive
+        self.submit_button.grid(row=4, column=0, sticky="e", padx=10, pady=(10, 10))
+
+        # Inkluder pc-data checkbox
+        self.pc_checkbox = ctk.CTkCheckBox(self, text="Inkluder pc data", variable=self.pc_data_var)
+        self.pc_checkbox.grid(row=4, column=0, sticky="w", padx=10, pady=(10, 10))
+
+
+        # Tillad at tekstboksen vokser med vinduet
+        self.rowconfigure(3, weight=1)
+        self.columnconfigure(0, weight=1)
+
+    

@@ -341,8 +341,6 @@ def Output_financial_Monthly_future(finansiering_vars, udgift_vars, fremtid_vars
 # Udregn Ackerman forhandling 
 class Ackerman_Set_Values():
     def __init__(self, forhandlings_vars):
-        print ('forhandling udregnes.')
-
         # check the int. 
         self.ForventetPris = 0
         try:
