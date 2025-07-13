@@ -220,6 +220,7 @@ class RenoveringsOpgavePanel(Panel):
 class ForhandlingCheckPanel(Panel):
     def __init__(self, parent, ref_dict, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
         super().__init__(parent=parent)
+        self.columnconfigure(0, weight=1)
         
         self.ref_dict = ref_dict
         self.columnLabels = columnLabels
@@ -228,9 +229,18 @@ class ForhandlingCheckPanel(Panel):
 
         self.priority_options = priority_options 
 
+        # Scrollable frame til opgaver
+        self.OpgaveFrame = ctk.CTkScrollableFrame(self) 
+        self.OpgaveFrame.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=5, pady=5)
+        #self.OpgaveFrame.columnconfigure((0), weight=1)
+        self.OpgaveFrame.columnconfigure(3, weight=9)
+        self.OpgaveFrame.columnconfigure((1,2), weight=3)
+        self.OpgaveFrame.columnconfigure(0, weight=1)
+        self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer
+
         # set column labels.
         for index, i in enumerate(self.columnLabels):
-            ctk.CTkLabel(self, text=i).grid(row=0, column=index, sticky='w', padx=5)
+            ctk.CTkLabel(self.OpgaveFrame, text=i).grid(row=0, column=index, sticky='w', padx=5)
 
         # Indsæt alle eksempel linjer. 
         self.init_copy_dict = ref_dict
@@ -248,7 +258,7 @@ class ForhandlingCheckPanel(Panel):
                 border_width=2
                 )
             
-            add_button.grid(row=999, column=1, columnspan=2, pady=(10, 5), padx=10, sticky="ew")
+            add_button.grid(row=1, column=0, columnspan=1, pady=(10, 5), padx=10, sticky="ew")
 
     def initial_dict_on_load(self):
         
@@ -259,7 +269,7 @@ class ForhandlingCheckPanel(Panel):
             priority_val = data.get("priority", list(self.priority_options.keys())[0])
             priority_var = ctk.StringVar(value=priority_val)
 
-            print (data.get("label", ""))
+            # print (data.get("label", ""))
             self.add_line(
                 label_text= data.get("label", ""),
                 checked=data.get("checked", False),
@@ -279,16 +289,16 @@ class ForhandlingCheckPanel(Panel):
         var_priority = priority or ctk.StringVar(value=list(self.priority_options.keys())[0])
 
         # inkluder
-        checkbox = ctk.CTkCheckBox(self, text="", variable=var_chk)
+        checkbox = ctk.CTkCheckBox(self.OpgaveFrame, text="", variable=var_chk)
         checkbox.grid(row=row, column=0, padx=(10, 4), pady=2, sticky="w")
 
         # Key Navn på liste
-        label_entry = ctk.CTkEntry(self, textvariable=label_var)
+        label_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=label_var)
         label_entry.grid(row=row, column=1, sticky="ew", padx=(0, 5))
 
         # prioritering
         dropdown = ctk.CTkOptionMenu(
-            self,
+            self.OpgaveFrame,
             variable=var_priority,
             values=list(self.priority_options.keys()),
             command=lambda val, v=var_priority: self.update_dropdown_color(v)
@@ -296,17 +306,13 @@ class ForhandlingCheckPanel(Panel):
         dropdown.grid(row=row, column=2, padx=(5, 5), sticky="ew")
         
         # kommentar
-        comment_entry = ctk.CTkEntry(self, textvariable=comment_var)
+        comment_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=comment_var)
         comment_entry.grid(row=row, column=3, padx=(5, 10), sticky="ew")
 
         # slet knap
         varBut_str    = ctk.StringVar(value='-')
-        self.slet_but = ctk.CTkButton(self, textvariable=varBut_str, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
+        self.slet_but = ctk.CTkButton(self.OpgaveFrame, textvariable=varBut_str, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
         self.slet_but.grid(row=row, column=4, sticky="ew", padx=5, pady=5)
-
-        self.columnconfigure(3, weight=9)
-        self.columnconfigure((1,2), weight=3)
-        self.columnconfigure(0, weight=1)
 
         self.vars[f"row_{row}"] = {
             "checked": var_chk,
