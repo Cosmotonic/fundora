@@ -1,7 +1,5 @@
 # Fundora – Boligværktøjet til førstegangskøbere 🏠
 
-# Link til build: https://drive.google.com/drive/folders/1Kk6bCB9Y0xjCmECYFvZ8gc98OJtKOcHU?usp=sharing
-
 # Github : https://github.com/Cosmotonic/fundora
 
 # Video Gennemgang (Prototype) af use-case: https://mailchi.mp/7e3556e15fa2/fundora
