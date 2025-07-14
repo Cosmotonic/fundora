@@ -236,7 +236,6 @@ class App(ctk.CTk):
             }
                   
          self.budgetvaerktoej_dict = {
-            "Badeværelse": {"priority": "Skal"},
             }  
 
     def init_feedback_parameters(self):
@@ -294,7 +293,7 @@ class App(ctk.CTk):
         "argumentation": self.forhandlings_argumenter_dict,
         "loesoere": self.forhandlings_løsøre_dict,
         "feedback": self.feedback_dict,
-        #"budgetvaerktoej": self.budgetvaerktoej_dict,
+        "budgetvaerktoej": self.budgetvaerktoej_dict,
         }
 
         #print (f"----------")

@@ -145,7 +145,7 @@ def importer_ugc_fra_db(logged_in_email, target_dicts):
                 json_data = json.loads(data_dict[key])
                 target_dict.clear() # clear local dict. 
                 target_dict.update(json_data) # update local dict with db dict. 
-                print(f"Importerede {key}: {json_data}") # Fx: "feedback": self.feedback_dict,
+                #print(f"Importerede {key}: {json_data}") # Fx: "feedback": self.feedback_dict,
             except Exception as e:
                 print(f"Kunne ikke loade JSON for {key}: {e}")
 

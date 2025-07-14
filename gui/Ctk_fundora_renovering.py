@@ -16,22 +16,22 @@ class Renovering(ctk.CTkTabview):
         #self.add("Huskeliste")
         #self.add("Eksport")
 
-        Renovering_budget_tab(self.tab("Budget"), rennovering_vars)
+        Renovering_budget_tab(self.tab("Budget"), parent, rennovering_vars)
         #Renovering_huskeliste_tab(self.tab("Gantt Plan"), rennovering_vars)
         #Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
         #Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
 
 class Renovering_budget_tab(ctk.CTkFrame): 
-    def __init__(self, parent, rennovering_vars): 
+    def __init__(self, parent, mainApp, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
-        # self.columnconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
+        
+        # reference to maip
+        self.mainApp = mainApp
 
         self.current_row_index = 1  # Track row numbers
-
-        # ← HUSK du får grid/pack conflict hvis du smider button i samme "self" fordi panels er packed inherited fra panel class. 
 
         # budget navn
         self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=rennovering_vars['budget_titel'], font=("Helvetica", 18, "bold"), justify="center")
@@ -76,14 +76,14 @@ class Renovering_budget_tab(ctk.CTkFrame):
         
         # Eksporter         
         self.eksport_budget_button = ctk.CTkButton(self.renovation_bottom_Frame, 
-                                                        text="Eksporter Budget PDF", 
+                                                        text="print / Eksporter Budget PDF", 
                                                         corner_radius=32, 
                                                         hover_color="#00CF79", 
                                                         fg_color='transparent', 
                                                         border_color="#00B871", 
                                                         border_width=2, 
                                                         font=("Helvetica", 18, "bold"),
-                                                        command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
+                                                        command=self.get_all_results) # command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
 
         self.eksport_budget_button.grid(row=0, column=6, columnspan=3,padx=5, pady=5,sticky="ew")
 
@@ -114,15 +114,25 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.opgave_panels.append(new_panel)  # Gem den nye panel        
 
     def get_all_results(self):
-        result = {}
+        self.all_renovation_panels = {}
         for panel in self.opgave_panels:
             panel_results = panel.get_results()
-            result[panel.uid] = {
+            self.all_renovation_panels[panel.uid] = {
                 "inkluder_i_budget": panel.inkluder_budget_var.get(),
                 "hovedoppgave_navn": panel.Hovedoppgave_navn_var.get(), # <-- tilføj navnet
                 "opgaver": panel_results,
             }
-        return result
+        print (f"RESULT: {self.all_renovation_panels}")
+
+        # update dictionnary in app py
+        self.update_ref_dict()
+        return self.all_renovation_panels
+
+    def update_ref_dict(self):
+        # skal senere bruges som "gem" knap ogsaa
+        self.mainApp.budgetvaerktoej_dict.clear()
+        self.mainApp.budgetvaerktoej_dict.update(self.all_renovation_panels) 
+
 
     def Total_pris(self): 
         # make sure you have latest of all results. 

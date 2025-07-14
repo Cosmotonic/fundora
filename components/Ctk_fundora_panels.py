@@ -30,7 +30,7 @@ class SimpleContactLinePanel(Panel):
 
 
 class RenoveringsOpgavePanel(Panel): 
-    def __init__(self, parent, delete_callback, UIDText='RenovationPanel', UID=1, columnLabels=['ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
+    def __init__(self, parent, delete_callback, UIDText='RenovationPanel', UID=1, columnLabels=['Ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
         super().__init__(parent=parent)
         # Order panel
         self.columnconfigure((0,1,2,3), weight=1)  # ← allow frame to expand in its parent
