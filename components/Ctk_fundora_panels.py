@@ -39,12 +39,29 @@ class Bugetvaerktoej_handler():
         self.current_renovation_id = 1
         self.mainApp = mainApp_ref
         self.opgave_frame = opgave_frame
+
+        # initial value to hold panels on looping
+        self.new_panel = None
+
+        tmpDict = {"RenovationPanel_1": {"opgaver": {"Gulvslibning_1": {"Prio": "1", "Pris": "22000", "Opgave": "Gulvslibning", "Ekskludere": 0, "Tidsforbrug": "18", "Kommentar/Blokkere": "skal gøres inden ting flyttes ind"}, "Vinduspudsning_2": {"Prio": "2", "Pris": "1500", "Opgave": "Vinduspudsning", "Ekskludere": 0, "Tidsforbrug": "3", "Kommentar/Blokkere": "skal bare gøres når alt er inde"}}, "hovedoppgave_navn": "Køkken", "inkluder_i_budget": True}, "RenovationPanel_2": {"opgaver": {"Nyt armatur_1": {"Prio": "1", "Pris": "12000", "Opgave": "Nyt armatur", "Ekskludere": 0, "Tidsforbrug": "3", "Kommentar/Blokkere": "husk hunde til at bære på"}}, "hovedoppgave_navn": "Badeværelse", "inkluder_i_budget": True}}
         
-    def tilføj_renovering(self, label_text="", checked=False, priority=None, comment=""):
-        new_panel = RenoveringsOpgavePanel(self.opgave_frame, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
+        for panel_key, panel_data in tmpDict.items():
+            print(f"\n🔷 Panel-key: {panel_key}")  # F.eks. "RenovationPanel_1"
+            panelName = panel_data["hovedoppgave_navn"]
+            self.tilføj_renovering(hovedopgave_navn=panelName)
+
+            opgaver = panel_data.get("opgaver", {})
+            for opgave_key, opg_data in opgaver.items():
+                print(f"  └─ Opgave-key: {opgave_key}")  # F.eks. "Gulvslibning_1"
+                self.new_panel.initial_budget_opgave(opgave_key, opg_data)
+
+
+    def tilføj_renovering(self, hovedopgave_navn="Køkken", checked=False, priority=None, comment=""):
+        self.new_panel = RenoveringsOpgavePanel(self.opgave_frame, hovedopgave_navn=hovedopgave_navn, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
+        
         self.current_renovation_id += 1
 
-        self.opgave_panels.append(new_panel)  # Gem den nye panel        
+        self.opgave_panels.append(self.new_panel)  # Gem den nye panel        
 
     def get_all_results(self):
         self.all_renovation_panels = {}
@@ -75,7 +92,7 @@ class Bugetvaerktoej_handler():
 ######
 
 class RenoveringsOpgavePanel(Panel): 
-    def __init__(self, parent, delete_callback, UIDText='RenovationPanel', UID=1, columnLabels=['Ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
+    def __init__(self, parent,  delete_callback, hovedopgave_navn="Køkken etc.:", UIDText='RenovationPanel', UID=1, columnLabels=['Ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
         super().__init__(parent=parent)
         # Order panel
         self.columnconfigure((0,1,2,3), weight=1)  # ← allow frame to expand in its parent
@@ -100,7 +117,7 @@ class RenoveringsOpgavePanel(Panel):
         self.OpgaveFrame.columnconfigure((0, 1, 2, 3), weight=1)
 
         # Sæt Navn på opgave
-        self.Hovedoppgave_navn_var = ctk.StringVar(value=f"Køkken etc.:") 
+        self.Hovedoppgave_navn_var = ctk.StringVar(value=hovedopgave_navn) 
         self.OpgaveNavn_entry = ctk.CTkEntry(self.OpgaveFrame, textvariable=self.Hovedoppgave_navn_var, font=("Helvetica", 18, "bold"))
         self.OpgaveNavn_entry.grid(row = 0, column=0, sticky = 'ew', padx=5, pady=5)
 
@@ -167,17 +184,30 @@ class RenoveringsOpgavePanel(Panel):
         # self.total_pris = ctk.CTkEntry(self.OpgaveFrame, textvariable=OpgaveTotalPris)
         # self.total_pris.grid(row=99, column=3, sticky="e")
 
-    def add_line(self, label_text="", checked=False, priority=None, comment=""):
+    # should be run on each renovation panel. Opgave dict exists inside all renovation panel dicts. 
+    def initial_budget_opgave(self, task_name, values):
+        self.add_line(
+            opgave      = task_name,
+            prio        = values.get(self.columnLabels[2], ""),
+            kommentar   = values.get(self.columnLabels[3], ""),
+            tid         = values.get(self.columnLabels[4], ""),
+            pris        = values.get(self.columnLabels[5], ""),
+            checked     = values.get(self.columnLabels[0], False),
+        )
+
+
+    def add_line(self, opgave, prio, kommentar, tid, pris, checked=False):
+        
         row = self.current_row_index
         self.rowconfigure(row, weight=0) 
         
         # Opret navne 
-        var_chk     = ctk.BooleanVar(value=checked)
-        var_str1    = ctk.StringVar(value="") #self.columnLabels[1])
-        var_str2    = ctk.StringVar(value="") #self.columnLabels[2])
-        var_str3    = ctk.StringVar(value="") #self.columnLabels[3])
-        var_str4    = ctk.StringVar(value="") #self.columnLabels[4])
-        var_str5    = ctk.StringVar(value="") #self.columnLabels[5])
+        var_chk     = ctk.BooleanVar(value=checked) 
+        var_str1    = ctk.StringVar(value=opgave) 
+        var_str2    = ctk.StringVar(value=prio) 
+        var_str3    = ctk.StringVar(value=kommentar) 
+        var_str4    = ctk.StringVar(value=tid) 
+        var_str5    = ctk.StringVar(value=pris) 
         var_butStr  = ctk.StringVar(value='-')
 
         # Lav elements 
@@ -212,6 +242,8 @@ class RenoveringsOpgavePanel(Panel):
 
         self.current_row_index += 1
 
+
+
     def get_results(self):
         results = {}
         for i, data in enumerate(self.vars.values()): 
@@ -230,17 +262,6 @@ class RenoveringsOpgavePanel(Panel):
                 self.columnLabels[5]: data[self.columnLabels[5]].get(),  # 'Pris'
             }
         return results
-
-    def load_data(self, data_dict):
-        for task_name, values in data_dict.items():
-            self.add_line(
-                include=values.get(self.columnLabels[0], False),   # 'Ekskludere'
-                opgave=task_name,                                  # 'Opgave'
-                prio=values.get(self.columnLabels[2], ""),         # 'Prio'
-                kommentar=values.get(self.columnLabels[3], ""),    # 'Kommentar/Blokkere'
-                tid=values.get(self.columnLabels[4], ""),          # 'Tidsforbrug'
-                pris=values.get(self.columnLabels[5], "")          # 'Pris'
-            )
 
     def slet_opgave(self, row_id):
         if row_id in self.vars:
