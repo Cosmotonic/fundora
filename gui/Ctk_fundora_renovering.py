@@ -1,7 +1,7 @@
 
 import customtkinter as ctk
 
-from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, RenoveringsOpgavePanel, SimpleContactLinePanel
+from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, RenoveringsOpgavePanel, SimpleContactLinePanel, Bugetvaerktoej_handler
 import backend.Ctk_fundora_math_lib as fuMath
 import backend.Ctk_fundora_exportPDF as export 
 
@@ -28,6 +28,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.pack(expand=True, fill='both')
         self.columnconfigure(0, weight=1)
         
+
         # reference to maip
         self.mainApp = mainApp
 
@@ -57,6 +58,9 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.OpgaveFrame.columnconfigure((0,1,2,3), weight=1)
         self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer
 
+        # initier og tilføj budgetvaerktøj
+        self.bugetvaerktoej_handler = Bugetvaerktoej_handler(self.mainApp, self.OpgaveFrame) 
+
         # Frame for total result 
         # Udenfor opgave frame
         self.renovation_bottom_Frame = ctk.CTkFrame(self)
@@ -65,7 +69,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
         self.tilføj_renovation_button = ctk.CTkButton(self.renovation_bottom_Frame, 
                                                         text="+ tilføj Hovedoppgave", 
-                                                        command=self.tilføj_renovering,
+                                                        command=self.bugetvaerktoej_handler.tilføj_renovering,
                                                         corner_radius=32, 
                                                         hover_color="#0798EC", 
                                                         fg_color='transparent', 
@@ -83,78 +87,36 @@ class Renovering_budget_tab(ctk.CTkFrame):
                                                         border_color="#00B871", 
                                                         border_width=2, 
                                                         font=("Helvetica", 18, "bold"),
-                                                        command=self.get_all_results) # command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
+                                                        command=self.bugetvaerktoej_handler.get_all_results) # command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
 
         self.eksport_budget_button.grid(row=0, column=6, columnspan=3,padx=5, pady=5,sticky="ew")
 
         # total pris knap         
         self.Udregn_total_pris = ctk.CTkButton(self.renovation_bottom_Frame, 
                                                         text="Udregn Total pris", 
-                                                        command=self.Total_pris, 
                                                         corner_radius=32,
                                                         hover_color="#EC6E07", 
                                                         fg_color='transparent',  
                                                         border_color="#FF9100", 
                                                         border_width=2, 
-                                                         font=("Helvetica", 18, "bold"))
+                                                         font=("Helvetica", 18, "bold"),
+                                                        command=self.Total_pris)
+        
         self.Udregn_total_pris.grid(row=0, column=9, sticky="ew", padx=5, pady=5)
 
         self.total_pris_var = ctk.StringVar(value=" ") 
         self.total_pris = ctk.CTkEntry(self.renovation_bottom_Frame, textvariable=self.total_pris_var, font=("Helvetica", 18, "bold"))
         self.total_pris.grid(row=0, column=10, sticky="sew", padx=5, pady=5)
             
-        # Alle opgave paneler gemt. 
-        self.opgave_panels = []  # Liste til alle opgave-paneler
-        self.current_renovation_id = 1
-
-    def tilføj_renovering(self, label_text="", checked=False, priority=None, comment=""):
-        new_panel = RenoveringsOpgavePanel(self.OpgaveFrame, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
-        self.current_renovation_id += 1
-
-        self.opgave_panels.append(new_panel)  # Gem den nye panel        
-
-    def get_all_results(self):
-        self.all_renovation_panels = {}
-        for panel in self.opgave_panels:
-            panel_results = panel.get_results()
-            self.all_renovation_panels[panel.uid] = {
-                "inkluder_i_budget": panel.inkluder_budget_var.get(),
-                "hovedoppgave_navn": panel.Hovedoppgave_navn_var.get(), # <-- tilføj navnet
-                "opgaver": panel_results,
-            }
-        print (f"RESULT: {self.all_renovation_panels}")
-
-        # update dictionnary in app py
-        self.update_ref_dict()
-        return self.all_renovation_panels
-
-    def update_ref_dict(self):
-        # skal senere bruges som "gem" knap ogsaa
-        self.mainApp.budgetvaerktoej_dict.clear()
-        self.mainApp.budgetvaerktoej_dict.update(self.all_renovation_panels) 
-
-
     def Total_pris(self): 
         # make sure you have latest of all results. 
-
-        alle_panel_data = self.get_all_results()
+        alle_panel_data = self.bugetvaerktoej_handler.get_all_results()
 
         # Udregn min total pris
-        total_pris = fuMath.beregn_total_pris(alle_panel_data)
+        total_pris = fuMath.beregn_total_budget_pris(alle_panel_data)
         print (total_pris)
         self.total_pris_var.set(total_pris)
 
-    # Ikke i brug længere
-    def print_all_results(self):
-        for idx, panel in enumerate(self.opgave_panels):
-            print(f"Panel {idx + 1}:")
-            resultater = panel.get_results()
-            for opgave, info in resultater.items():
-                print(f"  {opgave}: {info}")
-
-    def delete_renovation(self, panel):
-        panel.destroy()  # Fjern fra UI
-        self.opgave_panels.remove(panel)  # fjern fra min liste
 
 
 class Renovering_plan_tab(ctk.CTkFrame): 

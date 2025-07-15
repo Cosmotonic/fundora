@@ -375,7 +375,7 @@ class Ackerman_Set_Values():
             self.forhandlings_vars[key_pris].set(pris_value)
 
 
-def beregn_total_pris(data_dict):
+def beregn_total_budget_pris(data_dict):
     total = 0
 
     for renovation in data_dict.values():

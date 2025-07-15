@@ -29,6 +29,51 @@ class SimpleContactLinePanel(Panel):
         self.kontakt_mail_entry.grid(row=0, column=2, sticky="new", padx=5, pady=5)
 
 
+
+######
+######
+class Bugetvaerktoej_handler():
+    def __init__(self, mainApp_ref, opgave_frame):
+        # Alle opgave paneler gemt. 
+        self.opgave_panels = []  # Liste til alle opgave-paneler
+        self.current_renovation_id = 1
+        self.mainApp = mainApp_ref
+        self.opgave_frame = opgave_frame
+        
+    def tilføj_renovering(self, label_text="", checked=False, priority=None, comment=""):
+        new_panel = RenoveringsOpgavePanel(self.opgave_frame, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
+        self.current_renovation_id += 1
+
+        self.opgave_panels.append(new_panel)  # Gem den nye panel        
+
+    def get_all_results(self):
+        self.all_renovation_panels = {}
+        for panel in self.opgave_panels:
+            panel_results = panel.get_results()
+            self.all_renovation_panels[panel.uid] = {
+                "inkluder_i_budget": panel.inkluder_budget_var.get(),
+                "hovedoppgave_navn": panel.Hovedoppgave_navn_var.get(), # <-- tilføj navnet
+                "opgaver": panel_results,
+            }
+        print (f"RESULT: {self.all_renovation_panels}")
+
+        # update dictionnary in app py
+        self.update_ref_dict()
+        return self.all_renovation_panels
+
+    def update_ref_dict(self):
+        # skal senere bruges som "gem" knap ogsaa
+        self.mainApp.budgetvaerktoej_dict.clear()
+        self.mainApp.budgetvaerktoej_dict.update(self.all_renovation_panels) 
+
+    def delete_renovation(self, panel):
+        panel.destroy()  # Fjern fra UI
+        self.opgave_panels.remove(panel)  # fjern fra min liste
+
+
+######
+######
+
 class RenoveringsOpgavePanel(Panel): 
     def __init__(self, parent, delete_callback, UIDText='RenovationPanel', UID=1, columnLabels=['Ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
         super().__init__(parent=parent)
@@ -101,7 +146,6 @@ class RenoveringsOpgavePanel(Panel):
                                             border_width=2 )  
                
         self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'w')
-
 
         # Tilføj underopgaver
         # Tilføj ny frame til underopgaver
