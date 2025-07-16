@@ -29,9 +29,6 @@ class SimpleContactLinePanel(Panel):
         self.kontakt_mail_entry.grid(row=0, column=2, sticky="new", padx=5, pady=5)
 
 
-
-######
-######
 class Bugetvaerktoej_handler():
     def __init__(self, mainApp_ref, opgave_frame):
         # Alle opgave paneler gemt. 
@@ -43,25 +40,35 @@ class Bugetvaerktoej_handler():
         # initial value to hold panels on looping
         self.new_panel = None
 
-        tmpDict = {"RenovationPanel_1": {"opgaver": {"Gulvslibning_1": {"Prio": "1", "Pris": "22000", "Opgave": "Gulvslibning", "Ekskludere": 0, "Tidsforbrug": "18", "Kommentar/Blokkere": "skal gøres inden ting flyttes ind"}, "Vinduspudsning_2": {"Prio": "2", "Pris": "1500", "Opgave": "Vinduspudsning", "Ekskludere": 0, "Tidsforbrug": "3", "Kommentar/Blokkere": "skal bare gøres når alt er inde"}}, "hovedoppgave_navn": "Køkken", "inkluder_i_budget": True}, "RenovationPanel_2": {"opgaver": {"Nyt armatur_1": {"Prio": "1", "Pris": "12000", "Opgave": "Nyt armatur", "Ekskludere": 0, "Tidsforbrug": "3", "Kommentar/Blokkere": "husk hunde til at bære på"}}, "hovedoppgave_navn": "Badeværelse", "inkluder_i_budget": True}}
+        # Hent dict fra main, som loader fra db ved start-up
+        budget_dict = mainApp_ref.budgetvaerktoej_dict 
         
-        for panel_key, panel_data in tmpDict.items():
-            print(f"\n🔷 Panel-key: {panel_key}")  # F.eks. "RenovationPanel_1"
+        # Opbygger budget fra Database 
+        for panel_key, panel_data in budget_dict.items():
+            print(f"\n🔷 Panel-key: {panel_key}")  # Hoved budget panel
             panelName = panel_data["hovedoppgave_navn"]
-            self.tilføj_renovering(hovedopgave_navn=panelName)
+            self.tilføj_renovering(hovedopgave_navn=panelName, on_start_build=True)
 
             opgaver = panel_data.get("opgaver", {})
             for opgave_key, opg_data in opgaver.items():
-                print(f"  └─ Opgave-key: {opgave_key}")  # F.eks. "Gulvslibning_1"
-                self.new_panel.initial_budget_opgave(opgave_key, opg_data)
+                print(f"  └─ Opgave-key: {opgave_key}")  # opgave paneler
+                task_name = self.clean_task_name( opgave_key )
+                self.new_panel.initial_budget_opgave(task_name, opg_data)
 
 
-    def tilføj_renovering(self, hovedopgave_navn="Køkken", checked=False, priority=None, comment=""):
+    def tilføj_renovering(self, hovedopgave_navn="Køkken", checked=False, priority=None, comment="", on_start_build=False):
         self.new_panel = RenoveringsOpgavePanel(self.opgave_frame, hovedopgave_navn=hovedopgave_navn, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
         
+        # Increment til uniq ID
         self.current_renovation_id += 1
 
-        self.opgave_panels.append(self.new_panel)  # Gem den nye panel        
+        # Samel alle værdier et sted.
+        self.opgave_panels.append(self.new_panel)  
+
+        if on_start_build == False: 
+            # Gemmer på db og henter igen, så vi syncer så ofte som muligt.     
+            self.get_all_results()
+
 
     def get_all_results(self):
         self.all_renovation_panels = {}
@@ -88,6 +95,12 @@ class Bugetvaerktoej_handler():
         self.opgave_panels.remove(panel)  # fjern fra min liste
 
 
+    def clean_task_name(self, name):
+        parts = name.split("_")
+        # Work backwards and remove numeric parts from the end
+        while parts and parts[-1].isdigit():
+            parts.pop()
+        return "_".join(parts)
 ######
 ######
 
@@ -196,7 +209,7 @@ class RenoveringsOpgavePanel(Panel):
         )
 
 
-    def add_line(self, opgave, prio, kommentar, tid, pris, checked=False):
+    def add_line(self, opgave="", prio="", kommentar="", tid="", pris="", checked=False):
         
         row = self.current_row_index
         self.rowconfigure(row, weight=0) 
@@ -242,8 +255,6 @@ class RenoveringsOpgavePanel(Panel):
 
         self.current_row_index += 1
 
-
-
     def get_results(self):
         results = {}
         for i, data in enumerate(self.vars.values()): 
@@ -261,11 +272,13 @@ class RenoveringsOpgavePanel(Panel):
                 self.columnLabels[4]: data[self.columnLabels[4]].get(),  # 'Tidsforbrug'
                 self.columnLabels[5]: data[self.columnLabels[5]].get(),  # 'Pris'
             }
+            #print ("CHECK BOOL PRINT")
+            #print (data[self.columnLabels[0]].get())
         return results
 
     def slet_opgave(self, row_id):
         if row_id in self.vars:
-            print ("Fjern widgets fra UI")
+            # print ("Fjern widgets fra UI")
             for widget in self.vars[row_id].values():
                 if hasattr(widget, "grid_forget"):
                     widget.grid_forget()
@@ -280,14 +293,16 @@ class RenoveringsOpgavePanel(Panel):
     def delete_self(self):
         if self.delete_callback:
             self.delete_callback(self)
-    
+
 
 class ForhandlingCheckPanel(Panel):
-    def __init__(self, parent, ref_dict, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4']):
+    def __init__(self, mainApp, parent, ref_dict, priority_options, AddCustomLine=True, columnLabels=['1','2','3','4'], inspiration_ref_dict={}):
         super().__init__(parent=parent)
         self.columnconfigure(0, weight=1)
-        
+
+        self.mainApp = mainApp
         self.ref_dict = ref_dict
+        self.inspiration_dict = inspiration_ref_dict
         self.columnLabels = columnLabels
         self.vars = {}
         # self.current_row_index = 1  # Track row numbers
@@ -297,7 +312,6 @@ class ForhandlingCheckPanel(Panel):
         # Scrollable frame til opgaver
         self.OpgaveFrame = ctk.CTkScrollableFrame(self) 
         self.OpgaveFrame.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=5, pady=5)
-        #self.OpgaveFrame.columnconfigure((0), weight=1)
         self.OpgaveFrame.columnconfigure(3, weight=9)
         self.OpgaveFrame.columnconfigure((1,2), weight=3)
         self.OpgaveFrame.columnconfigure(0, weight=1)
@@ -324,11 +338,43 @@ class ForhandlingCheckPanel(Panel):
                 )
             
             add_button.grid(row=1, column=0, columnspan=1, pady=(10, 5), padx=10, sticky="ew")
+        
+        # Indsæt "inspiration" button til at tilføje punkt
+            inspiration_button = ctk.CTkButton(
+                self,
+                text="+ indsæt inspiration",
+                command=self.add_inspiration,
+                hover_color="#EC6E07", 
+                fg_color='transparent', 
+                border_color="#FF9100", 
+                border_width=2
+                )
+            
+            inspiration_button.grid(row=1, column=1, columnspan=1, pady=(10, 5), padx=10, sticky="ew")
+
+    def add_inspiration(self):
+        inspiration_dict_copy = self.inspiration_dict
+        current_row_index = len(inspiration_dict_copy)
+
+        for id, data in inspiration_dict_copy.items(): 
+            self.loop_inspiration(id, data)
+
+    def loop_inspiration(self, id, data ): 
+
+        priority_val = data.get("priority", list(self.priority_options.keys())[0])
+        priority_var = ctk.StringVar(value=priority_val)
+
+        # print (data.get("label", ""))
+        self.add_line(
+            label_text= data.get("label", ""),
+            checked=data.get("checked", False),
+            priority=priority_var,
+            comment=data.get("comment", ""),
+            on_start=False)
 
     def initial_dict_on_load(self):
-        
         # 3 entries: row_0, row_1, row_2 - bliver len(self.init_copy_dict) giver 3
-        self.current_row_index = len(self.init_copy_dict)
+        self.current_row_index = len(self.ref_dict)
 
         for id, data in self.init_copy_dict.items():
             priority_val = data.get("priority", list(self.priority_options.keys())[0])
@@ -413,9 +459,11 @@ class ForhandlingCheckPanel(Panel):
         }
 
     def update_ref_dict(self):
-        # skal senere bruges som "gem" knap ogsaa
         self.ref_dict.clear()
         self.ref_dict.update(self.get_results()) 
+
+        # Gem til db. Måske lidt overkill?
+        self.mainApp.eksporter_data_til_db()
 
     def slet_opgave(self, row_id):
         if row_id in self.vars:
@@ -425,6 +473,9 @@ class ForhandlingCheckPanel(Panel):
                     widget.grid_forget()
                     widget.destroy()
             del self.vars[row_id]
+        
+        # update dictionary
+        self.update_ref_dict()
 
     def update_dropdown_color(self, var):
         for item in self.vars.values():

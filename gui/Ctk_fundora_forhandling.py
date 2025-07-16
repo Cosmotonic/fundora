@@ -17,8 +17,8 @@ class Forhandling(ctk.CTkTabview):
 
         Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
         
-        self.argument_tab = Argument_tab(self.tab("Argumentation"), mainApp.forhandlings_argumenter_dict) 
-        self.løsøre_tab   = Løsøre_tab(self.tab("Løsøre"), mainApp.forhandlings_løsøre_dict)
+        self.argument_tab = Argument_tab(self.tab("Argumentation"), mainApp, mainApp.forhandlings_argumenter_dict) 
+        self.løsøre_tab   = Løsøre_tab(self.tab("Løsøre"), mainApp, mainApp.forhandlings_løsøre_dict)
         self.eksport_tab = Eksport_tab(self.tab("Eksport"), forhandlings_vars, argumenter_getter_func=self.argument_tab.get_results, løsøre_getter_func=self.løsøre_tab.get_results)
 
 class Ackerman_tab(ctk.CTkFrame): 
@@ -44,7 +44,7 @@ class Ackerman_tab(ctk.CTkFrame):
         DoubleInputPanel(outputFrame, "4. Forhandlingsbud: ", forhandlings_vars['runde4_procent'], forhandlings_vars['runde4_pris'], readOption_A='disabled',  readOption_B='disabled') 
    
 class Argument_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_Argumenter_dict): 
+    def __init__(self, parent, mainApp, forhandlings_Argumenter_dict): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
 
@@ -61,8 +61,9 @@ class Argument_tab(ctk.CTkFrame):
         # Refactor til var for bedre PDF eksport. example: forhandlings_var['Arg_label_Column0'] 
         self.columnLabels=['Til PDF', 'Argument', 'Fra købers perspektiv', 'Købers argumentation'] 
 
-        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, ref_dict=forhandlings_Argumenter_dict, 
-                                           priority_options=self.priority_options, AddCustomLine=True, columnLabels=self.columnLabels) # Get_results
+        self.panel = ForhandlingCheckPanel(mainApp, parent=FrameColoum1,ref_dict=forhandlings_Argumenter_dict, 
+                                           priority_options=self.priority_options, AddCustomLine=True, columnLabels=self.columnLabels, 
+                                           inspiration_ref_dict=mainApp.forhandlings_argumenter_inspiration_dict) 
         self.panel.pack(fill="both", expand=True)
 
     def get_results(self):
@@ -71,7 +72,7 @@ class Argument_tab(ctk.CTkFrame):
 
 
 class Løsøre_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_løsøre_dict): 
+    def __init__(self, parent, mainApp, forhandlings_løsøre_dict): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
 
@@ -88,8 +89,9 @@ class Løsøre_tab(ctk.CTkFrame):
         
         self.columnLabels=['TIL PDF', 'Løsøre', 'Vigtighed', 'Egne noter'] 
 
-        self.panel = ForhandlingCheckPanel(parent=FrameColoum1, ref_dict=forhandlings_løsøre_dict, 
-                                           priority_options=self.priority_options1, columnLabels=self.columnLabels) 
+        self.panel = ForhandlingCheckPanel(mainApp, parent=FrameColoum1, ref_dict=forhandlings_løsøre_dict, 
+                                           priority_options=self.priority_options1, columnLabels=self.columnLabels, 
+                                           inspiration_ref_dict=mainApp.forhandlings_løsøre_inspiration_dict) 
         self.panel.pack(fill="both", expand=True)
 
         #print_button = ctk.CTkButton(self, text="Print resultater", command=self.get_results)

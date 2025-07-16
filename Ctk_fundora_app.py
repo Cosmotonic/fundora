@@ -4,6 +4,8 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
 
+import atexit
+
 import customtkinter as ctk
 import backend.Ctk_fundora_exportPDF as export 
 import backend.Ctk_fundora_math_lib as fuMath 
@@ -31,14 +33,20 @@ class App(ctk.CTk):
 
         self.minsize(800,500)
 
-        # set all parameters. Needs def so it can be called after logout and login. 
-        self.reset_all_parameters()
+        # set all parameters. 
+        self.factory_parameter_settings()
 
         # Start med login view
+        self.logged_in = False
         self.show_login_view()
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
+        # Gem i tilfælde af lukning
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        # start program
         self.mainloop()
 
     def show_login_view(self):
@@ -50,18 +58,19 @@ class App(ctk.CTk):
     def on_login_success(self, email):
         self.logged_in_email = email
         self.to_hubview()  # Når login er korrekt
-        self.reset_all_parameters() # Reset to default config params. 
+        self.factory_parameter_settings() # Reset to default config params, before pulling db info
         self.importer_data_fra_db() # automatically load data from cb based on logged in email
+        self.logged_in = False
 
     def to_hubview(self):
-        self.hubview = hubview(self, self.importer_data_fra_db, self.eksporter_data_til_db, logout_callback=self.back_to_login, finansiering = self.menu_finansierng, forhandling = self.menu_forhandling, budgetværktøj = self.menu_budgetvaerktoej)  # 
+        self.hubview = hubview(self, self.importer_data_fra_db, self.eksporter_data_til_db, logout_callback=self.back_to_login_screen, finansiering = self.menu_finansierng, forhandling = self.menu_forhandling, budgetværktøj = self.menu_budgetvaerktoej)  # 
 
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
         for var in self.combined:
             var.trace('w', self.manipulate_forhandling)
 
-    def reset_all_parameters(self):
+    def factory_parameter_settings(self):
         self.init_Finansiering_parameters()
         self.init_Forhandling_parameters()
         self.init_udgift_parameters()
@@ -200,32 +209,12 @@ class App(ctk.CTk):
             } 
 
                 
-        self.forhandlings_løsøre_dict = {
-            "row_0":    {"label": "Pris","checked": True, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
-            "row_1":    {"label": "Overtagelsesdato","checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
-            "row_2":    {"label": "Gardiner","checked": True, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
-            "row_3":    {"label": "Skabe og opbevaring","checked": True, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
-            "row_4":    {"label": "Forbedringer","checked": True, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
-            "row_5":    {"label": "Hvidevarer","checked": True, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
-            "row_6":    {"label": "Aconto og restancer","checked": True, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
-            "row_7":    {"label": "Vedligeholdelsesplan","checked": True, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
-            "row_8":    {"label": "Møbler","checked": True, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
-            "row_9 ":   {"label": "Havemøbler","checked": True, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
-            "row_10":   {"label": "Haveredskaber","checked": True, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
-            }
+        self.forhandlings_løsøre_dict = {}
+        self.forhandlings_løsøre_inspiration_dict = LØSØRE_INSPIRATION
 
-        self.forhandlings_argumenter_dict = {
-            "row_0":    {"label": "Liggetid", "checked": True, "priority": "Fordel", "comment": ""},
-            "row_1":    {"label": "Boligmarkedet", "checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
-            "row_2":    {"label": "Prisniveau i området", "checked": True, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
-            "row_3":    {"label": "Stand og vedligeholdelse", "checked": True, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
-            "row_4":    {"label": "Boligens størrelse og planløsning", "checked": True, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
-            "row_5":    {"label": "Tidspres for sælger", "checked": True, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
-            "row_6":    {"label": "Ejendomsskat og fællesudgifter", "checked": True, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
-            "row_7":    {"label": "Udbud og efterspørgsel", "checked": True, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
-            "row_8":    {"label": "Naboer eller støjforhold", "checked": True, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
-            "row_9":    {"label": "Tilstandsrapport eller energimærke", "checked": True, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
-            }
+        self.forhandlings_argumenter_dict = {}
+        self.forhandlings_argumenter_inspiration_dict = ARGUMENTER_INSPIRATION
+        
 
     def init_budgetvaerktoej_parameters(self):
          self.budgetvaerktoej_vars = { 
@@ -269,12 +258,31 @@ class App(ctk.CTk):
     def back_to_hub(self):
         self.current_view.grid_forget()
         self.to_hubview()
+        self.eksporter_data_til_db()
 
-    def back_to_login(self):
+    def back_to_login_screen(self):
+        # 1. Luk aktiv databaseforbindelse, hvis der er en
+        # de bliver lukket hvergang jeg gemmer og henter nu 
+
+        # 2. Nulstil brugerrelaterede data
+        self.logged_in_email = None
+        self.factory_parameter_settings() 
+        self.logged_in = False
+
+        # 3. Fjern nuværende visning og vis login
         self.current_view.grid_forget()
-        self.show_login_view()        
+        self.show_login_view()
 
-      
+    def on_close(self):
+        try:
+            if self.logged_in: 
+                self.eksporter_data_til_db()
+
+        except Exception as e:
+            print("Fejl ved luk:", e)
+
+        self.destroy()
+
     def eksporter_data_til_db(self):
         # Export Vars
         vars_dicts = {
@@ -296,13 +304,6 @@ class App(ctk.CTk):
         "budgetvaerktoej": self.budgetvaerktoej_dict,
         }
 
-        #print (f"----------")
-        #print (f"FORHANDLINGS DICT:{self.forhandlings_argumenter_dict}")
-        #print (f"----------")
-        #print (f"LØSØRE DICT:{self.forhandlings_løsøre_dict}")
-        print (f"----------")
-        print (f"Feedback Dict: {self.feedback_dict}")
-
         dbhandler.eksporter_ugc_til_db(self.logged_in_email, ugc_dict)
 
 
@@ -322,11 +323,13 @@ class App(ctk.CTk):
         # hent User generaated dictionaries
         ugc_dict = { 
         "feedback": self.feedback_dict,
-        #"argumentation": self.forhandlings_argumenter_dict,
-        #"loesoere": self.forhandlings_løsøre_dict,
-        #"budgetvaerktoej": self.budgetvaerktoej_dict,
+        "argumentation": self.forhandlings_argumenter_dict,
+        "loesoere": self.forhandlings_løsøre_dict,
+        "budgetvaerktoej": self.budgetvaerktoej_dict,
         }
         dbhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
+        print ("UGC picked from DB")
+        print ("self.budgetvaerktoej_dict")
 
     # count down 
     def countdown(self):

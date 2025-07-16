@@ -109,14 +109,13 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.total_pris.grid(row=0, column=10, sticky="sew", padx=5, pady=5)
             
     def Total_pris(self): 
-        # make sure you have latest of all results. 
+        # Gemmer alle resultater på db og henter dem igen, så de matcher.     
         alle_panel_data = self.bugetvaerktoej_handler.get_all_results()
 
         # Udregn min total pris
         total_pris = fuMath.beregn_total_budget_pris(alle_panel_data)
         print (total_pris)
         self.total_pris_var.set(total_pris)
-
 
 
 class Renovering_plan_tab(ctk.CTkFrame): 

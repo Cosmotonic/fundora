@@ -160,3 +160,33 @@ BUDGETNAVN      = "BUDGET NAVN"
 KONTAKT_NAVN    = 'Kontaktperson'
 KONTAKT_TELEFON = 'Telefon'
 KONTAKT_MAIL    = 'E-mail'
+
+
+
+# FORHANDLING
+ARGUMENTER_INSPIRATION = {
+            "row_0":    {"label": "Liggetid", "checked": True, "priority": "Fordel", "comment": ""},
+            "row_1":    {"label": "Boligmarkedet", "checked": True, "priority": "Ulempe", "comment": "Det er sælgers markede"},
+            "row_2":    {"label": "Prisniveau i området", "checked": True, "priority": "Fordel", "comment": "Sammenlignelige boliger sælges billigere"},
+            "row_3":    {"label": "Stand og vedligeholdelse", "checked": True, "priority": "Ulempe", "comment": "Boligen kræver istandsættelse"},
+            "row_4":    {"label": "Boligens størrelse og planløsning", "checked": True, "priority": "Fordel", "comment": "Planløsningen er ikke optimal"},
+            "row_5":    {"label": "Tidspres for sælger", "checked": True, "priority": "Fordel", "comment": "Sælger virker ivrig for hurtig overtagelse"},
+            "row_6":    {"label": "Ejendomsskat og fællesudgifter", "checked": True, "priority": "Ulempe", "comment": "Høje faste udgifter påvirker købers økonomi"},
+            "row_7":    {"label": "Udbud og efterspørgsel", "checked": True, "priority": "Fordel", "comment": "Få interesserede og mange boliger i området"},
+            "row_8":    {"label": "Naboer eller støjforhold", "checked": True, "priority": "Ulempe", "comment": "Støj fra vej eller naboejendom"},
+            "row_9":    {"label": "Tilstandsrapport eller energimærke", "checked": True, "priority": "Fordel", "comment": "Dårlig energimærkning åbner for rabat"}
+            }
+
+LØSØRE_INSPIRATION = {
+            "row_0":    {"label": "Pris","checked": True, "priority": "Vigtigt", "comment": "Ønske om reduktion på 100.000 kr"},
+            "row_1":    {"label": "Overtagelsesdato","checked": True, "priority": "Bonus", "comment": "Senest 1. august"},
+            "row_2":    {"label": "Gardiner","checked": True, "priority": "Ikke relevant", "comment": "Medbringes selv ved indflytning"},
+            "row_3":    {"label": "Skabe og opbevaring","checked": True, "priority": "Bonus", "comment": "Indbyggede skabe ønskes inkluderet"},
+            "row_4":    {"label": "Forbedringer","checked": True, "priority": "Vigtigt", "comment": "Ønsker kompensation for manglende vedligehold"},
+            "row_5":    {"label": "Hvidevarer","checked": True, "priority": "Bonus", "comment": "Alle hvidevarer ønskes inkluderet i handlen"},
+            "row_6":    {"label": "Aconto og restancer","checked": True, "priority": "Vigtigt", "comment": "Ingen gamle regninger må overdrages"},
+            "row_7":    {"label": "Vedligeholdelsesplan","checked": True, "priority": "Bonus", "comment": "Ønske om indsigt i kommende udgifter"},
+            "row_8":    {"label": "Møbler","checked": True, "priority": "Bonus", "comment": "Spisebord og sofa må gerne blive"},
+            "row_9 ":   {"label": "Havemøbler","checked": True, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
+            "row_10":   {"label": "Haveredskaber","checked": True, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
+            }
