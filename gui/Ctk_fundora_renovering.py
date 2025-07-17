@@ -21,14 +21,12 @@ class Renovering(ctk.CTkTabview):
         #Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
         #Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
-
 class Renovering_budget_tab(ctk.CTkFrame): 
     def __init__(self, parent, mainApp, rennovering_vars): 
         super().__init__(master=parent, fg_color="transparent")
         self.pack(expand=True, fill='both')
         self.columnconfigure(0, weight=1)
         
-
         # reference to maip
         self.mainApp = mainApp
 
@@ -60,6 +58,9 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
         # initier og tilføj budgetvaerktøj
         self.bugetvaerktoej_handler = Bugetvaerktoej_handler(self.mainApp, self.OpgaveFrame) 
+        mainApp.all_UGC_update_functions["budgetvaerktoej_update_dict"] = self.bugetvaerktoej_handler.update_ref_dict
+
+
 
         # Frame for total result 
         # Udenfor opgave frame

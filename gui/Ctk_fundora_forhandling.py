@@ -66,6 +66,8 @@ class Argument_tab(ctk.CTkFrame):
                                            inspiration_ref_dict=mainApp.forhandlings_argumenter_inspiration_dict) 
         self.panel.pack(fill="both", expand=True)
 
+        mainApp.all_UGC_update_functions["argument_update_dict"] = self.panel.update_ref_dict
+
     def get_results(self):
         resultater = self.panel.get_results()
         return resultater
@@ -93,6 +95,8 @@ class Løsøre_tab(ctk.CTkFrame):
                                            priority_options=self.priority_options1, columnLabels=self.columnLabels, 
                                            inspiration_ref_dict=mainApp.forhandlings_løsøre_inspiration_dict) 
         self.panel.pack(fill="both", expand=True)
+
+        mainApp.all_UGC_update_functions["losore_update_dict"] = self.panel.update_ref_dict
 
         #print_button = ctk.CTkButton(self, text="Print resultater", command=self.get_results)
         #print_button.grid(row=1, column=0, pady=10, padx=10, sticky="new")

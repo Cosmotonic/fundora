@@ -190,3 +190,8 @@ LØSØRE_INSPIRATION = {
             "row_9 ":   {"label": "Havemøbler","checked": True, "priority": "Bonus", "comment": "Terrassemøbler kan indgå i prisen"},
             "row_10":   {"label": "Haveredskaber","checked": True, "priority": "Bonus", "comment": "Redskaber ønskes efterladt i skuret"}
             }
+
+
+FEEDBACK_INSPIRATION = { 
+            "row_0":    {"feedback": "This works well, this doesnt", "pc_data": True, "date": "dd/mm/yyyy", "time": "16:28", "version": "0.1"},
+            }    

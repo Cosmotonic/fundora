@@ -77,7 +77,7 @@ class App(ctk.CTk):
         self.init_fremtid_parameters()
         self.init_person_info_parameters()
         self.init_budgetvaerktoej_parameters()
-        self.init_feedback_parameters()
+        self.init_UGC_parameters()
 
     def init_Finansiering_parameters(self): 
         self.finansiering_vars = {
@@ -208,13 +208,6 @@ class App(ctk.CTk):
             "argument_titel"    : ctk.StringVar(value=FORHANDLING_ARGUMENT),
             } 
 
-                
-        self.forhandlings_løsøre_dict = {}
-        self.forhandlings_løsøre_inspiration_dict = LØSØRE_INSPIRATION
-
-        self.forhandlings_argumenter_dict = {}
-        self.forhandlings_argumenter_inspiration_dict = ARGUMENTER_INSPIRATION
-        
 
     def init_budgetvaerktoej_parameters(self):
          self.budgetvaerktoej_vars = { 
@@ -224,13 +217,30 @@ class App(ctk.CTk):
             'kontakt_mail'          : ctk.StringVar (value=KONTAKT_MAIL)
             }
                   
-         self.budgetvaerktoej_dict = {
-            }  
 
-    def init_feedback_parameters(self):
-         self.feedback_dict = { 
-            "row_0":    {"feedback": "This works well, this doesnt", "pc_data": True, "date": "dd/mm/yyyy", "time": "16:28", "version": "0.1"},
-         }
+    def init_UGC_parameters(self):
+        self.feedback_dict = {} 
+        self.forhandlings_løsøre_dict = {}
+        self.forhandlings_løsøre_inspiration_dict = LØSØRE_INSPIRATION
+
+        self.forhandlings_argumenter_dict = {}
+        self.forhandlings_argumenter_inspiration_dict = ARGUMENTER_INSPIRATION
+        
+        self.budgetvaerktoej_dict = {} 
+
+        # gets all result functions for saves and db syncs. 
+        self.all_UGC_update_functions = {}  
+
+    def run_all_update_functions(self): 
+        for updateFunc in self.all_UGC_update_functions.values():
+            try: 
+                updateFunc()
+                print ("update func run")
+                updateFunc()
+            except: 
+                print ("update func passed")
+                pass
+        
 
     def manipulate_forhandling(self, *args):
         # Udregn når variabler ændres
@@ -258,7 +268,11 @@ class App(ctk.CTk):
     def back_to_hub(self):
         self.current_view.grid_forget()
         self.to_hubview()
+
+        # make sure all dicts are up to date. 
+        self.run_all_update_functions()
         self.eksporter_data_til_db()
+        
 
     def back_to_login_screen(self):
         # 1. Luk aktiv databaseforbindelse, hvis der er en
@@ -328,8 +342,8 @@ class App(ctk.CTk):
         "budgetvaerktoej": self.budgetvaerktoej_dict,
         }
         dbhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
-        print ("UGC picked from DB")
-        print ("self.budgetvaerktoej_dict")
+        #print ("UGC picked from DB")
+        #print ("self.budgetvaerktoej_dict")
 
     # count down 
     def countdown(self):
