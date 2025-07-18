@@ -11,7 +11,7 @@ import backend.Ctk_fundora_math_lib as fuMath
 
 class Finansering(ctk.CTkTabview): 
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp): 
-        super().__init__(master = parent)
+        super().__init__(master = parent, fg_color=WHITE)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
         #self.add("Intro")
@@ -40,10 +40,10 @@ class Laane_Evne_tab(ctk.CTkFrame):
         self.columnconfigure(1, weight=1)
         #self.rowconfigure(0, weight=1)
       
-        person1Frame = ctk.CTkFrame(self)
+        person1Frame = ctk.CTkFrame(self)#  fg_color=LIGHT_ORANGE)
         person1Frame.grid(row=0, sticky='new',column=0, padx=5, pady=5)
 
-        person2Frame = ctk.CTkFrame(self)
+        person2Frame = ctk.CTkFrame(self)#  fg_color=LIGHT_ORANGE)
         person2Frame.grid(row=0, sticky='new',column=1, padx=5, pady=5)
 
         ctk.CTkLabel(person1Frame, text="1. Person ").pack()
@@ -65,16 +65,17 @@ class Laane_Evne_tab(ctk.CTkFrame):
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
                                            text="Beregn", 
-                                           corner_radius=32, 
                                            command=lambda: fuMath.udregn_Indkomst(Finansiering_vars), 
-                                           hover_color="#EC6E07", 
-                                           fg_color='transparent', 
-                                           border_color="#FF9100", 
+                                           corner_radius=32, 
+                                           hover_color=LIGHT_PURPLE, 
+                                           fg_color=PURPLE, 
+                                           border_color=PURPLE, 
+                                           text_color=WHITE_TEXT_COLOR,
                                            border_width=2)
 
         self.beregn_button.grid(row = 2, column=0, columnspan=2)#, stick='ew')#, padx = 5, pady=5)# style="Calculate.TButton")  style = "primary"    
 
-        output_frame = ctk.CTkFrame(self)
+        output_frame = ctk.CTkFrame(self)#  fg_color=LIGHT_ORANGE)
         output_frame.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='new')
 
         # Output values 
@@ -131,13 +132,14 @@ class Bolig_Udgift_tab(ctk.CTkFrame):
         
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
-                                            text="Beregn", 
-                                            corner_radius=32, 
-                                            hover_color="#EC6E07", 
-                                            fg_color='transparent', 
-                                            border_color="#FF9100", 
-                                            border_width=2, 
-                                            command=lambda: fuMath.udregn_Bolig_Udgift_output(finansiering_vars, udgift_vars))
+                                           text="Beregn", 
+                                           command=lambda: fuMath.udregn_Bolig_Udgift_output(finansiering_vars, udgift_vars),
+                                           corner_radius=32, 
+                                           hover_color=LIGHT_PURPLE, 
+                                           fg_color=PURPLE, 
+                                           border_color=PURPLE, 
+                                           text_color=WHITE_TEXT_COLOR,
+                                           border_width=2)
         
         self.beregn_button.grid(row = 3, column=1, columnspan=1)#, stick='ew')#, padx = 5, pady=5)# style="Calculate.TButton")  style = "primary"    
 
@@ -189,16 +191,18 @@ class Fremtidig_Oekonomi_tab(ctk.CTkFrame):
 
         SingleInputPanel(output_frame3, "Rådighedsbeløb: ",             fremtid_vars["raadighedsbeloeb"], readOnly=True)
         
-        # Beregning 
+        # Beregning
         self.beregn_button = ctk.CTkButton(self, 
-                                            text="Beregn", 
-                                            corner_radius=32, 
-                                            hover_color="#EC6E07", 
-                                            fg_color='transparent', 
-                                            border_color="#FF9100", 
-                                            border_width=2, command=lambda: fuMath.udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp))
+                                           text="Beregn", 
+                                           command=lambda: fuMath.udregn_fremtidig_økonomi(finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp),
+                                           corner_radius=32, 
+                                           hover_color=LIGHT_PURPLE, 
+                                           fg_color=PURPLE, 
+                                           border_color=PURPLE, 
+                                           text_color=WHITE_TEXT_COLOR,
+                                           border_width=2)
         
-        #self.beregn_button.grid(row = 4, column=0, sticky='e') #, columnspan=1)#, stick='ew')#, padx = 5, pady=5)# style="Calculate.TButton")  style = "primary"    
+ 
         self.beregn_button.grid(row = 4, column=0, columnspan=2)
 
 class Eksport_tab(ctk.CTkFrame): 
@@ -241,19 +245,19 @@ class Eksport_tab(ctk.CTkFrame):
         SingleInputPanel(Bolig_frame1, "Link til bolig: ", person_info_vars["link_til_ny_adresse"], entry_sticky='ew')
 
 
-        # Beregning 
-        self.beregn_button = ctk.CTkButton(self, 
+        # eksport 
+        self.eksporter_button = ctk.CTkButton(self, 
                                             text="Eksporter PDF", 
                                             corner_radius=32, 
-                                            hover_color="#EC6E07", 
-                                            fg_color='transparent', 
-                                            border_color="#FF9100", 
+                                            hover_color=HIGHTLIGHT_ORANGE, 
+                                            fg_color=ORANGE, 
+                                            border_color=DARK_ORANGE, 
+                                            text_color=WHITE_TEXT_COLOR,
                                             border_width=2, command=lambda: export.Export_finansiering_PDF(self.set_export_values, mainApp, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars))
                     
-        self.beregn_button.grid(row = 3, column=0, columnspan=2)
+        self.eksporter_button.grid(row = 3, column=0, columnspan=2)
         
-    
-
+ 
     def set_export_values(self): 
         # Tracking event jeg vil bruge senere som bliver ført over til anden fuction. Obj program for life. 
 

@@ -133,7 +133,7 @@ class RegisterFrame(ctk.CTkFrame):
             dropdown_text_color="black",  # tekst i dropdown
         )
         self.koen_combobox.set("Vælg køn")  # standardtekst
-        self.koen_combobox.grid(row=4, column=0, pady=5, padx=40, sticky="ew")
+        self.koen_combobox.grid(row=4, column=0, pady=5, padx=40)
         
         self.password_entry = ctk.CTkEntry(centerFrame, placeholder_text="Password", show="*", corner_radius=20)
         self.password_entry.grid(row=5, column=0, pady=5, padx=40, sticky="ew")

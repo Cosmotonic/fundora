@@ -7,7 +7,7 @@ import platform
 
 class Panel(ctk.CTkFrame):
     def __init__(self, parent): 
-        super().__init__(master=parent, fg_color=DARK_GREY)
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack_propagate(False)
         self.pack(fill='x', padx=4, pady=8)
 
@@ -501,19 +501,19 @@ class BooleanInputPanel(Panel):
 
 class SingleInputPanel(Panel): 
     def __init__(self, parent, text, data_var, readOnly = False, entry_sticky='e'): 
-        super().__init__(parent=parent)
+        super().__init__(parent=parent )
 
         readOption = 'normal'
-        read_color = '#2b2b2b'
+        read_color = "#ffffff"
         if readOnly == True: 
             readOption = 'disabled'
-            read_color ="#3a3a3a"
+            read_color ="#c7c7c7"
 
         self.rowconfigure((0,1),weight=1)
         self.columnconfigure((0), weight=1)
         self.columnconfigure((1), weight=1)
 
-        ctk.CTkLabel(self, text = text).grid(row=0, column=0, sticky='w', padx=5) 
+        ctk.CTkLabel(self, text = text, text_color=DARK_TEXT_COLOR, font=("helvita", 12, "bold")).grid(row=0, column=0, sticky='w', padx=5) 
         self.SingleEntry = ctk.CTkEntry(self, textvariable= data_var, state=readOption, fg_color=read_color)
         self.SingleEntry.grid(row=0, sticky=entry_sticky, column=1,  columnspan=1, padx=5, pady=5)
 
@@ -534,16 +534,23 @@ class InlineDatePicker(Panel):
         ctk.CTkLabel(self, text=text, font=("Arial", 14, "bold")).grid(row=0, column=0, sticky='w', columnspan=5, pady=10, padx=5)
 
         # Day dropdown
-        ctk.CTkOptionMenu(self, variable=self.day, values=[str(i) for i in range(1, 32)], width=90).grid(row=1, column=0, padx=5, sticky='ew')
+        day_menu = ctk.CTkOptionMenu(self, variable=self.day, values=[str(i) for i in range(1, 32)], 
+                                        width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE )
+        day_menu.grid(row=1, column=0, padx=5, sticky='ew')        
         ctk.CTkLabel(self, text="dag").grid(row=2, column=0, sticky='ew')
 
         # Month dropdown
-        ctk.CTkOptionMenu(self, variable=self.month, values=[str(i) for i in range(1, 13)], width=90).grid(row=1, column=1, padx=5, sticky='ew')
+        month_menu = ctk.CTkOptionMenu(self, variable=self.month, values=[str(i) for i in range(1, 13)], 
+                                        width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE )
+        month_menu.grid(row=1, column=1, padx=5, sticky='ew')
         ctk.CTkLabel(self, text="måned").grid(row=2, column=1, sticky='ew')
 
         # Year dropdown
         years = [str(i) for i in range(1970, date.today().year + 1)]
-        ctk.CTkOptionMenu(self, variable=self.year, values=years, width=90).grid(row=1, column=2, padx=5, sticky='ew')
+
+        years_menu = ctk.CTkOptionMenu(self, variable=self.year, values=years, 
+                                       width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE )
+        years_menu.grid(row=1, column=2, padx=5, sticky='ew')
         ctk.CTkLabel(self, text="år").grid(row=2, column=2, sticky='ew')
 
         # Submit button
@@ -595,7 +602,7 @@ class FlexibleInputPanel(Panel):
         self.NameEntry.grid(row=0, column=0, sticky='w', padx=5, pady=5)
 
         # Felt til beløb
-        self.ValueEntry = ctk.CTkEntry(self, placeholder_text="Beløb", textvariable=value_var, fg_color='#2b2b2b')
+        self.ValueEntry = ctk.CTkEntry(self, placeholder_text="Beløb", textvariable=value_var, fg_color=WHITE)
         self.ValueEntry.grid(row=0, column=2, sticky='e', padx=5, pady=5)
 
 class DoubleInputPanel(Panel): 
@@ -613,8 +620,8 @@ class DoubleInputPanel(Panel):
         fgColorB = self.setBGColor(readOption_B)
 
         ctk.CTkLabel(self, text= text).grid(row=0, column=0, sticky='w', padx=5)
-        self.entry_a    = ctk.CTkEntry(self, textvariable= self.entry_a_var, state=readOption_A, fg_color=fgColorA)
-        self.entry_b    = ctk.CTkEntry(self, textvariable= self.entry_b_var, state=readOption_B, fg_color=fgColorB)
+        self.entry_a    = ctk.CTkEntry(self, textvariable= self.entry_a_var, state=readOption_A, fg_color=WHITE, text_color=DARK_TEXT_COLOR)
+        self.entry_b    = ctk.CTkEntry(self, textvariable= self.entry_b_var, state=readOption_B, fg_color=WHITE, text_color=DARK_TEXT_COLOR)
 
         self.entry_a.grid(row=0, sticky='ew',column=3,  columnspan=1, padx=5, pady=5)
         self.entry_b.grid(row=0, sticky='ew',column=4,  columnspan=2, padx=5, pady=5)
@@ -726,7 +733,7 @@ class SliderPanel(Panel):
         self.name_label = ctk.CTkLabel(self, text=text1)
         self.name_label.grid(row=0, column=0, sticky='w', padx=5, pady=5)
 
-        self.ValueEntry = ctk.CTkEntry(self, state='disabled', textvariable=self.data, fg_color='#3a3a3a')
+        self.ValueEntry = ctk.CTkEntry(self, state='disabled', textvariable=self.data, fg_color=WHITE)
         self.ValueEntry.grid(row=0, column=2, sticky='e', padx=5, pady=5)
 
         number_of_steps = max(1, int((max_value - min_value) / step_size))
@@ -781,11 +788,11 @@ class CloseSection(ctk.CTkButton):
             text = 'X', 
             command = close_func, 
             text_color=WHITE, 
-            fg_color='transparent', 
+            fg_color=CLOSE_RED, 
             width=40, 
             height=40, 
-            corner_radius=0,
-            hover_color=CLOSE_RED)
+            corner_radius=8,
+            hover_color=HOVER_RED)
         
         self.place(relx = 0.99, rely = 0.01, anchor = 'ne')
 
@@ -794,14 +801,16 @@ class Open_Feedback_button(ctk.CTkButton):
     def __init__(self, parent):
         super().__init__(
             master=parent, 
-            text = ' Indsend Feedback ', 
+            text = '  Indsend Feedback  ', 
             command = self.load_feedback_window, 
-            text_color=WHITE, 
-            fg_color='transparent', 
+            text_color=DARK_TEXT_COLOR, 
+            fg_color=WHITE, 
+            border_color=ORANGE,
+            border_width=2,
             width=40, 
             height=40, 
-            corner_radius=0,
-            hover_color=HIGHLIGHT_COLOR)
+            corner_radius=8,
+            hover_color=LIGHT_ORANGE)
         
         self.place(relx = 0.94, rely = 0.01, anchor = 'ne')
 
@@ -838,7 +847,7 @@ class FeedbackPanel(Panel):
 
         self.pc_data_var = ctk.BooleanVar()
         self.version_var = ctk.StringVar(value=mainApp.appVersion )
-        self.feedback_text = ctk.CTkTextbox(self, height=120)
+        self.feedback_text = ctk.CTkTextbox(self, height=120, border_color=DARK_GREY, border_width=2)
         
         self.dato = date.today().strftime("%Y-%m-%d")              # "2025-07-12"
         self.tidspunkt = datetime.now().strftime("%Y-%m-%d %H:%M") # "2025-07-12 11:30"
@@ -848,8 +857,8 @@ class FeedbackPanel(Panel):
         self.timestamp_label.grid(row=1, column=0, sticky="w", padx=10, pady=2)
 
         # Versionsfelt
-        self.version_entry = ctk.CTkEntry(self, textvariable=self.version_var, placeholder_text="Programversion")
-        self.version_entry.grid(row=2, column=0, sticky="we", padx=10, pady=2)
+        self.version_label = ctk.CTkLabel(self, text=f"Fundora Version: {self.version_var.get()}") # placeholder_text="Programversion")
+        self.version_label.grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
         # Feedback tekstboks
         self.feedback_text.grid(row=3, column=0, sticky="nsew", padx=10, pady=(10, 2))
