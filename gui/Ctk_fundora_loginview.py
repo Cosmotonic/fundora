@@ -3,6 +3,8 @@ from database.Ctk_fundora_auth import login_user, register_user
 import mysql.connector
 from Ctk_fundora_loanerValues import *
 
+from backend.Ctk_fundora_services import process_register
+
 
 class Login_Center(ctk.CTkFrame):
     def __init__(self, master, on_success):
@@ -110,14 +112,17 @@ class RegisterFrame(ctk.CTkFrame):
         header1 = ctk.CTkLabel(centerFrame, text="OPRET NY BRUGER", font=("Helvetica", 22, "bold"))
         header1.grid(row=0, column=0, pady=(30, 10))
 
-        self.navn_entry = ctk.CTkEntry(centerFrame, placeholder_text="NAVN", corner_radius=20)
+        self.navn_entry = ctk.CTkEntry(centerFrame, placeholder_text="FORNAVN", corner_radius=20)
         self.navn_entry.grid(row=1, column=0, pady=5, padx=40, sticky="ew")
 
+        self.efternavn_entry = ctk.CTkEntry(centerFrame, placeholder_text="EFTERNAVN", corner_radius=20)
+        self.efternavn_entry.grid(row=2, column=0, pady=5, padx=40, sticky="ew")
+
         self.telefon_entry = ctk.CTkEntry(centerFrame, placeholder_text="TELEFON", corner_radius=20)
-        self.telefon_entry.grid(row=2, column=0, pady=5, padx=40, sticky="ew")
+        self.telefon_entry.grid(row=3, column=0, pady=5, padx=40, sticky="ew")
 
         self.email_entry = ctk.CTkEntry(centerFrame, placeholder_text="EMAIL", corner_radius=20)
-        self.email_entry.grid(row=3, column=0, pady=5, padx=40, sticky="ew")
+        self.email_entry.grid(row=4, column=0, pady=5, padx=40, sticky="ew")
 
         self.koen_combobox = ctk.CTkComboBox(
             master=centerFrame,
@@ -133,29 +138,60 @@ class RegisterFrame(ctk.CTkFrame):
             dropdown_text_color="black",  # tekst i dropdown
         )
         self.koen_combobox.set("Vælg køn")  # standardtekst
-        self.koen_combobox.grid(row=4, column=0, pady=5, padx=40)
+        self.koen_combobox.grid(row=5, column=0, pady=5, padx=40)
         
         self.password_entry = ctk.CTkEntry(centerFrame, placeholder_text="Password", show="*", corner_radius=20)
-        self.password_entry.grid(row=5, column=0, pady=5, padx=40, sticky="ew")
+        self.password_entry.grid(row=6, column=0, pady=5, padx=40, sticky="ew")
 
         self.password_gentag_entry = ctk.CTkEntry(centerFrame, placeholder_text="Gentag Password", show="*", corner_radius=20)
-        self.password_gentag_entry.grid(row=6, column=0, pady=5, padx=40, sticky="ew")
+        self.password_gentag_entry.grid(row=7, column=0, pady=5, padx=40, sticky="ew")
 
-        self.check_personlig_data = ctk.CTkCheckBox(centerFrame, text="Tilladelse om adgang til personlige data")
-        self.check_personlig_data.grid(row=7, column=0, pady=(10, 2), padx=40, sticky="w")
+        self.check_personlig_data = ctk.CTkCheckBox(centerFrame, text="Tilladelse om adgang til personlige data", fg_color=PURPLE, hover_color=LIGHT_PURPLE)
+        self.check_personlig_data.grid(row=8, column=0, pady=(10, 2), padx=40, sticky="w")
         
-        self.check_kontakt = ctk.CTkCheckBox(centerFrame, text="Tilladelse til at blive kontaktet")
-        self.check_kontakt.grid(row=8, column=0, pady=(0, 10), padx=40, sticky="w")
+        self.check_kontakt = ctk.CTkCheckBox(centerFrame, text="Tilladelse til at blive kontaktet", fg_color=PURPLE, hover_color=LIGHT_PURPLE)
+        self.check_kontakt.grid(row=9, column=0, pady=(0, 10), padx=40, sticky="w")
 
         self.status_label = ctk.CTkLabel(centerFrame, text="Eventuelle fejl beskeder", text_color="red")
-        self.status_label.grid(row=9, column=0, pady=(0, 5))
+        self.status_label.grid(row=10, column=0, pady=(0, 5))
 
-        self.register_button = ctk.CTkButton(centerFrame, text="Registrer", fg_color=PURPLE, hover_color=LIGHT_PURPLE, corner_radius=30, font=ctk.CTkFont(weight="bold"))
-        self.register_button.grid(row=10, column=0, pady=10, padx=40, sticky="ew")
+        self.register_button = ctk.CTkButton(centerFrame, text="Registrer", fg_color=PURPLE, command=self.prepare_register, hover_color=LIGHT_PURPLE, corner_radius=30, font=ctk.CTkFont(weight="bold"))
+        self.register_button.grid(row=11, column=0, pady=10, padx=40, sticky="ew")
 
         self.tilbage_button = ctk.CTkButton(centerFrame, text="Tilbage til login", command=switch_to_login, fg_color="transparent", text_color="black", hover=False)
-        self.tilbage_button.grid(row=11, column=0, pady=(0, 20))
+        self.tilbage_button.grid(row=12, column=0, pady=(0, 20))
 
+
+
+    def prepare_register(self):
+        data = {
+            "fornavn": self.navn_entry.get(),
+            "efternavn": self.efternavn_entry.get(),
+            "telefon": self.telefon_entry.get(),
+            "email": self.email_entry.get(),
+            "password": self.password_entry.get(),
+            "password_gentag": self.password_gentag_entry.get(),
+            "tillad_data": self.check_personlig_data.get(),
+            "vil_kontaktes": self.check_kontakt.get()
+        }
+
+        result = process_register(data)
+
+        if result == "success":
+            self.status_label.configure(text="Bruger oprettet – du kan nu logge ind", text_color="green")
+            self.on_success(data["email"])  # eller gå til login
+        elif result == "email_exists":
+            self.status_label.configure(text="Denne email findes allerede", text_color="red")
+        elif result == "password_mismatch":
+            self.status_label.configure(text="Adgangskoderne matcher ikke", text_color="red")
+        elif result == "missing_fields":
+            self.status_label.configure(text="Alle felter skal udfyldes", text_color="red")
+        elif result == "no_data_consent":
+            self.status_label.configure(text="Du skal acceptere behandling af data", text_color="red")
+        else:
+            self.status_label.configure(text="Der opstod en fejl – prøv igen", text_color="red")
+
+    '''
     def try_register(self):
         email = self.email_entry.get()
         password = self.password_entry.get()
@@ -165,3 +201,4 @@ class RegisterFrame(ctk.CTkFrame):
         else:
             self.status_label.configure(text="Udfyld email og adgangskode", text_color="red")
 
+    '''

@@ -11,7 +11,7 @@ from database.Ctk_Fundora_data_config import DB_CONFIG
 def get_mysql_connection():
     return mysql.connector.connect(**DB_CONFIG)
 
-
+'''
 # Funktion til at oprette en ny bruger i tabellen "bruger"
 def register_user(email, password):
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
@@ -30,7 +30,7 @@ def register_user(email, password):
     finally:
         cursor.close()
         conn.close()
-
+'''
 
 # Funktion til at logge en bruger ind
 def login_user(email, password):
@@ -54,6 +54,54 @@ def login_user(email, password):
         else:
             print("Forkert adgangskode.")
             return False
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+def register_user(email, password, fornavn, efternavn, telefon, tillad_data, vil_kontaktes):
+    if not tillad_data:
+        print("Brugeren accepterede ikke databehandling.")
+        return "no_data_consent"
+
+    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+    try:
+        conn = get_mysql_connection()
+        cursor = conn.cursor()
+
+        # Tjek om mail allerede findes
+        cursor.execute("SELECT * FROM brugere WHERE logged_in_email = %s", (email,))
+        if cursor.fetchone():
+            return "email_exists"
+
+        # Indsæt bruger – oprettet_dato sættes automatisk af databasen
+        cursor.execute("""
+            INSERT INTO brugere (
+                logged_in_email, mail1, password,
+                fornavn1, efternavn1, telefon1,
+                tillad_data, vil_kontaktes
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            email,
+            email,
+            hashed_pw,
+            fornavn,
+            efternavn,
+            telefon,
+            int(tillad_data),
+            int(vil_kontaktes)
+        ))
+
+        conn.commit()
+        print("Bruger oprettet.")
+        return "success"
+
+    except mysql.connector.Error as e:
+        print("Databasefejl:", e)
+        return "db_error"
 
     finally:
         cursor.close()
