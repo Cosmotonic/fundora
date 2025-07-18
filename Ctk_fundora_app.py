@@ -16,7 +16,7 @@ from gui.Ctk_fundora_hubview import *
 from gui.Ctk_fundora_forhandling import * 
 from gui.Ctk_fundora_finansiering import * 
 from gui.Ctk_fundora_renovering import * 
-from gui.Ctk_fundora_loginview import LoginFrame
+from gui.Ctk_fundora_loginview import Login_Center
 from components.Ctk_fundora_panels import *
 
 
@@ -25,7 +25,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.current_view = None
-        ctk.set_appearance_mode('dark')
+        ctk.set_appearance_mode('light')
         self.geometry('1280x720')
         self.appVersion = "0.2"
 
@@ -52,7 +52,8 @@ class App(ctk.CTk):
     def show_login_view(self):
         if self.current_view:
             self.current_view.destroy()
-        self.current_view = LoginFrame(self, on_success=self.on_login_success)
+
+        self.current_view = Login_Center(self, self.on_login_success)
         self.current_view.grid(row=0, column=0, sticky="nsew")
 
     def on_login_success(self, email):
@@ -63,8 +64,10 @@ class App(ctk.CTk):
         self.logged_in = False
 
     def to_hubview(self):
-        self.hubview = hubview(self, self.importer_data_fra_db, self.eksporter_data_til_db, logout_callback=self.back_to_login_screen, finansiering = self.menu_finansierng, forhandling = self.menu_forhandling, budgetværktøj = self.menu_budgetvaerktoej)  # 
-
+        self.current_view.destroy()
+        self.hubview = hubview(self, logout_callback=self.back_to_login_screen, finansiering = self.menu_finansierng, forhandling = self.menu_forhandling, budgetværktøj = self.menu_budgetvaerktoej)  # 
+        self.current_view = self.hubview
+        
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
         for var in self.combined:
@@ -267,7 +270,8 @@ class App(ctk.CTk):
 
     def back_to_hub(self):
         self.current_view.grid_forget()
-        self.to_hubview()
+        hub = self.to_hubview()
+        self.current_view = hub
 
         # make sure all dicts are up to date. 
         self.run_all_update_functions()
@@ -284,7 +288,16 @@ class App(ctk.CTk):
         self.logged_in = False
 
         # 3. Fjern nuværende visning og vis login
-        self.current_view.grid_forget()
+        # print ("CURRENT VIEW: ")
+        # print("WIDGET MANAGER:", self.current_view.winfo_manager())
+        # print(self.current_view.winfo_manager())  # viser om det er "grid", "pack" eller ""
+        # print (self.current_view)
+
+        try: 
+            self.current_view.grid_forget()
+        except: 
+            pass
+        
         self.show_login_view()
 
     def on_close(self):

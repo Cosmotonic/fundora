@@ -155,3 +155,5 @@ def importer_ugc_fra_db(logged_in_email, target_dicts):
         cursor.close()
         connection.close()
 
+
+
