@@ -253,10 +253,27 @@ class Eksport_tab(ctk.CTkFrame):
                                             fg_color=ORANGE, 
                                             border_color=DARK_ORANGE, 
                                             text_color=WHITE_TEXT_COLOR,
+                                            font=("Helvetica", 14, "bold"),
                                             border_width=2, command=lambda: export.Export_finansiering_PDF(self.set_export_values, mainApp, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars))
                     
         self.eksporter_button.grid(row = 3, column=0, columnspan=2)
         
+        # upgrade to premium 
+        self.eksporter_button = ctk.CTkButton(self, 
+                                            text="OPGRADER TIL PREMIUM", 
+                                            corner_radius=32, 
+                                            hover_color=HIGHTLIGHT_ORANGE, 
+                                            fg_color=ORANGE, 
+                                            border_color=DARK_ORANGE, 
+                                            text_color=WHITE_TEXT_COLOR,
+                                            font=("Helvetica", 14, "bold"),
+                                            border_width=2, command=self.open_stripe_payment)
+                    
+        self.eksporter_button.grid(row = 4, column=0, columnspan=2)
+        
+    def open_stripe_payment(self):
+        import webbrowser
+        webbrowser.open("https://buy.stripe.com/test_cNi4gz1JJcXH93O6Rvawo00")    
  
     def set_export_values(self): 
         # Tracking event jeg vil bruge senere som bliver ført over til anden fuction. Obj program for life. 

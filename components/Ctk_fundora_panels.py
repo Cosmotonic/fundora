@@ -554,7 +554,7 @@ class InlineDatePicker(Panel):
         ctk.CTkLabel(self, text="år").grid(row=2, column=2, sticky='ew')
 
         # Submit button
-        ctk.CTkButton(self, text="Vælg", command=self.set_date).grid(row=1, column=3, padx=10, sticky='ew')
+        ctk.CTkButton(self, text="Vælg", fg_color=PURPLE, command=self.set_date).grid(row=1, column=3, padx=10, sticky='ew')
 
         # Output field
         ctk.CTkEntry(self, textvariable=self.output, width=150, state="readonly").grid(row=0, column=3, padx=10, sticky='ew')

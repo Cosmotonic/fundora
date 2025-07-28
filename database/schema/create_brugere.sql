@@ -4,6 +4,11 @@ ADD COLUMN password VARCHAR(255);
 ALTER TABLE brugere ADD COLUMN vil_kontaktes BOOLEAN DEFAULT 0;
 ALTER TABLE brugere ADD COLUMN tillad_data BOOLEAN DEFAULT 0;
 
+--- Indsæt brugerens betaling
+ALTER TABLE brugere
+ADD COLUMN user_role ENUM('free', 'premium') NOT NULL DEFAULT 'free',
+ADD COLUMN payment_date DATETIME NULL;
+
 -- mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 'samletadresse1' in 'field list'
 
 CREATE TABLE brugere (
