@@ -9,7 +9,7 @@ import atexit
 import customtkinter as ctk
 import backend.Ctk_fundora_exportPDF as export 
 import backend.Ctk_fundora_math_lib as fuMath 
-import database.Fundora_data_handler as dbhandler
+import database.Ctk_fundora_data_handler as dbhandler
 
 from Ctk_fundora_loanerValues import *
 from gui.Ctk_fundora_hubview import * 
@@ -188,8 +188,12 @@ class App(ctk.CTk):
 
             "ny_adresse_vej"                    : ctk.StringVar (value=NY_ADDR),
             "link_til_ny_adresse"               : ctk.StringVar (value=LINK_ADDR),
-            "rapportnavn"                       : ctk.StringVar (value=RAPPORTNAVN)
+            "rapportnavn"                       : ctk.StringVar (value=RAPPORTNAVN), 
+            
+            "user_role"                         : ctk.StringVar(value=USER_ROLE),
+            "payment_date"                      : ctk.StringVar(value=PAYMENT_DATE)
             }
+            
 
     def init_Forhandling_parameters(self):
         self.forhandlings_vars = { 
@@ -253,52 +257,66 @@ class App(ctk.CTk):
     def menu_finansierng(self): 
         self.hubview.grid_forget() # Hide import buttons
         self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars,  mainApp=self)
-        self.close_button = CloseSection(self, self.back_to_hub)
-        self.feedback_button = Open_Feedback_button(self)
+        self.show_overlay_buttons()
 
     def menu_forhandling(self): 
         self.hubview.grid_forget()
         self.current_view = Forhandling(self, self.forhandlings_vars)
-        self.close_button = CloseSection(self, self.back_to_hub)
-        self.feedback_button = Open_Feedback_button(self)
-        
+        self.show_overlay_buttons()
+ 
     def menu_budgetvaerktoej(self):
         self.hubview.grid_forget()
         self.current_view = Renovering(self, self.budgetvaerktoej_vars)
-        self.close_button = CloseSection(self, self.back_to_hub)
-        self.feedback_button = Open_Feedback_button(self)
+        self.show_overlay_buttons()
 
     def back_to_hub(self):
         self.current_view.grid_forget()
         hub = self.to_hubview()
+        self.show_overlay_buttons(show_close_button=False)
         self.current_view = hub
 
         # make sure all dicts are up to date. 
         self.run_all_update_functions()
         self.eksporter_data_til_db()
         
-
     def back_to_login_screen(self):
-        # 1. Luk aktiv databaseforbindelse, hvis der er en
-        # de bliver lukket hvergang jeg gemmer og henter nu 
-
-        # 2. Nulstil brugerrelaterede data
+         # 2. Nulstil brugerrelaterede data
         self.logged_in_email = None
         self.factory_parameter_settings() 
         self.logged_in = False
 
-        # 3. Fjern nuværende visning og vis login
-        # print ("CURRENT VIEW: ")
-        # print("WIDGET MANAGER:", self.current_view.winfo_manager())
-        # print(self.current_view.winfo_manager())  # viser om det er "grid", "pack" eller ""
-        # print (self.current_view)
-
+ 
         try: 
             self.current_view.grid_forget()
         except: 
             pass
         
         self.show_login_view()
+
+    def show_overlay_buttons(self, show_close_button=True):
+        # Fjern evt. gammel close-button
+        if hasattr(self, "close_button"):
+            try:
+                self.close_button.grid_forget()
+            except:
+                pass  
+
+        # Vis close-button hvis nødvendigt
+        if show_close_button: 
+            self.close_button = CloseSection(self, self.back_to_hub)
+
+        # Vis feedback-knap
+        self.feedback_button = Open_Feedback_button(self)
+
+        # Vis brugerrolle (gem som self for at kunne opdatere senere)
+        payment_var = self.person_info_vars.get("payment_date")
+        payment_date = payment_var.get() if payment_var and payment_var.get() else None
+        self.role_label = Show_User_Role( 
+            self,
+            self.person_info_vars["user_role"].get(),
+            payment_date
+        )
+
 
     def on_close(self):
         try:
@@ -344,6 +362,8 @@ class App(ctk.CTk):
             "budgetvaerktoej": self.budgetvaerktoej_vars,
             "forhandling": self.forhandlings_vars,
         }
+
+        print(self.person_info_vars["user_role"].get())
 
         dbhandler.importer_vars_fra_db(self.logged_in_email, vars_dicts)
 

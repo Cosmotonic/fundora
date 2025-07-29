@@ -20,25 +20,37 @@ def gem_person_data(email, table_name, var_dict):
     data = {}
     for key, var in var_dict.items():
         try:
-            data[key.lower()] = var.get()
+            value = var.get()
+            # Hvis feltet er payment_date og værdien er tom streng → lav det til None (MySQL = NULL)
+            if key.lower() == "payment_date" and (value == "" or value is None):
+                value = None
+            data[key.lower()] = value
         except Exception as e:
             print(f"Fejl ved hentning af '{key}': {e}")
- 
-    # (1. data = {"indtaegt_1": 50000, "pension_1": 10} # (2. ["indtaegt_1 = %s", "pension_1 = %s"] # (3 "indtaegt_1 = %s, pension_1 = %s" 
-    fields = ', '.join([f"{key} = %s" for key in data]) # bliver brugt i UPDATE
+    
+    
+    # Check for at beskytte Premium-brugere
+    if "user_role" in data and data["user_role"] == "free":
+        cursor.execute(f"SELECT user_role FROM {table_name} WHERE logged_in_email = %s", (email,))
+        current_role = cursor.fetchone()[0]
+        if current_role == "premium":
+            print(f"Springer user_role over for {email} (allerede premium).")
+            del data["user_role"]
+    # Check slutter her
+
+
+    fields = ', '.join([f"{key} = %s" for key in data])
     values = list(data.values())
-    values.append(email) # (1. values = [50000, 10, "kasper@voca.com"] # (2 Husk MySql skiller værdier til en liste og struktur til en liste. 
+    values.append(email)
 
     # Tjek om rækken findes
     cursor.execute(f"SELECT COUNT(*) FROM {table_name} WHERE logged_in_email = %s", (email,))
     exists = cursor.fetchone()[0] > 0
 
     if exists:
-        # UPDATE
-        query = f"UPDATE {table_name} SET {fields} WHERE logged_in_email = %s" # Opdaterer data i tabellen 'fremtid' for kasper@voca.com
+        query = f"UPDATE {table_name} SET {fields} WHERE logged_in_email = %s"
         print(f"Opdaterer data i tabellen '{table_name}' for {email}")
     else:
-        # INSERT
         field_names = ', '.join(data.keys()) + ", logged_in_email"
         placeholders = ', '.join(["%s"] * (len(data) + 1))
         query = f"INSERT INTO {table_name} ({field_names}) VALUES ({placeholders})"
@@ -48,6 +60,7 @@ def gem_person_data(email, table_name, var_dict):
     connection.commit()
     cursor.close()
     connection.close()
+
 
 def eksporter_ugc_til_db(logged_in_email, ugc_dict):
     connection = mysql.connector.connect(**DB_CONFIG)
@@ -156,4 +169,37 @@ def importer_ugc_fra_db(logged_in_email, target_dicts):
         connection.close()
 
 
+# After payment - updates in the flask (webhook)
+def update_user_to_premium(email):
+    connection = None
+    cursor = None
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+        cursor = connection.cursor()
 
+        cursor.execute("SELECT COUNT(*) FROM brugere WHERE logged_in_email = %s", (email,))
+        exists = cursor.fetchone()[0] > 0
+
+        if exists:
+            query = """
+                UPDATE brugere
+                SET user_role = %s, payment_date = NOW()
+                WHERE logged_in_email = %s
+            """
+            values = ('premium', email)
+            cursor.execute(query, values)
+            connection.commit()
+            print(f"Bruger '{email}' opdateret til premium.")
+            return True
+        else:
+            print(f"Bruger '{email}' blev ikke fundet i databasen. Ingen opdatering udført.")
+            return False
+
+    except Exception as e:
+        print(f"Fejl under opdatering af premium-status for '{email}': {e}")
+        return False
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()

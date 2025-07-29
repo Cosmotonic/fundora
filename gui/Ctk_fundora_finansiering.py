@@ -211,7 +211,10 @@ class Eksport_tab(ctk.CTkFrame):
         self.pack(expand=True, fill='both')
 
         self.logged_in_email = mainApp.logged_in_email
-        self.person_info_vars = person_info_vars
+        self.person_info_vars   = person_info_vars
+        self.finansiering_vars  = finansiering_vars
+        self.udgift_vars        = udgift_vars
+        self.fremtid_vars       = fremtid_vars
         self.columnconfigure((0, 1), weight=1)
 
         # layout
@@ -244,34 +247,45 @@ class Eksport_tab(ctk.CTkFrame):
         SingleInputPanel(Bolig_frame1, "Bolig Navn: ",     person_info_vars["ny_adresse_vej"], entry_sticky='ew')
         SingleInputPanel(Bolig_frame1, "Link til bolig: ", person_info_vars["link_til_ny_adresse"], entry_sticky='ew')
 
-
         # eksport 
         self.eksporter_button = ctk.CTkButton(self, 
-                                            text="Eksporter PDF", 
+                                            text="button_text", 
                                             corner_radius=32, 
                                             hover_color=HIGHTLIGHT_ORANGE, 
                                             fg_color=ORANGE, 
                                             border_color=DARK_ORANGE, 
                                             text_color=WHITE_TEXT_COLOR,
                                             font=("Helvetica", 14, "bold"),
-                                            border_width=2, command=lambda: export.Export_finansiering_PDF(self.set_export_values, mainApp, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars))
+                                            border_width=2, ) # command=lambda: export.Export_finansiering_PDF(self.set_export_values, mainApp, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars))
                     
-        self.eksporter_button.grid(row = 3, column=0, columnspan=2)
+        self.eksporter_button.grid(row = 3, column=0, columnspan=2, pady=10)
         
-        # upgrade to premium 
-        self.eksporter_button = ctk.CTkButton(self, 
-                                            text="OPGRADER TIL PREMIUM", 
-                                            corner_radius=32, 
-                                            hover_color=HIGHTLIGHT_ORANGE, 
-                                            fg_color=ORANGE, 
-                                            border_color=DARK_ORANGE, 
-                                            text_color=WHITE_TEXT_COLOR,
-                                            font=("Helvetica", 14, "bold"),
-                                            border_width=2, command=self.open_stripe_payment)
-                    
-        self.eksporter_button.grid(row = 4, column=0, columnspan=2)
+        # set button text 
+        self.upgrade_or_export()
+        role = self.person_info_vars["user_role"].get()
+        print (f"USER ROLE {role}")
+
+    def upgrade_or_export(self):
+        if self.person_info_vars["user_role"].get() == "premium":
+            self.eksporter_button.configure(
+                text="👑 Premium aktiv",
+                state="normal",  
+                command=lambda: export.Export_finansiering_PDF(
+                                    self.set_export_values, self.master, 
+                                    self.finansiering_vars,
+                                    self.udgift_vars, 
+                                    self.fremtid_vars, 
+                                    self.person_info_vars))
+                
+        else:
+            self.eksporter_button.configure(
+                text="Opgrader til 👑 Premium for PDF Eksport",
+                state="normal",
+                command=self.go_to_payment)
+            
+                
+    def go_to_payment(self):      
         
-    def open_stripe_payment(self):
         import webbrowser
         webbrowser.open("https://buy.stripe.com/test_cNi4gz1JJcXH93O6Rvawo00")    
  

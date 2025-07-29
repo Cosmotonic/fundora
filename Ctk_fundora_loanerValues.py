@@ -101,7 +101,8 @@ DATO_DMO2 = "DD/MM/YYYY"
 NY_ADDR = "Vejnavn på ny adresse"
 LINK_ADDR = "http://"
 RAPPORTNAVN = "Låne_Rapport.pdf"
-
+PAYMENT_DATE = None
+USER_ROLE = "free"
 
 # LAANEEVNE default values 
 BLUR_DEFAULT = 0

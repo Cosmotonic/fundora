@@ -796,6 +796,31 @@ class CloseSection(ctk.CTkButton):
         
         self.place(relx = 0.99, rely = 0.01, anchor = 'ne')
 
+
+class Show_User_Role(ctk.CTkLabel): 
+    def __init__(self, parent, user_role, payment_date=None):
+        # User_role 
+        # Bestem tekst baseret på rolle
+
+        if user_role == "premium":
+            text = f"👑 Premium" + (f" (siden {payment_date})" if payment_date else "")
+            text_color = DARK_ORANGE   # Guld
+        else:
+            text = "Gratis bruger – Opgrader for PDF-eksport"
+            text_color = PURPLE  
+
+        super().__init__(
+            master=parent,
+            text=text,
+            text_color=text_color,
+            fg_color=WHITE,
+            font=ctk.CTkFont(size=14, weight="bold")
+        )
+
+        # Placér fx i hjørnet som badge
+        self.place(relx=0.99, rely=0.99, anchor="se")
+
+
 # Feedback system
 class Open_Feedback_button(ctk.CTkButton):
     def __init__(self, parent):
