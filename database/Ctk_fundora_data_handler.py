@@ -28,8 +28,8 @@ def gem_person_data(email, table_name, var_dict):
         except Exception as e:
             print(f"Fejl ved hentning af '{key}': {e}")
     
-    
-    # Check for at beskytte Premium-brugere
+
+    # Beskyt Premium-brugere, når de opgradere mens programmet et åbent. Undgå at overskrive user role på db
     if "user_role" in data and data["user_role"] == "free":
         cursor.execute(f"SELECT user_role FROM {table_name} WHERE logged_in_email = %s", (email,))
         current_role = cursor.fetchone()[0]

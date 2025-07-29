@@ -58,16 +58,17 @@ class App(ctk.CTk):
 
     def on_login_success(self, email):
         self.logged_in_email = email
-        self.to_hubview()  # Når login er korrekt
         self.factory_parameter_settings() # Reset to default config params, before pulling db info
         self.importer_data_fra_db() # automatically load data from cb based on logged in email
+        self.to_hubview()  # Set hubview last so it picks latest data, including user role. 
         self.logged_in = False
 
     def to_hubview(self):
         self.current_view.destroy()
         self.hubview = hubview(self, logout_callback=self.back_to_login_screen, finansiering = self.menu_finansierng, forhandling = self.menu_forhandling, budgetværktøj = self.menu_budgetvaerktoej)  # 
         self.current_view = self.hubview
-        
+        self.show_overlay_buttons()
+
         # Only trace needed values. Or use all:  combined_vars = list(self.forhandlings_vars.values()) 
         self.combined = [self.forhandlings_vars['aggressivitet'], self.forhandlings_vars['forventet_pris'], self.forhandlings_vars['forventet_procent']]
         for var in self.combined:

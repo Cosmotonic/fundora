@@ -268,7 +268,7 @@ class Eksport_tab(ctk.CTkFrame):
     def upgrade_or_export(self):
         if self.person_info_vars["user_role"].get() == "premium":
             self.eksporter_button.configure(
-                text="👑 Premium aktiv",
+                text="👑 Premium PDF Eksport",
                 state="normal",  
                 command=lambda: export.Export_finansiering_PDF(
                                     self.set_export_values, self.master, 
