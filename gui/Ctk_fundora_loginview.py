@@ -15,7 +15,7 @@ class Login_Center(ctk.CTkFrame):
         self.on_success = on_success
 
         # Sidebar
-        self.sidebar = ctk.CTkFrame(self, width=300, fg_color=ORANGE)
+        self.sidebar = ctk.CTkFrame(self, width=300, fg_color=LIGHT_ORANGE)
         self.sidebar.grid(row=0, column=0, sticky="ns")
         self.sidebar.grid_rowconfigure((0,1,2,3), weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)

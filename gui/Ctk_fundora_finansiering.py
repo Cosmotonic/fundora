@@ -11,7 +11,10 @@ import backend.Ctk_fundora_math_lib as fuMath
 
 class Finansering(ctk.CTkTabview): 
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp): 
-        super().__init__(master = parent, fg_color=WHITE)
+        super().__init__(master = parent, fg_color=WHITE,
+                         segmented_button_selected_color=PURPLE, 
+                         segmented_button_selected_hover_color=LIGHT_PURPLE, 
+                         segmented_button_unselected_hover_color=LIGHT_PURPLE, text_color=WHITE, border_color= ORANGE)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
         #self.add("Intro")
@@ -28,25 +31,30 @@ class Finansering(ctk.CTkTabview):
         
 class Intro_tab(ctk.CTkFrame): 
     def __init__(self, parent): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
         
 class Laane_Evne_tab(ctk.CTkFrame): 
     def __init__(self, parent, Finansiering_vars): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure((0,1), weight=1)
+
+        #self.columnconfigure(0, weight=1)
+        #self.columnconfigure(1, weight=1)
         #self.rowconfigure(0, weight=1)
-      
-        person1Frame = ctk.CTkFrame(self)#  fg_color=LIGHT_ORANGE)
-        person1Frame.grid(row=0, sticky='new',column=0, padx=5, pady=5)
 
-        person2Frame = ctk.CTkFrame(self)#  fg_color=LIGHT_ORANGE)
-        person2Frame.grid(row=0, sticky='new',column=1, padx=5, pady=5)
-
-        ctk.CTkLabel(person1Frame, text="1. Person ").pack()
+        person1_label = ctk.CTkLabel(self, text="   1. Person   ")
+        person1_label.grid(row=0, column=0, columnspan=1, padx=5, pady=5, sticky='new')
+        person2_label = ctk.CTkLabel(self, text="   2. Person   ")
+        person2_label.grid(row=0, column=0, columnspan=1, padx=5, pady=5, sticky='new')
+        
+        # Personal info frames
+        person1Frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)#  fg_color=LIGHT_ORANGE)
+        person1Frame.grid(row=1, sticky='new',column=0, padx=5, pady=5)
+        person2Frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)#  fg_color=LIGHT_ORANGE)
+        person2Frame.grid(row=1, sticky='new',column=1, padx=5, pady=5)
 
         # person 1 using panels. 
         SingleInputPanel(person1Frame, "Løn før skat: ", Finansiering_vars["indtaegt_1"])
@@ -54,13 +62,22 @@ class Laane_Evne_tab(ctk.CTkFrame):
         SingleInputPanel(person1Frame, "Opsparring: ", Finansiering_vars["opsparring_1"])
         SingleInputPanel(person1Frame, "Gæld: ", Finansiering_vars["gaeld_1"])
         
-        ctk.CTkLabel(person2Frame, text="2. Person ").pack()
-        
         # person 2 using panels. 
         SingleInputPanel(person2Frame, "Løn før skat: ", Finansiering_vars["indtaegt_2"])
         SingleInputPanel(person2Frame, "Pension %: ", Finansiering_vars["pension_2"])
         SingleInputPanel(person2Frame, "Opsparring: ", Finansiering_vars["opsparring_2"])
         SingleInputPanel(person2Frame, "Gæld: ", Finansiering_vars["gaeld_2"])
+
+        # output frames
+        output_frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)#  fg_color=LIGHT_ORANGE)
+        output_frame.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky='new')
+
+        # Output values 
+        SingleInputPanel(output_frame, "Samlet indtægt før skat: ", Finansiering_vars["samlet_indtaegt"], readOnly=True)
+        SingleInputPanel(output_frame, "Max Lånfaktor (Ca. forventet): ", Finansiering_vars["max_laan"], readOnly=True, fg_color=LIGHT_GREEN)
+        SingleInputPanel(output_frame, "Person 1. Ca. Løn efter skat: ", Finansiering_vars["lon_efter_skat1"], readOnly=True)
+        SingleInputPanel(output_frame, "Person 2. Ca. Løn efter skat: ", Finansiering_vars["lon_efter_skat2"], readOnly=True)
+        SingleInputPanel(output_frame, "Samlet indtægt efter skat: ", Finansiering_vars["samlet_efter_skat"], readOnly=True)
 
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
@@ -73,36 +90,26 @@ class Laane_Evne_tab(ctk.CTkFrame):
                                            text_color=WHITE_TEXT_COLOR,
                                            border_width=2)
 
-        self.beregn_button.grid(row = 2, column=0, columnspan=2)#, stick='ew')#, padx = 5, pady=5)# style="Calculate.TButton")  style = "primary"    
-
-        output_frame = ctk.CTkFrame(self)#  fg_color=LIGHT_ORANGE)
-        output_frame.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='new')
-
-        # Output values 
-        SingleInputPanel(output_frame, "Samlet indtægt før skat: ", Finansiering_vars["samlet_indtaegt"], readOnly=True)
-        SingleInputPanel(output_frame, "Max Lånfaktor (Indtægter x 4 + opsparing - gæld): ", Finansiering_vars["max_laan"], readOnly=True)
-        SingleInputPanel(output_frame, "Person 1. Ca. Løn efter skat: ", Finansiering_vars["lon_efter_skat1"], readOnly=True)
-        SingleInputPanel(output_frame, "Person 2. Ca. Løn efter skat: ", Finansiering_vars["lon_efter_skat2"], readOnly=True)
-        SingleInputPanel(output_frame, "Samlet indtægt efter skat: ", Finansiering_vars["samlet_efter_skat"], readOnly=True)
+        self.beregn_button.grid(row = 3, column=0, columnspan=2)#, stick='ew')#, padx = 5, pady=5)# style="Calculate.TButton")  style = "primary"    
 
         
 class Bolig_Udgift_tab(ctk.CTkFrame): 
     def __init__(self, parent, finansiering_vars, udgift_vars): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
         
         #self.rowconfigure((0,1),weight=1)
         self.columnconfigure((0,1,2), weight=1)
       
-        FrameColoum1 = ctk.CTkFrame(self)
+        FrameColoum1 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         FrameColoum1.grid(row=0, sticky='new',column=0, padx=5, pady=5)
-        FrameColoum2 = ctk.CTkFrame(self)
+        FrameColoum2 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         FrameColoum2.grid(row=0, sticky='new',column=1, padx=5, pady=5)
-        FrameColoum3 = ctk.CTkFrame(self)
+        FrameColoum3 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         FrameColoum3.grid(row=0, sticky='new',column=2, padx=5, pady=5)
 
-        SingleInputPanel(FrameColoum1, "Ejerudgift: (Ejendomsværdiskat, fællesudg, osv. ) ",            udgift_vars["bolig_udgift"])
-        SingleInputPanel(FrameColoum1, "Forbrug: (El, vand, varme, gas)",                               udgift_vars["forbrug"])
+        SingleInputPanel(FrameColoum1, "Ejerudgift: (Ejendomsværdiskat, fællesudg, osv. ) ",            udgift_vars["bolig_udgift"], fg_color=LIGHT_GREEN)
+        SingleInputPanel(FrameColoum1, "Forbrug: (El, vand, varme, gas)",                               udgift_vars["forbrug"], fg_color=LIGHT_GREEN)
         SingleInputPanel(FrameColoum1, "Mad dagligvare: (Indkøb, husholdning)",                         udgift_vars["mad_dagligvare"])
         FlexibleInputPanel(FrameColoum1, udgift_vars["flex_udgift_string1"],                            udgift_vars["flex_udgift_var1"])
 
@@ -116,12 +123,12 @@ class Bolig_Udgift_tab(ctk.CTkFrame):
         SingleInputPanel(FrameColoum3, "Pasning og fritidsaktiv: (Institution, SFO, sport)",            udgift_vars["pasning_fritidsaktiv"])
         FlexibleInputPanel(FrameColoum3, udgift_vars["flex_udgift_string3"],                            udgift_vars["flex_udgift_var3"])
 
-        slider_frame = ctk.CTkFrame(self)
+        slider_frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         slider_frame.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='new')
         SliderPanel(slider_frame, "Forventet købspris", "0", udgift_vars["forventet_pris"], 0, 10_000_000, defaultValue=5_000_000, step_size=12500)
 
         # Output values 
-        output_frame = ctk.CTkFrame(self)
+        output_frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         output_frame.grid(row=2, column=0, columnspan=3, padx=5, pady=5, sticky='new')
 
         SingleInputPanel(output_frame, "Gældsfaktor: ",             udgift_vars["gaeldsfaktor"], readOnly=True)
@@ -145,19 +152,19 @@ class Bolig_Udgift_tab(ctk.CTkFrame):
 
 class Fremtidig_Oekonomi_tab(ctk.CTkFrame): 
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
         
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
       
-        FrameColoum1 = ctk.CTkFrame(self)
+        FrameColoum1 = ctk.CTkFrame(self, fg_color=WHITE,  border_width=2, border_color=DARK_GREY)
         FrameColoum1.grid(row=1, column=0, sticky='new', padx=5, pady=5)
-        FrameColoum2 = ctk.CTkFrame(self)
+        FrameColoum2 = ctk.CTkFrame(self, fg_color=WHITE,  border_width=2, border_color=DARK_GREY)
         FrameColoum2.grid(row=1, column=1, sticky='new', padx=5, pady=5)
 
         # real loan
-        real_label = ctk.CTkLabel(self, text='Realkredit Lån')
+        real_label = ctk.CTkLabel(self, text='   Realkredit Lån   ')
         real_label.grid(row=0, column=0, sticky='new', padx=5, pady=5)
         SingleInputPanel(   FrameColoum1, "Realkredit Nominel Rente:",   fremtid_vars["realkredit_nominel"])
         SingleInputPanel(   FrameColoum1, "Realkredit Bidragssats:",     fremtid_vars["realkredit_bidragssats"])
@@ -166,17 +173,21 @@ class Fremtidig_Oekonomi_tab(ctk.CTkFrame):
         BooleanInputPanel(  FrameColoum1, "10 Års Afdragsfrihed", fremtid_vars["afdragsfri"])
 
         # bank loan
-        bank_label = ctk.CTkLabel(self, text='Bank Lån')
+        bank_label = ctk.CTkLabel(self, text='   Bank Lån   ')
         bank_label.grid(row=0, column=1, sticky='new', padx=5, pady=5)
         SingleInputPanel(   FrameColoum2, "Bank Nominel Rente:",   fremtid_vars["bank_nominel"])
         SingleInputPanel(   FrameColoum2, "Bank Terminer:",        fremtid_vars["bank_terminer"])
         RadioInputPanel(    FrameColoum2, "Bank Låneperiode (år):",fremtid_vars["bank_laaneperiode"], [5, 10, 15, 20, 30])
 
         # Output values
-        output_frame1 = ctk.CTkFrame(self)
-        output_frame1.grid(row=2, column=0, columnspan=1, padx=5, pady=5, sticky='new')
-        output_frame2 = ctk.CTkFrame(self)
-        output_frame2.grid(row=2, column=1, columnspan=1, padx=5, pady=5, sticky='new')
+        output_frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
+        output_frame.grid(row=2, column=0, columnspan=2, sticky='new', padx=5, pady=5)
+        output_frame.columnconfigure((0,1), weight=1)
+
+        output_frame1 = ctk.CTkFrame(output_frame, fg_color=WHITE)
+        output_frame1.grid(row=0, column=0, padx=5, pady=5, sticky='new')
+        output_frame2 = ctk.CTkFrame(output_frame, fg_color=WHITE)
+        output_frame2.grid(row=0, column=1, padx=5, pady=5, sticky='new')
 
         SingleInputPanel(output_frame1, "Rente Betaling: ",              fremtid_vars["rente_betaling"], readOnly=True)
         SingleInputPanel(output_frame1, "Rente Afdrag: ",                fremtid_vars["rente_afdrag"], readOnly=True)
@@ -186,10 +197,10 @@ class Fremtidig_Oekonomi_tab(ctk.CTkFrame):
         SingleInputPanel(output_frame2, "Faste udgifter: ",              fremtid_vars["fast_udgifter"], readOnly=True)
         SingleInputPanel(output_frame2, "Faster Udgifter plus Ydelse: ", fremtid_vars["fast_udgifter_inkl_ydelser"], readOnly=True)
 
-        output_frame3 = ctk.CTkFrame(self)
+        output_frame3 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         output_frame3.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky='new')
 
-        SingleInputPanel(output_frame3, "Rådighedsbeløb: ",             fremtid_vars["raadighedsbeloeb"], readOnly=True)
+        SingleInputPanel(output_frame3, "Rådighedsbeløb: ",             fremtid_vars["raadighedsbeloeb"], readOnly=True, fg_color=LIGHT_GREEN)
         
         # Beregning
         self.beregn_button = ctk.CTkButton(self, 
@@ -207,7 +218,7 @@ class Fremtidig_Oekonomi_tab(ctk.CTkFrame):
 
 class Eksport_tab(ctk.CTkFrame): 
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
 
         self.logged_in_email = mainApp.logged_in_email
@@ -218,13 +229,13 @@ class Eksport_tab(ctk.CTkFrame):
         self.columnconfigure((0, 1), weight=1)
 
         # layout
-        person_frame1 = ctk.CTkFrame(self)
+        person_frame1 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         person_frame1.grid(row=1, column=0, columnspan=1, padx=5, pady=5, sticky='new')
-        person_frame2 = ctk.CTkFrame(self)
+        person_frame2 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
         
         # Personlig information 1st person 
-        person1_label = ctk.CTkLabel(self, text='1. Person')
+        person1_label = ctk.CTkLabel(self, text='   1. Person   ')
         person1_label.grid(row=0, column=0, columnspan=1, padx=5, pady=5, sticky='new')
         DoubleInputPanel(person_frame1, "Navn: ", person_info_vars['Fornavn1'], person_info_vars['Efternavn1'])
         xxInputPanel    (person_frame1, "Adresse: ", field1=person_info_vars['adresse_vej1'],field2=person_info_vars['adresse_postnr1'],field3=person_info_vars['adresse_by1'])
@@ -233,7 +244,7 @@ class Eksport_tab(ctk.CTkFrame):
         SingleInputPanel(person_frame1, "E-mail: ",               person_info_vars["mail1"],    entry_sticky='ew')
 
         # Personlig information 1st person 
-        person2_label = ctk.CTkLabel(self, text='2. Person')
+        person2_label = ctk.CTkLabel(self, text='   2. Person   ')
         person2_label.grid(row=0, column=1, columnspan=1, padx=5, pady=5, sticky='new')
         DoubleInputPanel(person_frame2, "Navn: ", person_info_vars['Fornavn2'], person_info_vars['Efternavn2'])
         xxInputPanel    (person_frame2, "Adresse: ", field1=person_info_vars['adresse_vej2'],field2=person_info_vars['adresse_postnr2'],field3=person_info_vars['adresse_by2'])
@@ -241,7 +252,7 @@ class Eksport_tab(ctk.CTkFrame):
         SingleInputPanel(person_frame2, "Telefon: ",              person_info_vars["telefon2"], entry_sticky='ew')
         SingleInputPanel(person_frame2, "E-mail: ",               person_info_vars["mail2"],entry_sticky='ew')
 
-        Bolig_frame1 = ctk.CTkFrame(self)
+        Bolig_frame1 = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)
         Bolig_frame1.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky='new')
 
         SingleInputPanel(Bolig_frame1, "Bolig Navn: ",     person_info_vars["ny_adresse_vej"], entry_sticky='ew')
@@ -252,7 +263,7 @@ class Eksport_tab(ctk.CTkFrame):
                                             text="button_text", 
                                             corner_radius=32, 
                                             hover_color=HIGHTLIGHT_ORANGE, 
-                                            fg_color=ORANGE, 
+                                            fg_color=DARK_ORANGE, 
                                             border_color=DARK_ORANGE, 
                                             text_color=WHITE_TEXT_COLOR,
                                             font=("Helvetica", 14, "bold"),

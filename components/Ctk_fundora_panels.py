@@ -6,8 +6,8 @@ from datetime import date, datetime
 import platform
 
 class Panel(ctk.CTkFrame):
-    def __init__(self, parent): 
-        super().__init__(master=parent, fg_color=WHITE)
+    def __init__(self, parent, fg_color=WHITE): 
+        super().__init__(master=parent, fg_color=fg_color)
         self.pack_propagate(False)
         self.pack(fill='x', padx=4, pady=8)
 
@@ -125,7 +125,7 @@ class RenoveringsOpgavePanel(Panel):
 
         # Lav hovedopgave 
         # Lav hovedframe til overordnet opgave
-        self.OpgaveFrame = ctk.CTkFrame(self)
+        self.OpgaveFrame = ctk.CTkFrame(self, fg_color=WHITE)
         self.OpgaveFrame.grid(row=0, sticky='new', columnspan=4 ,column=0, padx=5, pady=5)
         self.OpgaveFrame.columnconfigure((0, 1, 2, 3), weight=1)
 
@@ -150,7 +150,7 @@ class RenoveringsOpgavePanel(Panel):
 
         # Inkluder i budget checkbox 
         self.inkluder_budget_var = ctk.BooleanVar(value=True)
-        self.inkluder_budget_check = ctk.CTkCheckBox(self, variable=self.inkluder_budget_var, text="Inkluder i budget  ", fg_color= "#16AD7E", bg_color= "#09573E", hover_color= "#1CCC94" )
+        self.inkluder_budget_check = ctk.CTkCheckBox(self, variable=self.inkluder_budget_var, text="Inkluder i budget  ", text_color=WHITE_TEXT_COLOR, fg_color= GREEN, bg_color=DARK_GREEN, hover_color=LIGHT_GREEN )
         self.inkluder_budget_check.grid(row=0, column=2, padx=(5,5), pady=5, sticky="w")
 
         # Tilføj opgave button
@@ -158,9 +158,10 @@ class RenoveringsOpgavePanel(Panel):
                                             command=self.add_line,
                                             text="+ Tilføj opgave", 
                                             corner_radius=32, 
-                                            hover_color="#0798EC", 
-                                            fg_color='transparent', 
-                                            border_color="#0077FF",  
+                                            hover_color=LIGHT_PURPLE, 
+                                            fg_color=PURPLE, 
+                                            border_color=PURPLE, 
+                                            text_color=WHITE_TEXT_COLOR,
                                             border_width=2, )  
                
         self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'e')
@@ -170,16 +171,17 @@ class RenoveringsOpgavePanel(Panel):
                                             command=self.delete_self,
                                             text="+ Slet Hovedoppgave", 
                                             corner_radius=32, 
-                                            hover_color="#EC075F", 
-                                            fg_color='transparent', 
-                                            border_color="#C00040",  
+                                            hover_color=LIGHT_RED, 
+                                            fg_color=RED, 
+                                            border_color=RED, 
+                                            text_color=WHITE_TEXT_COLOR, 
                                             border_width=2 )  
                
         self.tilføj_opgave_button.grid(row = 0, column=3, padx=5, pady=5, columnspan=1, sticky = 'w')
 
         # Tilføj underopgaver
         # Tilføj ny frame til underopgaver
-        self.underopgave_frame = ctk.CTkFrame(self)
+        self.underopgave_frame = ctk.CTkFrame(self, fg_color=WHITE)
         self.underopgave_frame.grid(row=1, column=0, padx=5, pady=5, columnspan=4, sticky='new')
         self.underopgave_frame.columnconfigure(tuple(range(12)), weight=1)
 
@@ -230,8 +232,16 @@ class RenoveringsOpgavePanel(Panel):
         entry3 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str3)
         entry4 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str4)
         entry5 = ctk.CTkEntry(self.underopgave_frame, textvariable=var_str5)
-        slet_but = ctk.CTkButton(self.underopgave_frame, textvariable=var_butStr, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
-
+        slet_but = ctk.CTkButton(self.underopgave_frame, 
+                                textvariable=var_butStr, 
+                                command=lambda r=row: self.slet_opgave(f"row_{r}"), # this current instanced row
+                                corner_radius=32, 
+                                hover_color=LIGHT_RED, 
+                                fg_color=RED, 
+                                border_color=RED, 
+                                text_color=WHITE_TEXT_COLOR, 
+                                border_width=2,
+                                font=("helvita", 12, "bold"))
 
         # Placer alt  
         checkbox.grid(row=row, column=0, columnspan=1, padx=5, pady=2, sticky="w")
@@ -310,7 +320,7 @@ class ForhandlingCheckPanel(Panel):
         self.priority_options = priority_options 
 
         # Scrollable frame til opgaver
-        self.OpgaveFrame = ctk.CTkScrollableFrame(self) 
+        self.OpgaveFrame = ctk.CTkScrollableFrame(self, fg_color=WHITE) 
         self.OpgaveFrame.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=5, pady=5)
         self.OpgaveFrame.columnconfigure(3, weight=9)
         self.OpgaveFrame.columnconfigure((1,2), weight=3)
@@ -331,10 +341,13 @@ class ForhandlingCheckPanel(Panel):
                 self,
                 text="+ Tilføj punkt",
                 command=self.add_line,
-                hover_color="#EC6E07", 
-                fg_color='transparent', 
-                border_color="#FF9100", 
-                border_width=2
+                corner_radius=32, 
+                hover_color=LIGHT_PURPLE, 
+                fg_color=PURPLE, 
+                border_color=PURPLE, 
+                text_color=WHITE_TEXT_COLOR,
+                border_width=2,
+                font=("helvita", 12, "bold")
                 )
             
             add_button.grid(row=1, column=0, columnspan=1, pady=(10, 5), padx=10, sticky="ew")
@@ -344,10 +357,13 @@ class ForhandlingCheckPanel(Panel):
                 self,
                 text="+ indsæt inspiration",
                 command=self.add_inspiration,
-                hover_color="#EC6E07", 
-                fg_color='transparent', 
-                border_color="#FF9100", 
-                border_width=2
+                corner_radius=32, 
+                hover_color=LIGHT_PURPLE, 
+                fg_color=PURPLE, 
+                border_color=PURPLE, 
+                text_color=WHITE_TEXT_COLOR,
+                border_width=2,
+                font=("helvita", 12, "bold")
                 )
             
             inspiration_button.grid(row=1, column=1, columnspan=1, pady=(10, 5), padx=10, sticky="ew")
@@ -422,7 +438,17 @@ class ForhandlingCheckPanel(Panel):
 
         # slet knap
         varBut_str    = ctk.StringVar(value='-')
-        self.slet_but = ctk.CTkButton(self.OpgaveFrame, textvariable=varBut_str, command=lambda r=row: self.slet_opgave(f"row_{r}")) # this current instanced row
+        self.slet_but = ctk.CTkButton(self.OpgaveFrame, 
+                                    textvariable=varBut_str, 
+                                    command=lambda r=row: self.slet_opgave(f"row_{r}"),
+                                    corner_radius=32, 
+                                    hover_color=LIGHT_RED, 
+                                    fg_color=RED, 
+                                    border_color=RED, 
+                                    text_color=WHITE_TEXT_COLOR, 
+                                    border_width=2,
+                                    font=("helvita", 12, "bold"))
+        
         self.slet_but.grid(row=row, column=4, sticky="ew", padx=5, pady=5)
 
         self.vars[f"row_{row}"] = {
@@ -496,12 +522,12 @@ class BooleanInputPanel(Panel):
         ctk.CTkLabel(self, text=text).grid(row=0, column=0, sticky='w', padx=5)
 
         # Switch (acts as boolean button)
-        self.bool_switch = ctk.CTkSwitch(self, variable=data_var, text="Fra/TiL", fg_color="#3a3a3a")
+        self.bool_switch = ctk.CTkSwitch(self, variable=data_var, text="Fra/TiL", fg_color="#3a3a3a", progress_color=LIGHT_ORANGE, button_hover_color=LIGHT_PURPLE, button_color=PURPLE)
         self.bool_switch.grid(row=0, column=1, sticky='e', padx=5, pady=5)
 
 class SingleInputPanel(Panel): 
-    def __init__(self, parent, text, data_var, readOnly = False, entry_sticky='e'): 
-        super().__init__(parent=parent )
+    def __init__(self, parent, text, data_var, readOnly = False, entry_sticky='e', fg_color=WHITE): 
+        super().__init__(parent=parent, fg_color=fg_color)
 
         readOption = 'normal'
         read_color = "#ffffff"
@@ -584,7 +610,14 @@ class RadioInputPanel(Panel):
 
         # Create radio buttons dynamically
         for idx, val in enumerate(perioder):
-            btn = ctk.CTkRadioButton(radio_frame, text=str(val), variable=data_var, value=val, command= self.period_radio_update)
+            btn = ctk.CTkRadioButton(radio_frame, 
+                                     command= self.period_radio_update,
+                                     text=str(val), 
+                                     variable=data_var, 
+                                     value=val,
+                                     hover_color=LIGHT_PURPLE,
+                                     fg_color=PURPLE)
+            
             btn.grid( sticky='e', row=0, column=idx, padx=1)
 
     def period_radio_update(self): 
@@ -741,6 +774,9 @@ class SliderPanel(Panel):
         self.slider = ctk.CTkSlider(
             self,
             fg_color=FG_COLOR,
+            button_color=PURPLE,
+            button_hover_color=LIGHT_PURPLE,
+            button_corner_radius=32,
             from_=min_value,
             to=max_value,
             number_of_steps=number_of_steps,
@@ -788,7 +824,7 @@ class CloseSection(ctk.CTkButton):
             text = 'X', 
             command = close_func, 
             text_color=WHITE, 
-            fg_color=CLOSE_RED, 
+            fg_color=RED, 
             width=40, 
             height=40, 
             corner_radius=8,

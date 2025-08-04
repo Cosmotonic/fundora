@@ -45,7 +45,7 @@ class hubview(ctk.CTkFrame):
             headerframe.grid_rowconfigure(0, weight=1)
             headerframe.grid(row=0, column=0, columnspan=3, sticky="nsew")
 
-            header1 = ctk.CTkLabel(headerframe, text="FUNDORA - HOVEDMENU", text_color=DARK_TEXT_COLOR, font=("Helvetica", 30, "bold"))
+            header1 = ctk.CTkLabel(headerframe, text=" HOVEDMENU ", text_color=DARK_TEXT_COLOR, font=("Helvetica", 30, "bold"))
             header1.grid(row=0, column=0, padx=10, pady=(20, 10), sticky="nsew")
 
             # Build frames for buttons

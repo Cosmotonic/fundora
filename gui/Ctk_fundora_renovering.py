@@ -5,10 +5,14 @@ from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, S
 import backend.Ctk_fundora_math_lib as fuMath
 import backend.Ctk_fundora_exportPDF as export 
 
+from Ctk_fundora_loanerValues import *
 
 class Renovering(ctk.CTkTabview): 
     def __init__(self, parent, rennovering_vars): 
-        super().__init__(master = parent)
+        super().__init__(master = parent, fg_color=WHITE,
+                         segmented_button_selected_color=PURPLE, 
+                         segmented_button_selected_hover_color=LIGHT_PURPLE, 
+                         segmented_button_unselected_hover_color=LIGHT_PURPLE, text_color=WHITE, border_color= ORANGE)
         self.grid(row=0, column=0, sticky='nsew', pady=10, padx=10)
 
         self.add("Budget")
@@ -23,7 +27,7 @@ class Renovering(ctk.CTkTabview):
 
 class Renovering_budget_tab(ctk.CTkFrame): 
     def __init__(self, parent, mainApp, rennovering_vars): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
         self.columnconfigure(0, weight=1)
         
@@ -38,7 +42,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
         # kontakt linje 
         #self.Kontakt_info = SimpleContactLinePanel(self, rennovering_vars) 
-        self.kontaktFrame = ctk.CTkFrame(self)
+        self.kontaktFrame = ctk.CTkFrame(self, fg_color=WHITE)
         self.kontaktFrame.grid(row=1, column=0, sticky='new', padx=5, pady=(5,1))
         self.kontaktFrame.columnconfigure((0,1,2), weight=1)
 
@@ -51,7 +55,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.kontakt_mail_entry.grid(row=0, column=2, sticky="new", padx=5, pady=5)
 
         # Scrollable frame til opgaver
-        self.OpgaveFrame = ctk.CTkScrollableFrame(self) 
+        self.OpgaveFrame = ctk.CTkScrollableFrame(self, fg_color=WHITE)
         self.OpgaveFrame.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
         self.OpgaveFrame.columnconfigure((0,1,2,3), weight=1)
         self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer
@@ -64,7 +68,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
         # Frame for total result 
         # Udenfor opgave frame
-        self.renovation_bottom_Frame = ctk.CTkFrame(self)
+        self.renovation_bottom_Frame = ctk.CTkFrame(self, fg_color=WHITE)
         self.renovation_bottom_Frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
         self.renovation_bottom_Frame.columnconfigure((0,1,2,3,4,5,6,7,8,9,10), weight=1)  # ← allow frame to expand in its parent
 
@@ -72,36 +76,39 @@ class Renovering_budget_tab(ctk.CTkFrame):
                                                         text="+ tilføj Hovedoppgave", 
                                                         command=self.bugetvaerktoej_handler.tilføj_renovering,
                                                         corner_radius=32, 
-                                                        hover_color="#0798EC", 
-                                                        fg_color='transparent', 
-                                                        border_color="#0077FF", 
-                                                        border_width=2, 
-                                                         font=("Helvetica", 18, "bold"))
+                                                        hover_color=LIGHT_PURPLE, 
+                                                        fg_color=PURPLE, 
+                                                        border_color=PURPLE, 
+                                                        text_color=WHITE_TEXT_COLOR,
+                                                        font=("Helvetica", 14, "bold"),
+                                                        border_width=2)
         self.tilføj_renovation_button.grid(row=0, column=0, columnspan=6,padx=5, pady=5,sticky="ew")
         
         # Eksporter         
         self.eksport_budget_button = ctk.CTkButton(self.renovation_bottom_Frame, 
-                                                        text="print / Eksporter Budget PDF", 
+                                                        text="Eksporter Budget PDF", 
+                                                        command=self.bugetvaerktoej_handler.get_all_results, # command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
                                                         corner_radius=32, 
-                                                        hover_color="#00CF79", 
-                                                        fg_color='transparent', 
-                                                        border_color="#00B871", 
-                                                        border_width=2, 
-                                                        font=("Helvetica", 18, "bold"),
-                                                        command=self.bugetvaerktoej_handler.get_all_results) # command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
+                                                        fg_color=DARK_ORANGE, 
+                                                        hover_color=HIGHTLIGHT_ORANGE, 
+                                                        border_color=DARK_ORANGE, 
+                                                        text_color=WHITE_TEXT_COLOR,
+                                                        font=("Helvetica", 14, "bold"),
+                                                        border_width=2)
 
         self.eksport_budget_button.grid(row=0, column=6, columnspan=3,padx=5, pady=5,sticky="ew")
 
         # total pris knap         
         self.Udregn_total_pris = ctk.CTkButton(self.renovation_bottom_Frame, 
                                                         text="Udregn Total pris", 
+                                                        command=self.Total_pris,
                                                         corner_radius=32,
-                                                        hover_color="#EC6E07", 
-                                                        fg_color='transparent',  
-                                                        border_color="#FF9100", 
+                                                        fg_color=DARK_GREEN, 
+                                                        hover_color=LIGHT_GREEN, 
+                                                        border_color=DARK_GREEN, 
+                                                        text_color=WHITE_TEXT_COLOR,
                                                         border_width=2, 
-                                                         font=("Helvetica", 18, "bold"),
-                                                        command=self.Total_pris)
+                                                        font=("Helvetica", 18, "bold"))
         
         self.Udregn_total_pris.grid(row=0, column=9, sticky="ew", padx=5, pady=5)
 
@@ -121,29 +128,29 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
 class Renovering_plan_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars, renovering_hovedopgave_data, renovering_underopgave_data): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
 
 
 class Renovering_huskeliste_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
 
-        FrameColoum1 = ctk.CTkFrame(self)
+        FrameColoum1 = ctk.CTkFrame(self, fg_color=WHITE)
         FrameColoum1.grid(row=0, sticky='new', columnspan=3 ,column=0, padx=5, pady=5)
 
 class Renovering_eksport_tab(ctk.CTkFrame): 
     def __init__(self, parent, rennovering_vars): 
-        super().__init__(master=parent, fg_color="transparent")
+        super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
 
         self.columnconfigure((0, 1), weight=1)
 
         # layout
-        person_frame1 = ctk.CTkFrame(self)
+        person_frame1 = ctk.CTkFrame(self, fg_color=WHITE)
         person_frame1.grid(row=1, column=0, columnspan=1, padx=5, pady=5, sticky='new')
-        person_frame2 = ctk.CTkFrame(self)
+        person_frame2 = ctk.CTkFrame(self, fg_color=WHITE)
         person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
 
                 # Beregning 
