@@ -561,13 +561,13 @@ class InlineDatePicker(Panel):
 
         # Day dropdown
         day_menu = ctk.CTkOptionMenu(self, variable=self.day, values=[str(i) for i in range(1, 32)], 
-                                        width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE )
+                                        width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE, button_color=PURPLE, button_hover_color=PURPLE)
         day_menu.grid(row=1, column=0, padx=5, sticky='ew')        
         ctk.CTkLabel(self, text="dag").grid(row=2, column=0, sticky='ew')
 
         # Month dropdown
         month_menu = ctk.CTkOptionMenu(self, variable=self.month, values=[str(i) for i in range(1, 13)], 
-                                        width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE )
+                                        width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE, button_color=PURPLE, button_hover_color=PURPLE )
         month_menu.grid(row=1, column=1, padx=5, sticky='ew')
         ctk.CTkLabel(self, text="måned").grid(row=2, column=1, sticky='ew')
 
@@ -575,12 +575,12 @@ class InlineDatePicker(Panel):
         years = [str(i) for i in range(1970, date.today().year + 1)]
 
         years_menu = ctk.CTkOptionMenu(self, variable=self.year, values=years, 
-                                       width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE )
+                                       width=90, corner_radius=10, fg_color=PURPLE, text_color=WHITE, button_color=PURPLE, button_hover_color=PURPLE )
         years_menu.grid(row=1, column=2, padx=5, sticky='ew')
         ctk.CTkLabel(self, text="år").grid(row=2, column=2, sticky='ew')
 
         # Submit button
-        ctk.CTkButton(self, text="Vælg", fg_color=PURPLE, command=self.set_date).grid(row=1, column=3, padx=10, sticky='ew')
+        ctk.CTkButton(self, text="Vælg", fg_color=PURPLE, hover_color=PURPLE, command=self.set_date).grid(row=1, column=3, padx=10, sticky='ew')
 
         # Output field
         ctk.CTkEntry(self, textvariable=self.output, width=150, state="readonly").grid(row=0, column=3, padx=10, sticky='ew')

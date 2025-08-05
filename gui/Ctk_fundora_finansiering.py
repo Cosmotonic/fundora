@@ -134,7 +134,7 @@ class Bolig_Udgift_tab(ctk.CTkFrame):
         SingleInputPanel(output_frame, "Gældsfaktor: ",             udgift_vars["gaeldsfaktor"], readOnly=True)
         SingleInputPanel(output_frame, "Banklån: ",                 udgift_vars["banklaan"], readOnly=True)
         SingleInputPanel(output_frame, "Realkreditlån: ",           udgift_vars["realkreditlaan"], readOnly=True)
-        SingleInputPanel(output_frame, "Samlet lån: ",              udgift_vars["samlet_laan"], readOnly=True)
+        SingleInputPanel(output_frame, "Samlet lån: ",              udgift_vars["samlet_laan"], readOnly=True, fg_color=LIGHT_GREEN)
         SingleInputPanel(output_frame, "Faste udgifter: ",          udgift_vars["alle_faste_udgifter"], readOnly=True)
         
         # Beregning 
@@ -220,7 +220,7 @@ class Eksport_tab(ctk.CTkFrame):
     def __init__(self, parent, finansiering_vars, udgift_vars, fremtid_vars, person_info_vars, mainApp): 
         super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
-
+        self.mainApp = mainApp
         self.logged_in_email = mainApp.logged_in_email
         self.person_info_vars   = person_info_vars
         self.finansiering_vars  = finansiering_vars
@@ -258,6 +258,31 @@ class Eksport_tab(ctk.CTkFrame):
         SingleInputPanel(Bolig_frame1, "Bolig Navn: ",     person_info_vars["ny_adresse_vej"], entry_sticky='ew')
         SingleInputPanel(Bolig_frame1, "Link til bolig: ", person_info_vars["link_til_ny_adresse"], entry_sticky='ew')
 
+
+        # Bankudtog påmindelse
+        header_bank_udskrift = ctk.CTkLabel(
+            self,
+            text="HUSK at udskrive bankhistorik",
+            font=("Helvetica", 14, "bold")
+        )
+        header_bank_udskrift.grid(row = 3, column=0, columnspan=1, pady=10, padx=5, sticky='nw')
+
+        text_bank_udskrift = ctk.CTkLabel(
+            self,
+            text=(
+                "Banken skal kunne se de sidste 12 måneders bevægelser på alle konti.\n"
+                "Dette hjælper dem med at vurdere, om budgettet er nogenlunde realistisk.\n\n"
+                "Sådan gøres det:\n"
+                "1. Log ind på netbank\n"
+                "2. Gå til kontooversigten og vælg udskrift\n"
+                "3. Sæt datoen et år tilbage og gem filen som PDF\n\n"
+                "*Bemærk: Processen kan variere fra bank til bank."
+            ),
+            font=("Helvetica", 12),
+            justify="left"
+        )
+        text_bank_udskrift.grid(row = 4, column=0, columnspan=1, padx=5, pady=10, sticky='nw')
+
         # eksport 
         self.eksporter_button = ctk.CTkButton(self, 
                                             text="button_text", 
@@ -282,7 +307,7 @@ class Eksport_tab(ctk.CTkFrame):
                 text="👑 Premium PDF Eksport",
                 state="normal",  
                 command=lambda: export.Export_finansiering_PDF(
-                                    self.set_export_values, self.master, 
+                                    self.set_export_values, self.mainApp, 
                                     self.finansiering_vars,
                                     self.udgift_vars, 
                                     self.fremtid_vars, 
