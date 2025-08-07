@@ -6,7 +6,6 @@ from database.Ctk_Fundora_mySql_data_config import DB_CONFIG
 # Dette bruges til at oprette forbindelse til din MySQL database
 # Du kan genbruge dette dictionary i hele din applikation, når du skal forbinde
 
-
 # Helper-funktion som returnerer en aktiv forbindelse til databasen
 def get_mysql_connection():
     return mysql.connector.connect(**DB_CONFIG)

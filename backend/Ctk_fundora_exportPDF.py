@@ -406,6 +406,8 @@ class Eksport_forhandling_PDF:
         if not forhandlings_arg_løs:
             return
 
+        print (forhandlings_arg_løs)
+
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
@@ -439,7 +441,7 @@ class Eksport_forhandling_PDF:
         # Løsøre tabel
         #print (f"Løsøre: {forhandlings_arg_løs["argumenter"]}")
         self.pdf.add_page()
-        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["losore_titel"])
+        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["losore"])
 
         # Gem PDF
         self.pdf.output(file_path)
@@ -496,8 +498,9 @@ class Eksport_forhandling_PDF:
             if data.get("checked") == True: 
                 prioritet = data.get("priority", "")
                 kommentar = data.get("comment", "")
+                label = data.get("label", "")
 
-                self.pdf.cell(60, 10, punkt, 1)
+                self.pdf.cell(60, 10, label, 1)
                 self.pdf.cell(30, 10, prioritet, 1)
                 self.pdf.cell(100, 10, kommentar, 1)
                 self.pdf.ln()

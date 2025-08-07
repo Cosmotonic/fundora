@@ -21,7 +21,6 @@ from gui.Ctk_fundora_loginview import Login_Center
 from components.Ctk_fundora_panels import *
 
 
-
 class App(ctk.CTk): 
     def __init__(self):
         super().__init__()

@@ -1,4 +1,6 @@
 
+# 
+
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
@@ -6,6 +8,9 @@ DB_CONFIG = {
     'database': 'fundora'
 }
 
+
+
+# for online connection 
 '''
 
 import mysql.connector

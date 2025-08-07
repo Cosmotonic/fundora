@@ -459,7 +459,7 @@ class ForhandlingCheckPanel(Panel):
             "comment": comment_var,
             "comment_entry": comment_entry,
             "label": label_var,
-            "Løsøre_entry" : label_entry, 
+            "label_entry" : label_entry, 
             "priority_options": self.priority_options,
             "Slet_but": self.slet_but,
             "ID": "row_{row}"
@@ -473,11 +473,11 @@ class ForhandlingCheckPanel(Panel):
 
     def get_results(self):        
         return {
-            id: {
+            id: { # data["label_entry"].get() + id {
                 "checked"   : data["checked"].get(),
                 "priority"  : data["priority"].get(),
                 "comment"   : data["comment"].get(),
-                "label"     : data["label"].get()
+                "label"     : data["label_entry"].get(),
             }
 
             # id referere til dict navnet på hver entry fx. Møbler(løsøre), liggetid(argument)   
