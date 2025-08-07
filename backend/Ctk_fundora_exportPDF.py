@@ -439,7 +439,7 @@ class Eksport_forhandling_PDF:
         # Løsøre tabel
         #print (f"Løsøre: {forhandlings_arg_løs["argumenter"]}")
         self.pdf.add_page()
-        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["losore"])
+        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["losore_titel"])
 
         # Gem PDF
         self.pdf.output(file_path)

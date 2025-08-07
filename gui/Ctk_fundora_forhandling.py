@@ -151,5 +151,5 @@ class Eksport_tab(ctk.CTkFrame):
         #print(self.løsøre_getter_func())
         return {
             "argumenter": self.argumenter_getter_func(),
-            "løsøre": self.løsøre_getter_func()
+            "losore": self.løsøre_getter_func()
         }

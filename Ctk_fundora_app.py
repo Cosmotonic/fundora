@@ -9,7 +9,8 @@ import atexit
 import customtkinter as ctk
 import backend.Ctk_fundora_exportPDF as export 
 import backend.Ctk_fundora_math_lib as fuMath 
-import database.Ctk_fundora_data_handler as dbhandler
+import database.Ctk_fundora_mySql_data_handler as dbhandler
+import database.Ctk_fundora_sqllite_data_handler as sqlhandler
 
 from Ctk_fundora_loanerValues import *
 from gui.Ctk_fundora_hubview import * 
@@ -47,7 +48,7 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         # initialize local database
-        from database.Ctk_fundora_initialize_sqlite_db import initialize_sqlite_db
+        from database.Ctk_fundora_sqllite_initialize_db import initialize_sqlite_db
         initialize_sqlite_db()     
 
         # start program
@@ -344,7 +345,7 @@ class App(ctk.CTk):
             "forhandling": self.forhandlings_vars,
         }
 
-        dbhandler.eksporter_vars_til_db(self.logged_in_email, vars_dicts)
+        sqlhandler.eksporter_vars_til_db(self.logged_in_email, vars_dicts)
 
         # export UGC
         ugc_dict = { 
@@ -354,7 +355,7 @@ class App(ctk.CTk):
         "budgetvaerktoej": self.budgetvaerktoej_dict,
         }
 
-        dbhandler.eksporter_ugc_til_db(self.logged_in_email, ugc_dict)
+        sqlhandler.eksporter_ugc_til_db(self.logged_in_email, ugc_dict)
 
 
     def importer_data_fra_db(self):
@@ -370,7 +371,7 @@ class App(ctk.CTk):
 
         print(self.person_info_vars["user_role"].get())
 
-        dbhandler.importer_vars_fra_db(self.logged_in_email, vars_dicts)
+        sqlhandler.importer_vars_fra_db(self.logged_in_email, vars_dicts)
 
         # hent User generaated dictionaries
         ugc_dict = { 
@@ -379,7 +380,7 @@ class App(ctk.CTk):
         "loesoere": self.forhandlings_løsøre_dict,
         "budgetvaerktoej": self.budgetvaerktoej_dict,
         }
-        dbhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
+        sqlhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
         #print ("UGC picked from DB")
         #print ("self.budgetvaerktoej_dict")
 
@@ -402,3 +403,8 @@ class App(ctk.CTk):
 # Run app 
 App() 
 
+
+
+# initialize local database
+#from database.Ctk_fundora_initialize_sqlite_db import initialize_sqlite_db
+#initialize_sqlite_db()     

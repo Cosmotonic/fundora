@@ -1,6 +1,6 @@
 from flask import Flask, request
 import stripe
-from database.Ctk_fundora_data_handler import update_user_to_premium
+from database.Ctk_fundora_mySql_data_handler import update_user_to_premium
 
 app = Flask(__name__)
 

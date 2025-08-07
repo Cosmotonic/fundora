@@ -1,6 +1,6 @@
 import mysql.connector
 import bcrypt
-from database.Ctk_Fundora_data_config import DB_CONFIG
+from database.Ctk_Fundora_mySql_data_config import DB_CONFIG
 
 # Konfiguration til din database
 # Dette bruges til at oprette forbindelse til din MySQL database

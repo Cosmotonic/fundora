@@ -1,5 +1,3 @@
-
-
 def create_table_brugere(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS brugere (
@@ -43,6 +41,7 @@ def create_table_brugere(cursor):
     """)
 
 
+
 def create_table_fremtid(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS fremtid (
@@ -67,8 +66,6 @@ def create_table_fremtid(cursor):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
-
-
 def create_table_finansiering(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS finansiering (
@@ -91,18 +88,6 @@ def create_table_finansiering(cursor):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
-
-def create_table_ugc_data(cursor):
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS ugc_data (
-            logged_in_email TEXT PRIMARY KEY,
-            argumentation TEXT,
-            loesoere TEXT,
-            budgetvaerktoej TEXT,
-            feedback TEXT
-        );
-    """)
-
 def create_table_udgift(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS udgift (
@@ -131,8 +116,6 @@ def create_table_udgift(cursor):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
-
-
 def create_table_budgetvaerktoej(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS budgetvaerktoej (
@@ -144,7 +127,17 @@ def create_table_budgetvaerktoej(cursor):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     """)
-
+def create_table_budgetvaerktoej(cursor):
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS budgetvaerktoej (
+            logged_in_email TEXT PRIMARY KEY,
+            budget_titel TEXT,
+            kontakt_navn TEXT,
+            kontakt_telefon TEXT,
+            kontakt_mail TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
 def create_table_forhandling(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS forhandling (
@@ -166,5 +159,15 @@ def create_table_forhandling(cursor):
             losore_titel TEXT,
             argument_titel TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+def create_table_ugc_data(cursor):
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ugc_data (
+            logged_in_email TEXT PRIMARY KEY,
+            argumentation TEXT,
+            loesoere TEXT,
+            budgetvaerktoej TEXT,
+            feedback TEXT
         );
     """)
