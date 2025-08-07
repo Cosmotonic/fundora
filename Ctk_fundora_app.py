@@ -46,6 +46,10 @@ class App(ctk.CTk):
         # Gem i tilfælde af lukning
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
+        # initialize local database
+        from database.Ctk_fundora_initialize_sqlite_db import initialize_sqlite_db
+        initialize_sqlite_db()     
+
         # start program
         self.mainloop()
 
@@ -395,5 +399,6 @@ class App(ctk.CTk):
             self.to_hubview()
 
 
-App() 
 # Run app 
+App() 
+

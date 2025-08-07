@@ -31,7 +31,13 @@ SELECT * FROM fremtid;
 SELECT * FROM ugc_data;
 
 SHOW COLUMNS FROM fundora_dictionaries;
+
 SHOW COLUMNS FROM brugere;
+SHOW COLUMNS FROM fremtid;
+SHOW COLUMNS FROM finansiering;
+SHOW COLUMNS FROM udgift;
+SHOW COLUMNS FROM fremtid;
+SHOW COLUMNS FROM ugc_data;
 
 ALTER TABLE fremtid MODIFY COLUMN logged_in_email VARCHAR(255) FIRST;
 ALTER TABLE fremtid MODIFY COLUMN bruger_id INT AUTO_INCREMENT PRIMARY KEY;
