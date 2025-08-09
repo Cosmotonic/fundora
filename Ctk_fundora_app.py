@@ -275,14 +275,16 @@ class App(ctk.CTk):
         self.show_overlay_buttons()
 
     def back_to_hub(self):
+        # make sure all dicts are up to date. 
+        self.run_all_update_functions()
+        self.eksporter_data_til_db()
+
+        # lets try to save dicts and exports before leaving the hub view.
         self.current_view.grid_forget()
         hub = self.to_hubview()
         self.show_overlay_buttons(show_close_button=False)
         self.current_view = hub
 
-        # make sure all dicts are up to date. 
-        self.run_all_update_functions()
-        self.eksporter_data_til_db()
         
     def back_to_login_screen(self):
          # 2. Nulstil brugerrelaterede data
@@ -306,7 +308,7 @@ class App(ctk.CTk):
             except:
                 pass  
 
-        # Vis close-button hvis nødvendigt
+        # Vis close-button hvis nødvendigt # exit 
         if show_close_button: 
             self.close_button = CloseSection(self, self.back_to_hub)
 
@@ -316,11 +318,7 @@ class App(ctk.CTk):
         # Vis brugerrolle (gem som self for at kunne opdatere senere)
         payment_var = self.person_info_vars.get("payment_date")
         payment_date = payment_var.get() if payment_var and payment_var.get() else None
-        self.role_label = Show_User_Role( 
-            self,
-            self.person_info_vars["user_role"].get(),
-            payment_date
-        )
+        self.role_label = Show_User_Role(self, self.person_info_vars["user_role"].get(), payment_date)
 
 
     def on_close(self):
@@ -368,7 +366,7 @@ class App(ctk.CTk):
             "forhandling": self.forhandlings_vars,
         }
 
-        print(self.person_info_vars["user_role"].get())
+        #print(self.person_info_vars["user_role"].get())
 
         sqlhandler.importer_vars_fra_db(self.logged_in_email, vars_dicts)
 

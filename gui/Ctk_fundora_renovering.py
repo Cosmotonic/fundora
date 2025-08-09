@@ -65,7 +65,6 @@ class Renovering_budget_tab(ctk.CTkFrame):
         mainApp.all_UGC_update_functions["budgetvaerktoej_update_dict"] = self.bugetvaerktoej_handler.update_ref_dict
 
 
-
         # Frame for total result 
         # Udenfor opgave frame
         self.renovation_bottom_Frame = ctk.CTkFrame(self, fg_color=WHITE)

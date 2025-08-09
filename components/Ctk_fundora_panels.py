@@ -43,7 +43,7 @@ class Bugetvaerktoej_handler():
         # Hent dict fra main, som loader fra db ved start-up
         budget_dict = mainApp_ref.budgetvaerktoej_dict 
         
-        # Opbygger budget fra Database 
+        # Load budget fra Database 
         for panel_key, panel_data in budget_dict.items():
             print(f"\n🔷 Panel-key: {panel_key}")  # Hoved budget panel
             panelName = panel_data["hovedoppgave_navn"]
@@ -54,10 +54,14 @@ class Bugetvaerktoej_handler():
                 print(f"  └─ Opgave-key: {opgave_key}")  # opgave paneler
                 task_name = self.clean_task_name( opgave_key )
                 self.new_panel.initial_budget_opgave(task_name, opg_data)
+        
+        self.get_all_results()
 
 
     def tilføj_renovering(self, hovedopgave_navn="Køkken", checked=False, priority=None, comment="", on_start_build=False):
-        self.new_panel = RenoveringsOpgavePanel(self.opgave_frame, hovedopgave_navn=hovedopgave_navn, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
+        
+        # Build the panel
+        self.new_panel = RenoveringsOpgavePanel(self, self.opgave_frame, hovedopgave_navn=hovedopgave_navn, delete_callback=self.delete_renovation, UID=self.current_renovation_id)
         
         # Increment til uniq ID
         self.current_renovation_id += 1
@@ -69,7 +73,7 @@ class Bugetvaerktoej_handler():
             # Gemmer på db og henter igen, så vi syncer så ofte som muligt.     
             self.get_all_results()
 
-
+    # here it saves all renovations including assignments. 
     def get_all_results(self):
         self.all_renovation_panels = {}
         for panel in self.opgave_panels:
@@ -92,8 +96,8 @@ class Bugetvaerktoej_handler():
 
     def delete_renovation(self, panel):
         panel.destroy()  # Fjern fra UI
-        self.opgave_panels.remove(panel)  # fjern fra min liste
-
+        self.opgave_panels.remove(panel) # fjern fra min liste
+        self.get_all_results()
 
     def clean_task_name(self, name):
         parts = name.split("_")
@@ -101,12 +105,17 @@ class Bugetvaerktoej_handler():
         while parts and parts[-1].isdigit():
             parts.pop()
         return "_".join(parts)
+
 ######
 ######
 
 class RenoveringsOpgavePanel(Panel): 
-    def __init__(self, parent,  delete_callback, hovedopgave_navn="Køkken etc.:", UIDText='RenovationPanel', UID=1, columnLabels=['Ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
-        super().__init__(parent=parent)
+    def __init__(self, handler, parent_frame, delete_callback, hovedopgave_navn="Køkken etc.:", UIDText='RenovationPanel', UID=1, columnLabels=['Ekskludere','Opgave','Prio','Kommentar/Blokkere','Tidsforbrug','Pris','Slet']):
+        super().__init__(parent=parent_frame)
+        
+        # make sure we can reach the save and update dicts. 
+        self.handler = handler
+
         # Order panel
         self.columnconfigure((0,1,2,3), weight=1)  # ← allow frame to expand in its parent
         self.rowconfigure(0, weight=1)
@@ -114,7 +123,7 @@ class RenoveringsOpgavePanel(Panel):
         # delete entire panel
         self.delete_callback = delete_callback
 
-        # giver mit renovation panel et unikt ID, i stedet for at dict har hardcoded "badeværelse" som overrider hver gang jeg opetter et nyt. 
+        # provide a unique ID instead of hardcoded names to avoid overriding in dicts.  
         self.uid = f"{UIDText}_{UID}" 
 
         self.vars = {}
@@ -201,6 +210,8 @@ class RenoveringsOpgavePanel(Panel):
 
     # should be run on each renovation panel. Opgave dict exists inside all renovation panel dicts. 
     def initial_budget_opgave(self, task_name, values):
+        
+        # being looped
         self.add_line(
             opgave      = task_name,
             prio        = values.get(self.columnLabels[2], ""),
@@ -208,10 +219,11 @@ class RenoveringsOpgavePanel(Panel):
             tid         = values.get(self.columnLabels[4], ""),
             pris        = values.get(self.columnLabels[5], ""),
             checked     = values.get(self.columnLabels[0], False),
+            initLoop    = True
         )
 
 
-    def add_line(self, opgave="", prio="", kommentar="", tid="", pris="", checked=False):
+    def add_line(self, opgave="", prio="", kommentar="", tid="", pris="", checked=False, initLoop = False):
         
         row = self.current_row_index
         self.rowconfigure(row, weight=0) 
@@ -252,7 +264,6 @@ class RenoveringsOpgavePanel(Panel):
         entry5.grid(row=row,   column=12,columnspan=3, sticky="ew", padx=5, pady=5)
         slet_but.grid(row=row, column=15,columnspan=1, sticky="ew", padx=5, pady=5)
 
-        
         self.vars[f"row_{row}"] = {
             self.columnLabels[0]: checkbox,        # e.g. 'Ekskludere' checkbox
             self.columnLabels[1]: entry1,         # e.g. 'Opgave'
@@ -264,6 +275,11 @@ class RenoveringsOpgavePanel(Panel):
         }
 
         self.current_row_index += 1
+
+        # save assignment to dict and onto server. 
+        if initLoop == False:
+            self.handler.get_all_results()
+  
 
     def get_results(self):
         results = {}
@@ -294,7 +310,10 @@ class RenoveringsOpgavePanel(Panel):
                     widget.grid_forget()
                     widget.destroy()
             del self.vars[row_id]
-     
+
+        # update dict. 
+        self.handler.get_all_results()
+
     # drop down color change not setup yet. 
     def update_dropdown_color(self, selected_value):
         color = self.priority_options.get(selected_value, {}).get("color", "#cccccc")
@@ -303,6 +322,7 @@ class RenoveringsOpgavePanel(Panel):
     def delete_self(self):
         if self.delete_callback:
             self.delete_callback(self)
+            self.handler.get_all_results()
 
 
 class ForhandlingCheckPanel(Panel):
@@ -830,6 +850,8 @@ class CloseSection(ctk.CTkButton):
             corner_radius=8,
             hover_color=HOVER_RED)
         
+        # exit page
+
         self.place(relx = 0.99, rely = 0.01, anchor = 'ne')
 
 

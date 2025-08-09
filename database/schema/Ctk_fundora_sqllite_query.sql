@@ -1,4 +1,5 @@
--- forbind sql scriptet med dit sql query med ctrl+shift+p "sqllite run query"
+-- forbind sql scriptet med dit sql query med ctrl+shift+p 
+-- Type connect and then choose MS SQL:Connect. (https://www.youtube.com/watch?v=VKg1Dnz7GN0)
 --- right click og vælg run query (eller ctrl + shift + Q)
 ---OBS: husk der er foreskel på "run query" og "run selected query" 
 
