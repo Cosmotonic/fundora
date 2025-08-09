@@ -850,9 +850,12 @@ class CloseSection(ctk.CTkButton):
             corner_radius=8,
             hover_color=HOVER_RED)
         
-        # exit page
-
         self.place(relx = 0.99, rely = 0.01, anchor = 'ne')
+
+        # save before leaving the section
+        parent.eksporter_data_til_db()
+
+        # exit page
 
 
 class Show_User_Role(ctk.CTkLabel): 

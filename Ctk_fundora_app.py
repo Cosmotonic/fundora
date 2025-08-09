@@ -261,7 +261,7 @@ class App(ctk.CTk):
     # De fire hovedmenuer 
     def menu_finansierng(self): 
         self.hubview.grid_forget() # Hide import buttons
-        self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars,  mainApp=self)
+        self.current_view = Finansering(self, self.finansiering_vars, self.udgift_vars, self.fremtid_vars, self.person_info_vars, mainApp=self)
         self.show_overlay_buttons()
 
     def menu_forhandling(self): 
