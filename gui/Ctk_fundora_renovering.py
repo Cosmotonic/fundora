@@ -60,7 +60,8 @@ class Renovering_budget_tab(ctk.CTkFrame):
         self.OpgaveFrame.columnconfigure((0,1,2,3), weight=1)
         self.OpgaveFrame.configure(height=550)  # eller den højde du synes passer
 
-        # initier og tilføj budgetvaerktøj
+        # initier og tilføj budgetvaerktøj 
+        # # BUG er det her den lave ren fejl?
         self.bugetvaerktoej_handler = Bugetvaerktoej_handler(self.mainApp, self.OpgaveFrame) 
         mainApp.all_UGC_update_functions["budgetvaerktoej_update_dict"] = self.bugetvaerktoej_handler.update_ref_dict
 
@@ -121,7 +122,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
 
         # Udregn min total pris
         total_pris = fuMath.beregn_total_budget_pris(alle_panel_data)
-        print (total_pris)
+        # print (total_pris)
         self.total_pris_var.set(total_pris)
 
 

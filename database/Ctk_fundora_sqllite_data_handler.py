@@ -11,7 +11,7 @@ DB_NAME = "fundora_data.db"
 
 def eksporter_vars_til_db(email, data_dicts):
     for table_name, var_dict in data_dicts.items():
-        print(f"TABEL NAME :::: {table_name}")
+        # print(f"TABEL NAME :::: {table_name}")
         gem_person_data(email, table_name, var_dict)
 
 def gem_person_data(email, table_name, var_dict):
@@ -26,14 +26,15 @@ def gem_person_data(email, table_name, var_dict):
                 value = None
             data[key.lower()] = value
         except Exception as e:
-            print(f"Fejl ved hentning af '{key}': {e}")
+            pass 
+            # print(f"Fejl ved hentning af '{key}': {e}")
 
     # Beskyt Premium-brugere, undgå overskrivning af user_role
     if "user_role" in data and data["user_role"] == "free":
         cursor.execute(f"SELECT user_role FROM {table_name} WHERE logged_in_email = ?", (email,))
         result = cursor.fetchone()
         if result and result[0] == "premium":
-            print(f"Springer user_role over for {email} (allerede premium).")
+            # print(f"Springer user_role over for {email} (allerede premium).")
             del data["user_role"]
 
     fields = ', '.join([f"{key} = ?" for key in data])
@@ -45,12 +46,12 @@ def gem_person_data(email, table_name, var_dict):
 
     if exists:
         query = f"UPDATE {table_name} SET {fields} WHERE logged_in_email = ?"
-        print(f"Opdaterer data i tabellen '{table_name}' for {email}")
+        #print(f"Opdaterer data i tabellen '{table_name}' for {email}")
     else:
         field_names = ', '.join(data.keys()) + ", logged_in_email"
         placeholders = ', '.join(["?"] * (len(data) + 1))
         query = f"INSERT INTO {table_name} ({field_names}) VALUES ({placeholders})"
-        print(f"Indsætter ny række i tabellen '{table_name}' for {email}")
+        #print(f"Indsætter ny række i tabellen '{table_name}' for {email}")
 
     cursor.execute(query, values)
     connection.commit()
@@ -65,9 +66,10 @@ def eksporter_ugc_til_db(logged_in_email, ugc_dict):
 
     # Konverter til JSON-strenge
     json_data = {key: json.dumps(value) for key, value in ugc_dict.items()}
-    print("JSON-klargjorte data til eksport:")
+    # print("JSON-klargjorte data til eksport:")
     for key, val in json_data.items():
-        print(f"  {key}: {val}")
+        pass
+        #print(f"  {key}: {val}")
 
     columns = ', '.join(['logged_in_email'] + list(json_data.keys()))
     placeholders = ', '.join(['?'] * (1 + len(json_data)))
@@ -78,15 +80,16 @@ def eksporter_ugc_til_db(logged_in_email, ugc_dict):
         VALUES ({placeholders})
     """
 
-    print("SQLite SQL forespørgsel klar:")
-    print(query)
+    #print("SQLite SQL forespørgsel klar:")
+    #print(query)
 
     try:
         cursor.execute(query, values)
         connection.commit()
-        print("Data eksporteret til ugc_data.")
+        #print("Data eksporteret til ugc_data.")
     except Exception as e:
-        print("Fejl under eksport:", e)
+        pass
+        #print("Fejl under eksport:", e)
     finally:
         cursor.close()
         connection.close()
@@ -98,7 +101,7 @@ def importer_vars_fra_db(email, data_dicts):
         data = hent_person_data(email, table_name)
 
         if not data:
-            print(f"Ingen data fundet i tabellen '{table_name}' for bruger.")
+            #print(f"Ingen data fundet i tabellen '{table_name}' for bruger.")
             continue
         
         for key, var in var_dict.items():
@@ -109,7 +112,8 @@ def importer_vars_fra_db(email, data_dicts):
                 else:
                     var.set("" if isinstance(var, ctk.StringVar) else 0)
             except Exception as e:
-                print(f"Fejl ved indsætning af '{key}' i '{table_name}': {e}")
+                pass
+                #print(f"Fejl ved indsætning af '{key}' i '{table_name}': {e}")
 
 def hent_person_data(email, table_name):
     connection = sqlite3.connect(DB_NAME)
@@ -139,7 +143,7 @@ def importer_ugc_fra_db(logged_in_email, target_dicts):
         row = cursor.fetchone()
 
         if not row:
-            print("Ingen data fundet for bruger:", logged_in_email)
+            #print("Ingen data fundet for bruger:", logged_in_email)
             return
 
         # Kolonnenavne
@@ -154,10 +158,12 @@ def importer_ugc_fra_db(logged_in_email, target_dicts):
                 target_dict.clear()  # tøm lokal dict
                 target_dict.update(json_data)  # opdater med db data
             except Exception as e:
-                print(f"Kunne ikke loade JSON for {key}: {e}")
+                pass 
+                # print(f"Kunne ikke loade JSON for {key}: {e}")
 
     except Exception as e:
-        print("Fejl under import:", e)
+        pass
+        #print("Fejl under import:", e)
     finally:
         cursor.close()
         connection.close()
@@ -181,14 +187,14 @@ def update_user_to_premium(email):
             """
             cursor.execute(query, ('premium', email))
             connection.commit()
-            print(f"Bruger '{email}' opdateret til premium.")
+            #print(f"Bruger '{email}' opdateret til premium.")
             return True
         else:
-            print(f"Bruger '{email}' blev ikke fundet i databasen. Ingen opdatering udført.")
+            #print(f"Bruger '{email}' blev ikke fundet i databasen. Ingen opdatering udført.")
             return False
 
     except Exception as e:
-        print(f"Fejl under opdatering af premium-status for '{email}': {e}")
+        #print(f"Fejl under opdatering af premium-status for '{email}': {e}")
         return False
     finally:
         if cursor:

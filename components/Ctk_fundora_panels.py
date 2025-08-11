@@ -491,24 +491,30 @@ class ForhandlingCheckPanel(Panel):
         self.update_dropdown_color(var_priority)
         self.current_row_index += 1
 
+    # Wouldnt this return empty if the page isnt loaded? BUG BUG BUG ? 
+    # jeg tror det er problematisk den opdatere her når den har lukket vinduet, så vil den vel return null på all get?
     def get_results(self):        
-        return {
-            id: { # data["label_entry"].get() + id {
-                "checked"   : data["checked"].get(),
-                "priority"  : data["priority"].get(),
-                "comment"   : data["comment"].get(),
-                "label"     : data["label_entry"].get(),
-            }
+        #print (self.vars)
 
-            # id referere til dict navnet på hver entry fx. Møbler(løsøre), liggetid(argument)   
-            for id, data in self.vars.items()
+        results = {
+            key: {
+                "checked": data["checked"].get(),
+                "priority": data["priority"].get(),
+                "comment": data["comment"].get(),
+                "label": data["label_entry"].get(),
+            }
+            for key, data in self.vars.items()
         }
+
+        print("DEBUG - get_results output:", results)
+        return results
+
 
     def update_ref_dict(self):
         self.ref_dict.clear()
         self.ref_dict.update(self.get_results()) 
 
-        # Gem til db. Måske lidt overkill?
+        # Gem til db. 
         self.mainApp.eksporter_data_til_db()
 
     def slet_opgave(self, row_id):

@@ -244,11 +244,12 @@ class App(ctk.CTk):
         self.all_UGC_update_functions = {}  
 
     def run_all_update_functions(self): 
+        # hvad er update func BUG? 
         for updateFunc in self.all_UGC_update_functions.values():
+            print (f"UPDATE FUNC: {updateFunc}")
             try: 
                 updateFunc()
                 print ("update func run")
-                updateFunc()
             except: 
                 print ("update func passed")
                 pass
@@ -275,8 +276,8 @@ class App(ctk.CTk):
         self.show_overlay_buttons()
 
     def back_to_hub(self):
-        # make sure all dicts are up to date. 
-        self.run_all_update_functions()
+        # make sure all dicts are up to date. BUG? 
+        # self.run_all_update_functions() # du kan ikke løbe alle update funcs da de vil return null. 
         self.eksporter_data_til_db()
 
         # lets try to save dicts and exports before leaving the hub view.
