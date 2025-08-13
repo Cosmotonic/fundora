@@ -20,12 +20,12 @@ class Renovering(ctk.CTkTabview):
         #self.add("Huskeliste")
         #self.add("Eksport")
 
-        Renovering_budget_tab(self.tab("Budget"), parent, rennovering_vars)
+        self.budget_tab = budget_tab(self.tab("Budget"), parent, rennovering_vars)
         #Renovering_huskeliste_tab(self.tab("Gantt Plan"), rennovering_vars)
         #Renovering_huskeliste_tab(self.tab("Huskeliste"), rennovering_vars)
         #Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
-class Renovering_budget_tab(ctk.CTkFrame): 
+class budget_tab(ctk.CTkFrame): 
     def __init__(self, parent, mainApp, rennovering_vars): 
         super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
@@ -34,7 +34,7 @@ class Renovering_budget_tab(ctk.CTkFrame):
         # reference to maip
         self.mainApp = mainApp
 
-        self.current_row_index = 1  # Track row numbers
+        self.current_row_index = 1 # Track row numbers
 
         # budget navn
         self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=rennovering_vars['budget_titel'], font=("Helvetica", 18, "bold"), justify="center")

@@ -268,12 +268,16 @@ class App(ctk.CTk):
     def menu_forhandling(self): 
         self.hubview.grid_forget()
         self.current_view = Forhandling(self, self.forhandlings_vars)
-        self.show_overlay_buttons()
+        save_arg_results = self.current_view.argument_tab.panel.update_ref_dict
+        save_losore_results = self.current_view.løsøre_tab.panel.update_ref_dict
+        self.show_overlay_buttons(True, save_arg_results, save_losore_results)
  
     def menu_budgetvaerktoej(self):
         self.hubview.grid_forget()
         self.current_view = Renovering(self, self.budgetvaerktoej_vars)
-        self.show_overlay_buttons()
+        # get the save function before closing. 
+        save_budget_results = self.current_view.budget_tab.bugetvaerktoej_handler.get_all_results
+        self.show_overlay_buttons(True, save_budget_results)
 
     def back_to_hub(self):
         # make sure all dicts are up to date. BUG? 
@@ -301,7 +305,7 @@ class App(ctk.CTk):
         
         self.show_login_view()
 
-    def show_overlay_buttons(self, show_close_button=True):
+    def show_overlay_buttons(self, show_close_button=True, *savefunctions):
         # Fjern evt. gammel close-button
         if hasattr(self, "close_button"):
             try:
@@ -311,7 +315,7 @@ class App(ctk.CTk):
 
         # Vis close-button hvis nødvendigt # exit 
         if show_close_button: 
-            self.close_button = CloseSection(self, self.back_to_hub)
+            self.close_button = CloseSection(self, self.back_to_hub, *savefunctions)
 
         # Vis feedback-knap
         self.feedback_button = Open_Feedback_button(self)

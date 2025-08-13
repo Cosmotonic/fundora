@@ -396,3 +396,34 @@ def beregn_total_budget_pris(data_dict):
 
     return round(total)
 
+
+
+
+
+'''
+
+    # expressions 
+
+    x ^ 3 = xxx 
+
+    x ^ -1 = 1 / x 
+    x ^ -n = 1 / x ^ n
+
+    (x^m)^n = x ^ m * n 
+
+    (x^3)^2 = x^3 * x
+
+    (xy)^m = x^m y^m 
+
+
+    #1.  8, 9
+    #2. 4^5 * 2^5 = 4^5
+    #3. 5^5*5*5 = 5^7            (5^6)*5 = 78125
+    #4. 
+    #5 a^b * a^b = (a^2)^b 
+    ## A^2*b 
+    #6 Same 
+
+    # 8 = 2^3 
+
+'''

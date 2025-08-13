@@ -76,6 +76,8 @@ class Argument_tab(ctk.CTkFrame):
 
     def get_results(self):
         resultater = self.panel.get_results()
+        print ("Entered Get Results on aguments")
+
         return resultater
 
 
@@ -109,6 +111,7 @@ class Løsøre_tab(ctk.CTkFrame):
 
     def get_results(self):
         resultater = self.panel.get_results()
+        print ("Entered Get Results on Løsøre")
         return resultater
 
     #def get_checklist_results(self):

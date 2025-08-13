@@ -45,13 +45,13 @@ class Bugetvaerktoej_handler():
         
         # Load budget fra Database 
         for panel_key, panel_data in budget_dict.items():
-            print(f"\n🔷 Panel-key: {panel_key}")  # Hoved budget panel
+            #print(f"\n🔷 Panel-key: {panel_key}")  # Hoved budget panel
             panelName = panel_data["hovedoppgave_navn"]
             self.tilføj_renovering(hovedopgave_navn=panelName, on_start_build=True)
 
             opgaver = panel_data.get("opgaver", {})
             for opgave_key, opg_data in opgaver.items():
-                print(f"  └─ Opgave-key: {opgave_key}")  # opgave paneler
+                #print(f"  └─ Opgave-key: {opgave_key}")  # opgave paneler
                 task_name = self.clean_task_name( opgave_key )
                 self.new_panel.initial_budget_opgave(task_name, opg_data)
         
@@ -83,8 +83,8 @@ class Bugetvaerktoej_handler():
                 "hovedoppgave_navn": panel.Hovedoppgave_navn_var.get(), # <-- tilføj navnet
                 "opgaver": panel_results,
             }
-        print (f"RESULT: {self.all_renovation_panels}")
-
+        # print (f"RESULT: {self.all_renovation_panels}")
+        print ("Entered budget get all results function")
         # update dictionnary in app py
         self.update_ref_dict()
         return self.all_renovation_panels
@@ -506,7 +506,7 @@ class ForhandlingCheckPanel(Panel):
             for key, data in self.vars.items()
         }
 
-        print("DEBUG - get_results output:", results)
+        # print("DEBUG - get_results output:", results)
         return results
 
 
@@ -844,24 +844,33 @@ class DropDownPanel(ctk.CTkOptionMenu):
         self.pack(fill='x', pady = 4, padx=4)
 
 class CloseSection(ctk.CTkButton):
-    def __init__(self, parent, close_func):
+    def __init__(self, parent, close_func, *extra_funcs):
         super().__init__(
-            master=parent, 
-            text = 'X', 
-            command = close_func, 
-            text_color=WHITE, 
-            fg_color=RED, 
-            width=40, 
-            height=40, 
+            master=parent,
+            text='X',
+            command=self.executeables,
+            text_color=WHITE,
+            fg_color=RED,
+            width=40,
+            height=40,
             corner_radius=8,
-            hover_color=HOVER_RED)
-        
-        self.place(relx = 0.99, rely = 0.01, anchor = 'ne')
+            hover_color=HOVER_RED
+        )
+        self.place(relx=0.99, rely=0.01, anchor='ne')
 
-        # save before leaving the section
-        parent.eksporter_data_til_db()
+        self.close_func = close_func
+        self.extra_funcs = list(extra_funcs) if extra_funcs else []
 
-        # exit page
+    def executeables(self):
+        #print ("entered executeables")
+        # run all extra functions (if any)
+        for fn in getattr(self, "extra_funcs", []):
+            if callable(fn):
+                #print("printing current function")
+                fn()
+
+        # Only close function after everything has been saved in current view. 
+        self.close_func()
 
 
 class Show_User_Role(ctk.CTkLabel): 
