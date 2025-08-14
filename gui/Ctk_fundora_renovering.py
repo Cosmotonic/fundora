@@ -26,18 +26,20 @@ class Renovering(ctk.CTkTabview):
         #Renovering_eksport_tab(self.tab("Eksport"), rennovering_vars)
 
 class budget_tab(ctk.CTkFrame): 
-    def __init__(self, parent, mainApp, rennovering_vars): 
+    def __init__(self, parent, mainApp, renovering_vars): 
         super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
         self.columnconfigure(0, weight=1)
         
+        self.renovering_vars = renovering_vars
+
         # reference to maip
         self.mainApp = mainApp
 
         self.current_row_index = 1 # Track row numbers
 
         # budget navn
-        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=rennovering_vars['budget_titel'], font=("Helvetica", 18, "bold"), justify="center")
+        self.budgetTitel_entry = ctk.CTkEntry(self, textvariable=renovering_vars['budget_titel'], font=("Helvetica", 18, "bold"), justify="center")
         self.budgetTitel_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
 
         # kontakt linje 
@@ -46,9 +48,9 @@ class budget_tab(ctk.CTkFrame):
         self.kontaktFrame.grid(row=1, column=0, sticky='new', padx=5, pady=(5,1))
         self.kontaktFrame.columnconfigure((0,1,2), weight=1)
 
-        self.kontakt_navn_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Kontaktperson', textvariable=rennovering_vars['kontakt_navn'],  justify="center")
-        self.kontakt_telefon_entry = ctk.CTkEntry(self.kontaktFrame, placeholder_text = 'Telefon', textvariable=rennovering_vars['kontakt_telefon'],  justify="center")
-        self.kontakt_mail_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Email', textvariable=rennovering_vars['kontakt_mail'],  justify="center")
+        self.kontakt_navn_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Kontaktperson', textvariable=renovering_vars['kontakt_navn'],  justify="center")
+        self.kontakt_telefon_entry = ctk.CTkEntry(self.kontaktFrame, placeholder_text = 'Telefon', textvariable=renovering_vars['kontakt_telefon'],  justify="center")
+        self.kontakt_mail_entry = ctk.CTkEntry   (self.kontaktFrame, placeholder_text = 'Email', textvariable=renovering_vars['kontakt_mail'],  justify="center")
 
         self.kontakt_navn_entry.grid(row=0, column=0, sticky="new", padx=5, pady=5)
         self.kontakt_telefon_entry.grid(row=0, column=1, sticky="new", padx=5, pady=5)
@@ -87,7 +89,7 @@ class budget_tab(ctk.CTkFrame):
         # Eksporter         
         self.eksport_budget_button = ctk.CTkButton(self.renovation_bottom_Frame, 
                                                         text="Eksporter Budget PDF", 
-                                                        command=self.bugetvaerktoej_handler.get_all_results, # command=lambda: export.Eksport_rennovation_budget_PDF(self.get_all_results(), rennovering_vars))
+                                                        command= self.gather_print, # lambda: export.Eksport_rennovation_budget_PDF(self.bugetvaerktoej_handler.get_all_results, rennovering_vars), # command=self.bugetvaerktoej_handler.get_all_results, # 
                                                         corner_radius=32, 
                                                         fg_color=DARK_ORANGE, 
                                                         hover_color=HIGHTLIGHT_ORANGE, 
@@ -115,7 +117,13 @@ class budget_tab(ctk.CTkFrame):
         self.total_pris_var = ctk.StringVar(value=" ") 
         self.total_pris = ctk.CTkEntry(self.renovation_bottom_Frame, textvariable=self.total_pris_var, font=("Helvetica", 18, "bold"))
         self.total_pris.grid(row=0, column=10, sticky="sew", padx=5, pady=5)
-            
+    
+    # not currently in use
+    def gather_print(self):
+        budget_dict = self.bugetvaerktoej_handler.get_all_results()
+        export.Eksport_rennovation_budget_PDF(budget_dict, self.renovering_vars)
+        #print ("inside test result")
+
     def Total_pris(self): 
         # Gemmer alle resultater på db og henter dem igen, så de matcher.     
         alle_panel_data = self.bugetvaerktoej_handler.get_all_results()
@@ -153,7 +161,7 @@ class Renovering_eksport_tab(ctk.CTkFrame):
         person_frame2 = ctk.CTkFrame(self, fg_color=WHITE)
         person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
 
-                # Beregning 
+        # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
                                             text="Eksporter PDF", 
                                             corner_radius=32, 

@@ -317,7 +317,7 @@ class App(ctk.CTk):
         if show_close_button: 
             self.close_button = CloseSection(self, self.back_to_hub, *savefunctions)
 
-        # Vis feedback-knap
+        # Vis feedback-knap # BUG ændret temp til discord link
         self.feedback_button = Open_Feedback_button(self)
 
         # Vis brugerrolle (gem som self for at kunne opdatere senere)

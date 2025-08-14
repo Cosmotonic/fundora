@@ -279,6 +279,7 @@ class Eksport_rennovation_budget_PDF:
         if not data_dict:
             return
 
+        print ("her er data dict")
         print (data_dict)
 
         file_path = filedialog.asksaveasfilename(

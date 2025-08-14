@@ -902,8 +902,8 @@ class Open_Feedback_button(ctk.CTkButton):
     def __init__(self, parent):
         super().__init__(
             master=parent, 
-            text = '  Indsend Feedback  ', 
-            command = self.load_feedback_window, 
+            text = '  Hjælp / Feedback Discord ', 
+            command = self.open_discord_invite, 
             text_color=DARK_TEXT_COLOR, 
             fg_color=WHITE, 
             border_color=ORANGE,
@@ -919,6 +919,12 @@ class Open_Feedback_button(ctk.CTkButton):
 
     def load_feedback_window(self): 
         feedback_window = Feedback_Window(self.mainApp)
+
+    def open_discord_invite(self):
+        import webbrowser
+
+        url = "https://discord.gg/Y9t49AKK"
+        webbrowser.open(url)
 
 class Feedback_Window(ctk.CTkToplevel):
     def __init__(self, parent):
