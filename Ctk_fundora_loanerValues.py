@@ -113,6 +113,7 @@ FLIP_OPTIONS = ['None', 'X', 'Y', 'Both']
 # COLORS 
 BLUE_COLOR='#1f6aa5'
 FG_COLOR ='#64686b'
+LIGHT_GREY ="#e2e2e2"
 DARK_GREY = '#4a4e51'
 BRIGHTNESS_DEFAULT = 1
 INVERT_DEFAULT = False
@@ -218,3 +219,51 @@ LØSØRE_INSPIRATION = {
 FEEDBACK_INSPIRATION = { 
             "row_0":    {"feedback": "This works well, this doesnt", "pc_data": True, "date": "dd/mm/yyyy", "time": "16:28", "version": "0.1"},
             }    
+
+
+
+
+
+
+# Forhandlings strategi råd
+NEGOTIATION_TEXT = """📘 5 GYLDNE FORHANDLINGSREGLER
+1. Forhandl om interesser – ikke positioner. Gå efter win-win fremfor win-lose. 
+   👉 Det betyder: I stedet for at holde fast i et krav (position), så fokusér på hvorfor du ønsker det (interesse). 
+2. Find fælles interesser – ofte kan begge parter få det, de reelt ønsker. 
+   👉 Tænk på “orange-eksemplet”: den ene vil have skallen, den anden vil have saften – begge kan vinde. 
+3. Kig bag facaden – det åbenlyse standpunkt dækker tit over de virkelige behov. 
+   👉 Eksempel: “Jeg vil have en lavere pris” kan i virkeligheden handle om tryghed eller fleksibilitet. 
+4. Kend dig selv – forstå din egen stil og tilpas dig modpartens. 
+   👉 Er de smilende, sure, direkte? Afspejl deres energi og kommunikationsform. 
+5. Du er kun så stærk som dine alternativer – hav altid en BATNA. 
+   👉 BATNA = Bedste Alternativ Til En Aftale. Altså: “Hvis jeg ikke kan få dette, så går jeg med dette alternativ”.
+
+⚡ FØR FORHANDLINGEN
+- Forberedelse er nøglen – jo bedre du forbereder dig, jo mere kontrol har du. 
+- Aftal processen før indholdet – hvordan skal mødet køres? 
+  👉 Vær åbne om at dette er jeres startbud, men signalér også at I er parate til at rykke jer.  
+- Bliv enige om, at der er reel interesse fra begge sider.  
+  👉 Hold roen – folk kan blive opkørte i en forhandling, undgå at blive trukket med.  
+- Brug objektive kriterier – fx data, standarder eller markedspriser.  
+- Adskil person fra problem – gå efter sagen, ikke individet.  
+
+📝 FORBEREDELSES-CHECKLISTE (“TOP 10”)
+1. Forstå dine behov og underliggende interesser.  
+2. Kend dine trade-offs – hvad kan du give uden at miste for meget?  
+3. Sæt dine mål – lav et realistisk spænd af mulige resultater.  
+4. Kend dine alternativer – og styrk dem, hvis muligt.  
+5. Definér din “walk-away”-grænse – hvornår stopper du?  
+6. Vurdér modpartens position, interesser og alternativer.  
+7. Find ZOPA – det fælles forhandlingsrum.  
+8. Kend modpartens beslutningskraft – kan de faktisk sige ja?  
+9. Saml relevante standarder og kriterier – fx lovgivning eller markedstal.  
+10. Tænk i kreative løsninger, der skaber værdi for begge parter.  
+
+🎯 BANT – HURTIG KVALIFICERING
+B = Budget → Kan kunden betale? I boligforhandling: har køber råd til din forventede pris?  
+A = Authority → Er det en beslutningstager? Mægleren går frem og tilbage – gør det nemt for mægler at præsentere dine ønsker.  
+N = Need → Vær sikker på, at du virkelig ønsker boligen. Hav dit walk-away point klart, så du ikke betaler mere, end du kan/vil.  
+T = Timeline → Hvornår ønsker de at handle?  
+
+👉 Bruges til hurtigt at vurdere, om en forhandling er værd at investere tid i.
+"""

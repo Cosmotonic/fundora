@@ -476,7 +476,7 @@ class ForhandlingCheckPanel(Panel):
             "CheckBox_widget" : checkbox,
             "priority": var_priority,
             "dropdown_widget": dropdown,
-            "comment": comment_var,
+            "comment": comment_var, 
             "comment_entry": comment_entry,
             "label": label_var,
             "label_entry" : label_entry, 
@@ -491,11 +491,8 @@ class ForhandlingCheckPanel(Panel):
         self.update_dropdown_color(var_priority)
         self.current_row_index += 1
 
-    # Wouldnt this return empty if the page isnt loaded? BUG BUG BUG ? 
-    # jeg tror det er problematisk den opdatere her når den har lukket vinduet, så vil den vel return null på all get?
     def get_results(self):        
         #print (self.vars)
-
         results = {
             key: {
                 "checked": data["checked"].get(),
@@ -536,6 +533,47 @@ class ForhandlingCheckPanel(Panel):
                 options = item.get("priority_options", {})
                 color = options.get(val, {}).get("color", "#cccccc")  # fallback farve
                 item["dropdown_widget"].configure(fg_color=color)
+
+
+class Notes_strategy(Panel): 
+    def __init__(self, parent, fg_color=WHITE):
+        super().__init__(parent, fg_color)
+
+        self.columnconfigure((1), weight=9)
+        self.columnconfigure((0), weight=1)
+        self.rowconfigure((1,2), weight=1)
+
+        # Row 0 - Tilfoej budget 
+        self.budget_label = ctk.CTkLabel(self, text="Ekskluder fra PDF", font=("helvita", 12, "bold"))# value=mainApp.appVersion )
+        self.budget_label.grid(row=0, column=0, sticky='w', padx=5, pady=5)
+        
+        # row 1 - 
+        self.personal_notes_check   = ctk.CTkCheckBox(self, text="Ekskluder") # variable=self.pc_data_var)
+        self.personal_notes_check.grid(row=2, column=0, sticky="w", padx=10, pady=(10, 10))
+        
+        self.personal_notes_text    = ctk.CTkTextbox(self, height=120, border_color=DARK_GREY, border_width=2)
+        self.personal_notes_text.grid(row=2, column=1, sticky='nsew', padx=5, pady=5)
+
+        # row 2 - 
+        self.advice_check = ctk.CTkCheckBox(self, text="Ekskluder") #  variable=self.pc_data_var)
+        self.advice_check.grid(row=1, column=0, sticky="w", padx=10, pady=(10, 10))
+        
+        self.advice_text  = ctk.CTkTextbox(self, height=120, border_color=DARK_GREY, border_width=2, fg_color=LIGHT_GREY)
+        self.advice_text.insert("0.0", NEGOTIATION_TEXT)  # 0.0 = starten af tekstboksen
+        self.advice_text.configure(state="disabled")
+        self.advice_text.grid(row=1, column=1, sticky='nsew', padx=5, pady=5)
+
+    def save_notes(self): 
+        text = self.personal_notes_text.get("1.0", "end-1c")  
+        print (text)
+
+    def load_notes(self): 
+
+        print ("Notes loaded.")
+
+
+
+
 
 class BooleanInputPanel(Panel): 
     def __init__(self, parent, text, data_var): 
@@ -665,8 +703,8 @@ class FlexibleInputPanel(Panel):
         self.ValueEntry.grid(row=0, column=2, sticky='e', padx=5, pady=5)
 
 class DoubleInputPanel(Panel): 
-    def __init__(self, parent, text, field1, field2,  readOption_A='normal',  readOption_B='normal'): 
-        super().__init__(parent=parent)
+    def __init__(self, parent, text, field1, field2,  readOption_A='normal',  readOption_B='normal', fg_color=WHITE): 
+        super().__init__(parent=parent, fg_color=fg_color)
 
         self.columnconfigure(0, weight=1)  # ← allow frame to expand in its parent
 
@@ -722,8 +760,8 @@ class xxInputPanel(Panel):
         print(f"Field '{name}' changed")
 
 class ForhandlingsPanel(Panel): 
-    def __init__(self, parent, text, entry1, entry2, udbudspris): 
-        super().__init__(parent=parent)
+    def __init__(self, parent, text, entry1, entry2, udbudspris, fg_color = WHITE): 
+        super().__init__(parent=parent, fg_color=fg_color)
  
         self.udbudspris = udbudspris
         self.columnconfigure(0, weight=1)  

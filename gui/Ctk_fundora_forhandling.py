@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel
+from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, Notes_strategy
 import backend.Ctk_fundora_exportPDF as export 
 from Ctk_fundora_loanerValues import *
 
@@ -20,11 +20,10 @@ class Forhandling(ctk.CTkTabview):
         
         mainApp = parent 
 
-        Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
-        
+        self.ackerman_tab = Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
         self.argument_tab = Argument_tab(self.tab("Argumentation"), mainApp, mainApp.forhandlings_argumenter_dict) 
         self.løsøre_tab   = Løsøre_tab(self.tab("Løsøre"), mainApp, mainApp.forhandlings_løsøre_dict)
-        self.eksport_tab = Eksport_tab(self.tab("Eksport"), forhandlings_vars, argumenter_getter_func=self.argument_tab.get_results, løsøre_getter_func=self.løsøre_tab.get_results)
+        self.eksport_tab = Eksport_tab(self.tab("Eksport"), mainApp, forhandlings_vars, argumenter_getter_func=self.argument_tab.get_results, løsøre_getter_func=self.løsøre_tab.get_results)
 
 
 class Ackerman_tab(ctk.CTkFrame): 
@@ -38,7 +37,7 @@ class Ackerman_tab(ctk.CTkFrame):
         SingleInputPanel(FrameColoum1, "Udbudspris", forhandlings_vars["udbudspris"])
 
         # beregn forventet besparing i procent
-        ForhandlingsPanel(FrameColoum1, "Forventet procent afslag & max købspris",  forhandlings_vars['forventet_procent'], forhandlings_vars['forventet_pris'], forhandlings_vars['udbudspris'])
+        ForhandlingsPanel(FrameColoum1, "Forventet procent afslag & max købspris",  forhandlings_vars['forventet_procent'], forhandlings_vars['forventet_pris'], forhandlings_vars['udbudspris'], fg_color=LIGHT_GREEN)
         SliderPanel(FrameColoum1, "Koncessiv forhandlingsaggressivitet", "0", forhandlings_vars["aggressivitet"], 1, 3, defaultValue=1, step_size=1)
         
         outputFrame = ctk.CTkFrame(self, fg_color=WHITE,  border_width=2, border_color=DARK_GREY)
@@ -47,7 +46,7 @@ class Ackerman_tab(ctk.CTkFrame):
         DoubleInputPanel(outputFrame, "1. Forhandlingsbud: ", forhandlings_vars['runde1_procent'], forhandlings_vars['runde1_pris'], readOption_A='disabled',  readOption_B='disabled') 
         DoubleInputPanel(outputFrame, "2. Forhandlingsbud: ", forhandlings_vars['runde2_procent'], forhandlings_vars['runde2_pris'], readOption_A='disabled',  readOption_B='disabled') 
         DoubleInputPanel(outputFrame, "3. Forhandlingsbud: ", forhandlings_vars['runde3_procent'], forhandlings_vars['runde3_pris'], readOption_A='disabled',  readOption_B='disabled') 
-        DoubleInputPanel(outputFrame, "4. Forhandlingsbud: ", forhandlings_vars['runde4_procent'], forhandlings_vars['runde4_pris'], readOption_A='disabled',  readOption_B='disabled') 
+        DoubleInputPanel(outputFrame, "4. Forhandlingsbud: ", forhandlings_vars['runde4_procent'], forhandlings_vars['runde4_pris'], readOption_A='disabled',  readOption_B='disabled', fg_color=LIGHT_GREEN) 
    
 class Argument_tab(ctk.CTkFrame): 
     def __init__(self, parent, mainApp, forhandlings_Argumenter_dict): 
@@ -79,7 +78,6 @@ class Argument_tab(ctk.CTkFrame):
         print ("Entered Get Results on aguments")
 
         return resultater
-
 
 class Løsøre_tab(ctk.CTkFrame): 
     def __init__(self, parent, mainApp, forhandlings_løsøre_dict): 
@@ -119,21 +117,24 @@ class Løsøre_tab(ctk.CTkFrame):
 
 
 class Eksport_tab(ctk.CTkFrame): 
-    def __init__(self, parent, forhandlings_vars,  argumenter_getter_func, løsøre_getter_func): # vi skal ikke have init dicts med ind her fordi vi skal generer dem hver gang vi trykker eksport, derfor skal de laves i panel. 
+    def __init__(self, parent, mainApp, forhandlings_vars, argumenter_getter_func, løsøre_getter_func): # vi skal ikke have init dicts med ind her fordi vi skal generer dem hver gang vi trykker eksport, derfor skal de laves i panel. 
         super().__init__(master=parent, fg_color=WHITE)
         self.pack(expand=True, fill='both')
+
+        # dict HERE 
+        self.user_notes_dict = mainApp.all_UGC_update_functions["user_notes_dict"]
 
         # getter funktioner
         self.argumenter_getter_func = argumenter_getter_func
         self.løsøre_getter_func     = løsøre_getter_func
 
         self.columnconfigure((0, 1), weight=1)
+        self.rowconfigure((0), weight=8)
+        self.rowconfigure((1), weight=1)
 
-        # layout
-        person_frame1 = ctk.CTkFrame(self, fg_color=WHITE)
-        person_frame1.grid(row=1, column=0, columnspan=1, padx=5, pady=5, sticky='new')
-        person_frame2 = ctk.CTkFrame(self, fg_color=WHITE)
-        person_frame2.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky='new')
+        self.notes_strategy = Notes_strategy(self)
+        self.notes_strategy.grid(row = 0, column=0, columnspan=2, sticky="nsew")
+
 
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
@@ -146,12 +147,9 @@ class Eksport_tab(ctk.CTkFrame):
                                             font=("Helvetica", 14, "bold"),
                                             border_width=2,
                                             command=lambda: export.Eksport_forhandling_PDF(forhandlings_vars, self.get_all_results()))
-
-        self.beregn_button.grid(row = 3, column=0, columnspan=2)
+        self.beregn_button.grid(row = 1, column=0, columnspan=2)
 
     def get_all_results(self):
-        #print(self.argumenter_getter_func())  
-        #print(self.løsøre_getter_func())
         return {
             "argumenter": self.argumenter_getter_func(),
             "losore": self.løsøre_getter_func()

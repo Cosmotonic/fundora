@@ -239,6 +239,7 @@ class App(ctk.CTk):
         self.forhandlings_argumenter_inspiration_dict = ARGUMENTER_INSPIRATION
         
         self.budgetvaerktoej_dict = {} 
+        self.user_notes_dict = {}
 
         # gets all result functions for saves and db syncs. 
         self.all_UGC_update_functions = {}  
@@ -355,6 +356,7 @@ class App(ctk.CTk):
         "loesoere": self.forhandlings_løsøre_dict,
         "feedback": self.feedback_dict,
         "budgetvaerktoej": self.budgetvaerktoej_dict,
+        "user_notes": self.user_notes_dict,
         }
 
         sqlhandler.eksporter_ugc_til_db(self.logged_in_email, ugc_dict)
@@ -381,6 +383,7 @@ class App(ctk.CTk):
         "argumentation": self.forhandlings_argumenter_dict,
         "loesoere": self.forhandlings_løsøre_dict,
         "budgetvaerktoej": self.budgetvaerktoej_dict,
+        "user_notes": self.user_notes_dict,
         }
         sqlhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
         #print ("UGC picked from DB")
