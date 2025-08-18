@@ -239,11 +239,12 @@ class App(ctk.CTk):
         self.forhandlings_argumenter_inspiration_dict = ARGUMENTER_INSPIRATION
         
         self.budgetvaerktoej_dict = {} 
-        self.user_notes_dict = {}
+        self.user_note_dict = {}
 
         # gets all result functions for saves and db syncs. 
         self.all_UGC_update_functions = {}  
 
+    # currently not in use? 
     def run_all_update_functions(self): 
         # hvad er update func BUG? 
         for updateFunc in self.all_UGC_update_functions.values():
@@ -271,7 +272,8 @@ class App(ctk.CTk):
         self.current_view = Forhandling(self, self.forhandlings_vars)
         save_arg_results = self.current_view.argument_tab.panel.update_ref_dict
         save_losore_results = self.current_view.løsøre_tab.panel.update_ref_dict
-        self.show_overlay_buttons(True, save_arg_results, save_losore_results)
+        save_notes_results = self.current_view.eksport_tab.notes_strategy.save_notes
+        self.show_overlay_buttons(True, save_arg_results, save_losore_results, save_notes_results)
  
     def menu_budgetvaerktoej(self):
         self.hubview.grid_forget()
@@ -356,7 +358,7 @@ class App(ctk.CTk):
         "loesoere": self.forhandlings_løsøre_dict,
         "feedback": self.feedback_dict,
         "budgetvaerktoej": self.budgetvaerktoej_dict,
-        "user_notes": self.user_notes_dict,
+        "user_notes": self.user_note_dict,
         }
 
         sqlhandler.eksporter_ugc_til_db(self.logged_in_email, ugc_dict)
@@ -383,7 +385,7 @@ class App(ctk.CTk):
         "argumentation": self.forhandlings_argumenter_dict,
         "loesoere": self.forhandlings_løsøre_dict,
         "budgetvaerktoej": self.budgetvaerktoej_dict,
-        "user_notes": self.user_notes_dict,
+        "user_notes": self.user_note_dict,
         }
         sqlhandler.importer_ugc_fra_db(self.logged_in_email, ugc_dict)
         #print ("UGC picked from DB")

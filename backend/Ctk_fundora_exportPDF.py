@@ -403,11 +403,11 @@ class FundoraPDF(FPDF):
 
 
 class Eksport_forhandling_PDF:
-    def __init__(self, data_vars, forhandlings_arg_løs): 
-        if not forhandlings_arg_løs:
+    def __init__(self, data_vars, forhandlings_arg_løs_notes): 
+        if not forhandlings_arg_løs_notes:
             return
 
-        print (forhandlings_arg_løs)
+        print (forhandlings_arg_løs_notes)
 
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
@@ -435,14 +435,21 @@ class Eksport_forhandling_PDF:
         self.tilføj_afsnit("forhandlingsstrategi", strategi_tekst)
 
         # Argumenter tabel
-        #print (f"Argumenter: {forhandlings_arg_løs["argumenter"]}")
         self.pdf.add_page()
-        self.tilføj_tabel("Argumenter", forhandlings_arg_løs["argumenter"])
+        self.tilføj_tabel("Argumenter", forhandlings_arg_løs_notes["argumenter"])
 
         # Løsøre tabel
-        #print (f"Løsøre: {forhandlings_arg_løs["argumenter"]}")
         self.pdf.add_page()
-        self.tilføj_tabel("Løsøre", forhandlings_arg_løs["losore"])
+        self.tilføj_tabel("Løsøre", forhandlings_arg_løs_notes["losore"])
+        
+        # Noter
+        self.pdf.add_page()
+        self.add_user_notes_page(forhandlings_arg_løs_notes["user_notes"])
+
+        # advice 
+        self.pdf.add_page()
+        self.add_advice_page(NEGOTIATION_TEXT)
+        #self.add_advice_page(forhandlings_arg_løs_notes["advice"])
 
         # Gem PDF
         self.pdf.output(file_path)
@@ -469,13 +476,13 @@ class Eksport_forhandling_PDF:
         return tekst    
 
 
-
     def tilføj_afsnit(self, overskrift, tekst):
         self.pdf.set_font("Helvetica", style='B', size=14)
         self.pdf.cell(200, 10, overskrift, ln=True)
         self.pdf.set_font("Helvetica", size=12)
         self.pdf.multi_cell(0, 10, tekst)
         self.pdf.ln(5)
+
 
     def tilføj_tabel(self, titel, data_dict):
         if not data_dict:
@@ -492,7 +499,7 @@ class Eksport_forhandling_PDF:
         self.pdf.cell(100, 10, "Kommentar", 1)
         self.pdf.ln()
 
-        # Rows
+        # Rows 
         self.pdf.set_font("Helvetica", size=12)
         for punkt, data in data_dict.items():
             #print (f"challenge area: {data.get('checked')}")
@@ -508,6 +515,24 @@ class Eksport_forhandling_PDF:
 
         self.pdf.ln(5)
 
+    # 1) USER NOTES
+    def add_user_notes_page(self, notes_text: str):
+        self.pdf.set_font("Helvetica", style='B', size=14)
+        self.pdf.cell(0, 10, "Personlige noter", ln=True)
+        self.pdf.ln(2)
 
+        # Helvetica (core font) kan ikke printe emojis. Fjern alt uden for Latin-1:
+        safe_text = notes_text.encode("latin-1", "ignore").decode("latin-1")
+
+        self.pdf.set_font("Helvetica", size=12)
+        self.pdf.multi_cell(0, 8, safe_text if safe_text else "— (ingen noter) —")
+
+    def add_advice_page(self, advice_text):
+        self.pdf.set_font("Helvetica", style='B', size=14)
+        self.pdf.cell(0, 10, "Forhandlingsråd", ln=True)
+        self.pdf.ln(2)
+
+        self.pdf.set_font("Helvetica", size=12)
+        self.pdf.multi_cell(0, 8, advice_text)
 
 

@@ -73,7 +73,7 @@ class Bugetvaerktoej_handler():
             # Gemmer på db og henter igen, så vi syncer så ofte som muligt.     
             self.get_all_results()
 
-    # here it saves all renovations including assignments. 
+    #  it saves all renovations including assignments. # HERE
     def get_all_results(self):
         self.all_renovation_panels = {}
         for panel in self.opgave_panels:
@@ -153,7 +153,7 @@ class RenoveringsOpgavePanel(Panel):
         self.dropdown = ctk.CTkOptionMenu(self.OpgaveFrame,
                                             variable=self.hovedopgave_dropdown_var,
                                             values=list(self.priority_options.keys()),
-                                            command=self.update_dropdown_color)  # ← Hook here
+                                            command=self.update_dropdown_color)  # ← Hook 
 
         self.dropdown.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
@@ -536,13 +536,15 @@ class ForhandlingCheckPanel(Panel):
 
 
 class Notes_strategy(Panel): 
-    def __init__(self, parent, fg_color=WHITE):
+    def __init__(self, parent, mainApp, fg_color=WHITE):
         super().__init__(parent, fg_color)
 
         self.columnconfigure((1), weight=9)
         self.columnconfigure((0), weight=1)
         self.rowconfigure((1,2), weight=1)
 
+        self.mainApp = mainApp
+ 
         # Row 0 - Tilfoej budget 
         self.budget_label = ctk.CTkLabel(self, text="Ekskluder fra PDF", font=("helvita", 12, "bold"))# value=mainApp.appVersion )
         self.budget_label.grid(row=0, column=0, sticky='w', padx=5, pady=5)
@@ -558,22 +560,32 @@ class Notes_strategy(Panel):
         self.advice_check = ctk.CTkCheckBox(self, text="Ekskluder") #  variable=self.pc_data_var)
         self.advice_check.grid(row=1, column=0, sticky="w", padx=10, pady=(10, 10))
         
-        self.advice_text  = ctk.CTkTextbox(self, height=120, border_color=DARK_GREY, border_width=2, fg_color=LIGHT_GREY)
+        self.advice_text  = ctk.CTkTextbox(self, height=120, border_color=DARK_GREY, border_width=2, fg_color=LIGHT_BG)
         self.advice_text.insert("0.0", NEGOTIATION_TEXT)  # 0.0 = starten af tekstboksen
         self.advice_text.configure(state="disabled")
         self.advice_text.grid(row=1, column=1, sticky='nsew', padx=5, pady=5)
 
+       
+        self.load_notes()
+
+    # HERE 
     def save_notes(self): 
-        text = self.personal_notes_text.get("1.0", "end-1c")  
-        print (text)
+        notes = self.personal_notes_text.get("1.0", "end-1c")  
+        #self.notes = {}
+        #self.notes["ID_1"] = {"user_notes" : notes} 
+        self.mainApp.user_note_dict.clear()
+        self.mainApp.user_note_dict["user_notes"] = notes
+        
+        #self.mainApp.user_note_dict.update(self.notes)
+
+        # send data til db
+        self.mainApp.eksporter_data_til_db()
 
     def load_notes(self): 
+        self.personal_notes_text.insert("1.0", self.mainApp.user_note_dict["user_notes"])
 
         print ("Notes loaded.")
-
-
-
-
+    
 
 class BooleanInputPanel(Panel): 
     def __init__(self, parent, text, data_var): 

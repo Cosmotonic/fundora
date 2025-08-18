@@ -23,7 +23,7 @@ class Forhandling(ctk.CTkTabview):
         self.ackerman_tab = Ackerman_tab(self.tab("Konsessiv Forhandling"), forhandlings_vars)
         self.argument_tab = Argument_tab(self.tab("Argumentation"), mainApp, mainApp.forhandlings_argumenter_dict) 
         self.løsøre_tab   = Løsøre_tab(self.tab("Løsøre"), mainApp, mainApp.forhandlings_løsøre_dict)
-        self.eksport_tab = Eksport_tab(self.tab("Eksport"), mainApp, forhandlings_vars, argumenter_getter_func=self.argument_tab.get_results, løsøre_getter_func=self.løsøre_tab.get_results)
+        self.eksport_tab  = Eksport_tab(self.tab("Eksport"), mainApp, forhandlings_vars, argumenter_getter_func=self.argument_tab.get_results, løsøre_getter_func=self.løsøre_tab.get_results)
 
 
 class Ackerman_tab(ctk.CTkFrame): 
@@ -112,9 +112,6 @@ class Løsøre_tab(ctk.CTkFrame):
         print ("Entered Get Results on Løsøre")
         return resultater
 
-    #def get_checklist_results(self):
-    #    return self.panel.get_results()
-
 
 class Eksport_tab(ctk.CTkFrame): 
     def __init__(self, parent, mainApp, forhandlings_vars, argumenter_getter_func, løsøre_getter_func): # vi skal ikke have init dicts med ind her fordi vi skal generer dem hver gang vi trykker eksport, derfor skal de laves i panel. 
@@ -122,7 +119,8 @@ class Eksport_tab(ctk.CTkFrame):
         self.pack(expand=True, fill='both')
 
         # dict HERE 
-        self.user_notes_dict = mainApp.all_UGC_update_functions["user_notes_dict"]
+        # self.user_notes_dict = {}
+        self.mainApp = mainApp
 
         # getter funktioner
         self.argumenter_getter_func = argumenter_getter_func
@@ -131,10 +129,9 @@ class Eksport_tab(ctk.CTkFrame):
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure((0), weight=8)
         self.rowconfigure((1), weight=1)
-
-        self.notes_strategy = Notes_strategy(self)
+ 
+        self.notes_strategy = Notes_strategy(self, mainApp=mainApp)
         self.notes_strategy.grid(row = 0, column=0, columnspan=2, sticky="nsew")
-
 
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
@@ -146,11 +143,19 @@ class Eksport_tab(ctk.CTkFrame):
                                             text_color=WHITE_TEXT_COLOR,
                                             font=("Helvetica", 14, "bold"),
                                             border_width=2,
-                                            command=lambda: export.Eksport_forhandling_PDF(forhandlings_vars, self.get_all_results()))
+                                            command= lambda: export.Eksport_forhandling_PDF(forhandlings_vars, self.get_all_results()))
         self.beregn_button.grid(row = 1, column=0, columnspan=2)
 
     def get_all_results(self):
-        return {
+        
+        self.notes_strategy.save_notes()
+        notes = self.mainApp.user_note_dict
+        print (notes)
+
+        # Runs the arg funcs here that makes it into argumenter : dicts
+        ret_value = {
             "argumenter": self.argumenter_getter_func(),
-            "losore": self.løsøre_getter_func()
-        }
+            "losore": self.løsøre_getter_func(),
+            "user_notes" : notes,
+            }
+        return ret_value
