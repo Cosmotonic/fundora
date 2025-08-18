@@ -285,10 +285,9 @@ class Eksport_rennovation_budget_PDF:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile=renovation_vars['budget_titel'],
+            initialfile= "Budgetoplæg_01", # renovation_vars['budget_titel'],
             initialdir=os.path.expanduser("~/Desktop")
         )
-
         if not file_path:
             return
 
@@ -412,7 +411,7 @@ class Eksport_forhandling_PDF:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile=data_vars['forhandling_titel'],
+            initialfile= "Forhandlingsstrategi_01", # data_vars['forhandling_titel'],
             initialdir=os.path.expanduser("~/Desktop")
         )
 
@@ -516,16 +515,18 @@ class Eksport_forhandling_PDF:
         self.pdf.ln(5)
 
     # 1) USER NOTES
-    def add_user_notes_page(self, notes_text: str):
+    def add_user_notes_page(self, notes_dict):
+        self.pdf.add_page()
         self.pdf.set_font("Helvetica", style='B', size=14)
         self.pdf.cell(0, 10, "Personlige noter", ln=True)
         self.pdf.ln(2)
 
-        # Helvetica (core font) kan ikke printe emojis. Fjern alt uden for Latin-1:
-        safe_text = notes_text.encode("latin-1", "ignore").decode("latin-1")
+        # get the notes
+        text = notes_dict.get("user_notes", "")
 
         self.pdf.set_font("Helvetica", size=12)
-        self.pdf.multi_cell(0, 8, safe_text if safe_text else "— (ingen noter) —")
+        self.pdf.multi_cell(0, 8, text if text else "— (ingen noter) —")
+
 
     def add_advice_page(self, advice_text):
         self.pdf.set_font("Helvetica", style='B', size=14)
