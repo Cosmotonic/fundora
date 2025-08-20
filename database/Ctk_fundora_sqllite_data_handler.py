@@ -1,14 +1,22 @@
 import mysql.connector
-from database.Ctk_Fundora_mySql_data_config import DB_CONFIG
+#from database.Ctk_Fundora_mySql_data_config import DB_CONFIG
 import customtkinter as ctk
 import json
 import sqlite3
+from database.Ctk_fundora_sqllite_initialize_db import get_db_path
 
-DB_NAME = "fundora_data.db"
+
+DB_CONFIG = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'Acmv13d2tv2450kbhsv*',
+    'database': 'fundora'
+}
+
+#DB_NAME = "fundora_data.db"
+DB_NAME = get_db_path()
 
 # from database.Fundora_data_handler import gem_person_data
-
-
 def eksporter_vars_til_db(email, data_dicts):
     for table_name, var_dict in data_dicts.items():
         # print(f"TABEL NAME :::: {table_name}")

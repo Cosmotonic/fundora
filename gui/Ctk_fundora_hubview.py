@@ -1,9 +1,11 @@
 
 import customtkinter as ctk
-from customtkinter import CTkImage
+import sys
 
+from pathlib import Path
+from customtkinter import CTkImage
 from tkinter import filedialog, Canvas
-from Ctk_fundora_loanerValues import * 
+from components.Ctk_fundora_loanerValues import * 
 from PIL import Image
 
 class hubview(ctk.CTkFrame): 
@@ -49,12 +51,21 @@ class hubview(ctk.CTkFrame):
 
             # Build frames for buttons
             for idx, (name, func) in enumerate(menues.items()):
+                #imagePath = self.resource_path(f"Images/0{idx+1}_Hub.png")
+                imagePath = self.resource_path(f"../Images/0{idx+1}_Hub.png")
+
+                frame = OpenSection(hubframe, func, button_text=name.upper(), imagePath=imagePath)
+                frame.grid(row=1, column=idx, padx=10, pady=10, sticky="nsew")
+                self.frames.append(frame)
+            
+            '''
+            for idx, (name, func) in enumerate(menues.items()):
                     imagePath = f"C:/Projects/Fundora/Images/0{idx+1}_Hub.png" 
                     frame = OpenSection(hubframe, func, button_text=name.upper(), imagePath=imagePath)
                     frame.grid(row=1, column=idx, padx=10, pady=10,  sticky="nsew")
 
                     self.frames.append(frame)
-
+            '''
         # make logout button
         self.lotout_button = ctk.CTkButton(hubframe, text="Log out", 
                                 hover_color=LIGHT_PURPLE, 
@@ -65,7 +76,14 @@ class hubview(ctk.CTkFrame):
                                 command=logout_callback)
         
         self.lotout_button.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
-        
+    
+
+    def resource_path(self, rel_path: str) -> str:
+        # Når app’en kører som PyInstaller onefile, pakkes assets ud i en temp-mappe (sys._MEIPASS)
+        base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+        return str(base / rel_path)
+
+
         # EXPORT/IMPORT DB BUTTONS
         '''
         # Database Temp UI

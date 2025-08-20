@@ -5,7 +5,7 @@ from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, S
 import backend.Ctk_fundora_math_lib as fuMath
 import backend.Ctk_fundora_exportPDF as export 
 
-from Ctk_fundora_loanerValues import *
+from components.Ctk_fundora_loanerValues import *
 
 class Renovering(ctk.CTkTabview): 
     def __init__(self, parent, rennovering_vars): 

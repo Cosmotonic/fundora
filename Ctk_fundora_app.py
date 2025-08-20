@@ -12,7 +12,8 @@ import backend.Ctk_fundora_math_lib as fuMath
 import database.Ctk_fundora_mySql_data_handler as dbhandler
 import database.Ctk_fundora_sqllite_data_handler as sqlhandler
 
-from Ctk_fundora_loanerValues import *
+from database.Ctk_fundora_sqllite_initialize_db import initialize_sqlite_db
+from components.Ctk_fundora_loanerValues import *
 from gui.Ctk_fundora_hubview import * 
 from gui.Ctk_fundora_forhandling import * 
 from gui.Ctk_fundora_finansiering import * 
@@ -47,7 +48,6 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         # initialize local database
-        from database.Ctk_fundora_sqllite_initialize_db import initialize_sqlite_db
         initialize_sqlite_db()     
 
         # start program

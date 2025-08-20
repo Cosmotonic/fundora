@@ -1,6 +1,7 @@
 from fpdf import FPDF
-from Ctk_fundora_loanerValues import *
+from components.Ctk_fundora_loanerValues import *
 from tkinter import filedialog
+
 import locale
 import os
 
@@ -28,8 +29,8 @@ class Export_finansiering_PDF():
         # Open a file dialog 
         self.file_path = filedialog.asksaveasfilename(defaultextension=".pdf", 
                                             filetypes=[("PDF files", "*.pdf")],
-                                            initialfile="Låne_Rapport",
-                                            initialdir="~/Desktop")
+                                            initialfile="Finansieringsplan_01",
+                                            initialdir="~/Downloads")
         if not self.file_path:  
             return
 
@@ -285,9 +286,8 @@ class Eksport_rennovation_budget_PDF:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
-            initialfile= "Budgetoplæg_01", # renovation_vars['budget_titel'],
-            initialdir=os.path.expanduser("~/Desktop")
-        )
+            initialfile= "Budgetoplæg_01", 
+            initialdir="~/Downloads")
         if not file_path:
             return
 
@@ -412,8 +412,8 @@ class Eksport_forhandling_PDF:
             defaultextension=".pdf",
             filetypes=[("PDF files", "*.pdf")],
             initialfile= "Forhandlingsstrategi_01", # data_vars['forhandling_titel'],
-            initialdir=os.path.expanduser("~/Desktop")
-        )
+            initialdir="~/Downloads")
+        
 
         if not file_path:
             return

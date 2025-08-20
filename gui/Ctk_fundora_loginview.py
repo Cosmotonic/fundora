@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from database.Ctk_fundora_auth import login_user, register_user
 import mysql.connector
-from Ctk_fundora_loanerValues import *
+from components.Ctk_fundora_loanerValues import *
 
 from backend.Ctk_fundora_services import process_register
 
@@ -66,11 +66,11 @@ class LoginFrame(ctk.CTkFrame):
         headline = ctk.CTkLabel(centerFrame, text="LOGIN I FUNDORA", font=("poppins", 30, "bold"))
         headline.grid(row=0, column=0, pady=(40, 10))
 
-        self.email_var = ctk.StringVar(value="kasper@voca.com")
-        self.email_entry = ctk.CTkEntry(centerFrame, placeholder_text="NAVN", textvariable=self.email_var, corner_radius=20)
+        self.email_var = ctk.StringVar(value="contactkasperlarsson@gmail.com") # kasper@voca.com
+        self.email_entry = ctk.CTkEntry(centerFrame, placeholder_text="E-mail", textvariable=self.email_var, corner_radius=20)
         self.email_entry.grid(row=1, column=0, pady=5, padx=40, sticky="ew")
 
-        self.pass_var = ctk.StringVar(value="mitKodeord123")
+        self.pass_var = ctk.StringVar(value="Kapper1988") #mitKodeord123
         self.password_entry = ctk.CTkEntry(centerFrame, placeholder_text="PASSWORD", textvariable=self.pass_var, show="*", corner_radius=20)
         self.password_entry.grid(row=2, column=0, pady=5, padx=40, sticky="ew")
 

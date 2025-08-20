@@ -168,6 +168,8 @@ def create_table_ugc_data(cursor):
             argumentation TEXT,
             loesoere TEXT,
             budgetvaerktoej TEXT,
-            feedback TEXT
+            feedback TEXT, 
+            user_notes TEXT
         );
     """)
+

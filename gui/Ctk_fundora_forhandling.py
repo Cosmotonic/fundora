@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from components.Ctk_fundora_panels import SingleInputPanel, ForhandlingsPanel, SliderPanel, DoubleInputPanel, ForhandlingCheckPanel, Notes_strategy
 import backend.Ctk_fundora_exportPDF as export 
-from Ctk_fundora_loanerValues import *
+from components.Ctk_fundora_loanerValues import *
 
 
 class Forhandling(ctk.CTkTabview): 

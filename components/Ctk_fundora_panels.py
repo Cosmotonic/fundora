@@ -1,7 +1,7 @@
 # panels.py are not specific to any UI layout but are generic building blocks to avoid code repetition. 
 
 import customtkinter as ctk
-from Ctk_fundora_loanerValues import * 
+from components.Ctk_fundora_loanerValues import * 
 from datetime import date, datetime
 import platform
 
@@ -582,8 +582,8 @@ class Notes_strategy(Panel):
         self.mainApp.eksporter_data_til_db()
 
     def load_notes(self): 
-        self.personal_notes_text.insert("1.0", self.mainApp.user_note_dict["user_notes"])
-
+        # self.personal_notes_text.insert("1.0", self.mainApp.user_note_dict["user_notes"])
+        self.personal_notes_text.insert( "1.0",self.mainApp.user_note_dict.get("user_notes", ""))
         print ("Notes loaded.")
     
 
