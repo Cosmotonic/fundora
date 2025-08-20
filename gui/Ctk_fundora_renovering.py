@@ -75,7 +75,7 @@ class budget_tab(ctk.CTkFrame):
         self.renovation_bottom_Frame.columnconfigure((0,1,2,3,4,5,6,7,8,9,10), weight=1)  # ← allow frame to expand in its parent
 
         self.tilføj_renovation_button = ctk.CTkButton(self.renovation_bottom_Frame, 
-                                                        text="+ tilføj Hovedoppgave", 
+                                                        text="- tilføj Hovedoppgave", 
                                                         command=self.bugetvaerktoej_handler.tilføj_renovering,
                                                         corner_radius=32, 
                                                         hover_color=LIGHT_PURPLE, 

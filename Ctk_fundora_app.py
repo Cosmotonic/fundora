@@ -21,6 +21,11 @@ from gui.Ctk_fundora_renovering import *
 from gui.Ctk_fundora_loginview import Login_Center
 from components.Ctk_fundora_panels import *
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(BASE_DIR, "backend"))
+sys.path.append(os.path.join(BASE_DIR, "components"))
+sys.path.append(os.path.join(BASE_DIR, "gui"))
+
 
 class App(ctk.CTk): 
     def __init__(self):

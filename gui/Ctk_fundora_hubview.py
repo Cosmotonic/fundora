@@ -1,6 +1,7 @@
 
 import customtkinter as ctk
 import sys
+import os 
 
 from pathlib import Path
 from customtkinter import CTkImage
@@ -51,13 +52,14 @@ class hubview(ctk.CTkFrame):
 
             # Build frames for buttons
             for idx, (name, func) in enumerate(menues.items()):
-                #imagePath = self.resource_path(f"Images/0{idx+1}_Hub.png")
-                imagePath = self.resource_path(f"../Images/0{idx+1}_Hub.png")
+                imagePath = self.resource_path(f"Images/0{idx+1}_Hub.png")
+                pil_image = Image.open(imagePath)
 
                 frame = OpenSection(hubframe, func, button_text=name.upper(), imagePath=imagePath)
                 frame.grid(row=1, column=idx, padx=10, pady=10, sticky="nsew")
                 self.frames.append(frame)
-            
+
+                        
             '''
             for idx, (name, func) in enumerate(menues.items()):
                     imagePath = f"C:/Projects/Fundora/Images/0{idx+1}_Hub.png" 
@@ -78,11 +80,15 @@ class hubview(ctk.CTkFrame):
         self.lotout_button.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
     
 
-    def resource_path(self, rel_path: str) -> str:
-        # Når app’en kører som PyInstaller onefile, pakkes assets ud i en temp-mappe (sys._MEIPASS)
-        base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
-        return str(base / rel_path)
 
+
+    def resource_path(self, relative_path):
+        """ Finder filstier både i udvikling og i PyInstaller build """
+        if hasattr(sys, '_MEIPASS'):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
 
         # EXPORT/IMPORT DB BUTTONS
         '''
