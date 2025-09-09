@@ -2,7 +2,7 @@
 
 # Github : https://github.com/Cosmotonic/fundora
 
-# Video Gennemgang (Prototype) af use-case: https://mailchi.mp/7e3556e15fa2/fundora
+# Video Gennemgang : https://www.youtube.com/playlist?list=PLPfk9JvmU86p2F4BmwPAEDzcjLfXR97Vb
 
 # FIGMA UX:  https://www.figma.com/design/exSKN1FlEkSTZo6Fu3pDGP/Fundora?node-id=0-1&p=f
 
