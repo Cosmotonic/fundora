@@ -178,7 +178,7 @@ class RenoveringsOpgavePanel(Panel):
         # Slet renovation button
         self.tilføj_opgave_button = ctk.CTkButton(self.OpgaveFrame, 
                                             command=self.delete_self,
-                                            text="+ Slet Hovedoppgave", 
+                                            text="- Slet Hovedoppgave", 
                                             corner_radius=32, 
                                             hover_color=LIGHT_RED, 
                                             fg_color=RED, 

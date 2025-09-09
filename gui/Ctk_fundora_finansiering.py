@@ -48,7 +48,7 @@ class Laane_Evne_tab(ctk.CTkFrame):
         person1_label = ctk.CTkLabel(self, text="   1. Person   ")
         person1_label.grid(row=0, column=0, columnspan=1, padx=5, pady=5, sticky='new')
         person2_label = ctk.CTkLabel(self, text="   2. Person   ")
-        person2_label.grid(row=0, column=0, columnspan=1, padx=5, pady=5, sticky='new')
+        person2_label.grid(row=0, column=1, columnspan=1, padx=5, pady=5, sticky='new')
         
         # Personal info frames
         person1Frame = ctk.CTkFrame(self, fg_color=WHITE, border_width=2, border_color=DARK_GREY)#  fg_color=LIGHT_ORANGE)

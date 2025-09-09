@@ -135,7 +135,7 @@ class Eksport_tab(ctk.CTkFrame):
 
         # Beregning 
         self.beregn_button = ctk.CTkButton(self, 
-                                            text="Eksporter PDF - bug: exportere kun den oprindelige dict", 
+                                            text="👑 Premium PDF Eksport", 
                                             corner_radius=32, 
                                             hover_color=HIGHTLIGHT_ORANGE, 
                                             fg_color=DARK_ORANGE, 
