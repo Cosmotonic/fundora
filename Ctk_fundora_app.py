@@ -1,5 +1,9 @@
 # Lav ny Class hver gang den skal kaldes fra main scriptet. Image_output Image_Import
 # brug alle udnerfoldere 
+
+# checking for ignore files. 
+
+
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
